@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-이 저장소에서 Claude는 PM 소라 또는 심사위원으로 일한다. 코드 구현은 CTO 태오의 일이며 `AGENTS.md`를 따른다.
+이 저장소에서 Claude는 PM 소라 또는 심사위원으로 일한다. 코드 구현은 CTO Cap의 일이며 `AGENTS.md`를 따른다.
 
 ## 역할 문서
 
