@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>미리내 메인 화면</title>
+<style>
+  :root { --ink:#222; --mid:#777; --line:#bbb; --fill:#eee; --bg:#fafafa; }
+  * { box-sizing:border-box; }
+  body { margin:0; padding:28px; background:var(--bg); color:var(--ink);
+         font-family:"Malgun Gothic","Apple SD Gothic Neo",sans-serif; word-break:keep-all; }
+  h1 { font-size:20px; margin:0 0 4px; }
+  .sub { color:var(--mid); font-size:13px; margin-bottom:22px; }
+  .row { display:flex; gap:32px; align-items:flex-start; }
+  .label { font-size:13px; font-weight:700; margin-bottom:8px; }
+  .muted { color:var(--mid); font-size:12px; }
+  .anno { font-size:11.5px; color:#555; margin-top:10px; line-height:1.55; }
+  .anno b { color:var(--ink); }
+
+  /* 공통 카드 */
+  .card { border:1.5px solid var(--ink); border-radius:10px; padding:10px 12px; background:#fff; }
+  .card.done { border-color:var(--line); color:var(--mid); }
+  .tag { display:inline-block; font-size:11px; font-weight:700; border:1.5px solid var(--ink); border-radius:4px; padding:1px 6px; margin-right:6px; }
+  .tag.flow { border-style:dashed; }
+  .tag.due { background:var(--fill); }
+  .card h3 { font-size:14px; margin:6px 0 4px; }
+  .why { font-size:12px; color:var(--mid); }
+  .todo { font-size:12.5px; margin-top:6px; padding:6px 8px; background:var(--fill); border-radius:6px; }
+  .src { font-size:11px; color:var(--mid); margin-top:6px; }
+  .acts { display:flex; gap:6px; margin-top:8px; }
+  .acts div { flex:1; border:1.5px solid var(--line); border-radius:6px; text-align:center; font-size:11px; padding:5px 0; white-space:nowrap; }
+  .acts div.pri { border-color:var(--ink); font-weight:700; }
+  .stamp { font-size:11px; font-weight:700; border:1.5px solid var(--line); border-radius:4px; padding:1px 6px; float:right; }
+  .panel { border:1.5px solid var(--line); border-radius:10px; padding:12px; background:#fff; }
+  .ph { font-size:13px; font-weight:700; margin-bottom:8px; display:flex; justify-content:space-between; }
+  .ph span { font-weight:400; color:var(--mid); font-size:11.5px; }
+  .tl { display:flex; gap:10px; font-size:12.5px; padding:6px 0; border-bottom:1px dashed var(--line); }
+  .tl:last-child { border-bottom:0; }
+  .tl .d { width:40px; font-weight:700; }
+  .bar { height:6px; background:var(--fill); border-radius:3px; margin-top:6px; }
+  .bar i { display:block; height:6px; background:var(--ink); border-radius:3px; }
+  .watch { font-size:12px; padding:4px 0; }
+  .chip { display:inline-block; border:1.5px solid var(--line); border-radius:14px; padding:2px 9px; font-size:11.5px; margin:0 4px 4px 0; }
+
+  /* PC */
+  .browser { width:1120px; border:2px solid var(--ink); border-radius:10px; background:#fff; overflow:hidden; }
+  .chrome { height:30px; border-bottom:1.5px solid var(--line); display:flex; align-items:center; gap:6px; padding:0 12px; }
+  .chrome i { width:10px; height:10px; border-radius:50%; border:1.5px solid var(--line); }
+  .chrome .url { margin-left:12px; flex:0 0 340px; height:18px; border:1.5px solid var(--line); border-radius:9px; font-size:10.5px; color:var(--mid); padding:1px 10px; }
+  .top { height:52px; border-bottom:1.5px solid var(--line); display:flex; align-items:center; justify-content:space-between; padding:0 20px; }
+  .logo { font-weight:800; font-size:16px; }
+  .prof { font-size:12px; border:1.5px solid var(--line); border-radius:14px; padding:4px 12px; }
+  .body { display:flex; min-height:560px; }
+  .nav { width:170px; border-right:1.5px solid var(--line); padding:16px 12px; }
+  .nav div { font-size:13px; padding:8px 10px; border-radius:6px; margin-bottom:2px; }
+  .nav div.on { background:var(--ink); color:#fff; font-weight:700; }
+  .nav .cnt { float:right; font-size:11px; }
+  .main { flex:1; padding:18px 20px; }
+  .greet { font-size:18px; font-weight:700; }
+  .cards3 { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:14px; }
+  .side { width:290px; padding:18px 16px 18px 0; display:flex; flex-direction:column; gap:12px; }
+  .lower { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:16px; }
+
+  /* 모바일 */
+  .phone { width:360px; border:2px solid var(--ink); border-radius:24px; background:#fff; overflow:hidden; }
+  .mtop { padding:16px 16px 10px; }
+  .mtop .logo { display:flex; justify-content:space-between; align-items:center; }
+  .sum { display:flex; gap:8px; margin-top:10px; }
+  .sum div { flex:1; border:1.5px solid var(--line); border-radius:8px; padding:6px; text-align:center; font-size:11px; color:var(--mid); }
+  .sum b { display:block; font-size:16px; color:var(--ink); }
+  .mbody { padding:0 16px 14px; }
+  .mbody .card { margin-top:10px; }
+  .sec { font-size:13px; font-weight:700; margin:16px 0 6px; }
+  .tabs { display:flex; border-top:1.5px solid var(--line); }
+  .tabs div { flex:1; text-align:center; font-size:11.5px; padding:10px 0 12px; color:var(--mid); }
+  .tabs div.on { color:var(--ink); font-weight:700; }
+  .tabs div::before { content:""; display:block; width:18px; height:18px; margin:0 auto 4px; border:1.5px solid currentColor; border-radius:5px; }
+</style>
+</head>
+<body>
+<h1>미리내 메인 화면 v0.2 — PC 웹 + 모바일</h1>
+<div class="sub">카드 뒤의 홈 화면 · 흑백 저해상도 · 주 대상 페르소나 A · 모든 내용은 가상 데이터</div>
+
+<div class="row">
+
+  <!-- PC 웹 -->
+  <div>
+    <div class="label">PC 웹 (1280px 기준)</div>
+    <div class="browser">
+      <div class="chrome"><i></i><i></i><i></i><div class="url">mirinae.app/today</div></div>
+      <div class="top">
+        <div class="logo">미리내</div>
+        <div class="prof">예비창업 · AI 에이전트 · 서울 ⚙</div>
+      </div>
+      <div class="body">
+        <div class="nav">
+          <div class="on">오늘</div>
+          <div>준비 중 <span class="cnt">1</span></div>
+          <div>다가오는 마감 <span class="cnt">3</span></div>
+          <div>지난 카드</div>
+          <div>사업 프로필</div>
+        </div>
+
+        <div class="main">
+          <div class="greet">11월 13일 (금), 오늘 미리 챙길 일 3가지</div>
+          <div class="muted">오전 6시에 Liner로 새로 찾아봤어요 · 3장 중 1장 처리</div>
+
+          <div class="cards3">
+            <div class="card">
+              <span class="tag">기회</span><span class="muted">마감 D-15</span>
+              <h3>○○ 예비창업 지원사업 공고</h3>
+              <div class="why">예비창업 · 서울 · AI 분야 조건에 맞아요</div>
+              <div class="todo">할 일: 사업계획서 3장 초안 시작하기</div>
+              <div class="src">출처 2 · 공고 원문</div>
+              <div class="acts"><div class="pri">준비 시작</div><div>나중에</div><div>필요 없어요</div></div>
+            </div>
+            <div class="card">
+              <span class="tag flow">흐름</span><span class="muted">이번 주</span>
+              <h3>△△사가 에이전트 업무 자동화 기능 공개</h3>
+              <div class="why">내 제품의 핵심 기능과 겹쳐요</div>
+              <div class="todo">할 일: 차별점 한 줄 다시 쓰고 고객 3명에게 확인</div>
+              <div class="src">출처 3 · 공식 발표 + 실무자 글</div>
+              <div class="acts"><div class="pri">했어요</div><div>나중에</div><div>필요 없어요</div></div>
+            </div>
+            <div class="card done">
+              <span class="stamp">했어요 ✔</span>
+              <span class="tag due">마감</span><span class="muted">오늘</span>
+              <h3>멘토링 프로그램 서류 제출 마감</h3>
+              <div class="why">할 일 목록에 있어요</div>
+              <div class="todo">할 일: 제출 서류 2종 확인 후 제출</div>
+            </div>
+          </div>
+
+          <div class="lower">
+            <div class="panel">
+              <div class="ph">준비 중 <span>카드에서 "준비 시작"을 누른 일</span></div>
+              <div style="font-size:13px;font-weight:700">□□ 청년창업 지원사업</div>
+              <div class="muted">마감 11월 20일 (D-7) · 체크리스트 2 / 3</div>
+              <div class="bar"><i style="width:66%"></i></div>
+              <div class="todo">다음 할 일: 신청 마감 3일 전 최종 검토</div>
+            </div>
+            <div class="panel">
+              <div class="ph">미리내가 지켜보는 것 <span>프로필에서 바꿈</span></div>
+              <span class="chip">예비창업 지원사업 · 서울</span><span class="chip">AI 에이전트 기술 발표</span><span class="chip">LLM 가격·정책 변화</span>
+              <div class="muted" style="margin-top:4px">오늘 Liner 검색 9회 · 출처 21건 중 카드 3장</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="side">
+          <div class="panel">
+            <div class="ph">다가오는 마감 <span>2주</span></div>
+            <div class="tl"><span class="d">오늘</span><span>멘토링 서류 제출 ✔</span></div>
+            <div class="tl"><span class="d">D-5</span><span>IR 자료 초안 (할 일 목록)</span></div>
+            <div class="tl"><span class="d">D-7</span><span>□□ 청년창업 지원사업</span></div>
+            <div class="tl"><span class="d">D-15</span><span>○○ 예비창업 지원사업</span></div>
+          </div>
+          <div class="panel">
+            <div class="ph">이번 주 해낸 일</div>
+            <div style="font-size:22px;font-weight:800">4 <span class="muted">/ 카드 9장</span></div>
+            <div class="muted">준비 시작 1 · 했어요 3 · 필요 없어요 2</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="anno">
+      <b>구조:</b> 가운데 = 오늘의 카드 3장(행동), 아래 = 이미 시작한 일, 오른쪽 = 시간축(마감). 카드를 처리하면 "준비 중"이나 "다가오는 마감"으로 옮겨 간다.<br>
+      <b>MVP:</b> 오늘 카드, 준비 중, 다가오는 마감. <b>뺄 수 있음:</b> 이번 주 해낸 일, 지켜보는 것의 검색 횟수(공수에 따라 Cap과 정함).<br>
+      <b>Liner 지점:</b> "오전 6시에 Liner로 새로 찾아봤어요"와 "출처 21건 중 카드 3장" — 검색을 많이 하고 골라서 보여 준다는 걸 드러낸다.
+    </div>
+  </div>
+
+  <!-- 모바일 -->
+  <div>
+    <div class="label">모바일 (360px)</div>
+    <div class="phone">
+      <div class="mtop">
+        <div class="logo"><span>미리내</span><span class="muted">⚙</span></div>
+        <div style="font-size:16px;font-weight:700;margin-top:10px">오늘 미리 챙길 일 3가지</div>
+        <div class="muted">11월 13일 (금) · 오전 6시 Liner로 찾음</div>
+        <div class="sum"><div><b>2</b>남은 카드</div><div><b>1</b>준비 중</div><div><b>D-5</b>가까운 마감</div></div>
+      </div>
+      <div class="mbody">
+        <div class="card">
+          <span class="tag">기회</span><span class="muted">마감 D-15</span>
+          <h3>○○ 예비창업 지원사업 공고</h3>
+          <div class="why">예비창업 · 서울 · AI 분야 조건에 맞아요</div>
+          <div class="todo">할 일: 사업계획서 3장 초안 시작하기</div>
+          <div class="acts"><div class="pri">준비 시작</div><div>나중에</div><div>필요 없어요</div></div>
+        </div>
+        <div class="card">
+          <span class="tag flow">흐름</span><span class="muted">이번 주</span>
+          <h3>△△사가 에이전트 업무 자동화 기능 공개</h3>
+          <div class="todo">할 일: 차별점 한 줄 다시 쓰고 고객 3명에게 확인</div>
+          <div class="acts"><div class="pri">했어요</div><div>나중에</div><div>필요 없어요</div></div>
+        </div>
+        <div class="card done" style="padding:8px 12px">
+          <span class="stamp">했어요 ✔</span><span class="tag due">마감</span>멘토링 서류 제출
+        </div>
+
+        <div class="sec">다가오는 마감</div>
+        <div class="tl"><span class="d">D-5</span><span>IR 자료 초안</span></div>
+        <div class="tl"><span class="d">D-7</span><span>□□ 청년창업 지원사업 · 준비 2/3</span></div>
+        <div class="tl"><span class="d">D-15</span><span>○○ 예비창업 지원사업</span></div>
+      </div>
+      <div class="tabs"><div class="on">오늘</div><div>준비 중</div><div>마감</div><div>프로필</div></div>
+    </div>
+    <div class="anno" style="width:360px">
+      <b>모바일:</b> 같은 내용을 한 줄로 쌓는다. 오른쪽 패널은 위의 요약 3칸과 아래 "다가오는 마감"으로 옮긴다. 메뉴는 아래 탭 4개.<br>
+      <b>제외:</b> 앱 설치, 푸시 알림. 반응형 웹 하나로 만든다.
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
