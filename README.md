@@ -18,3 +18,29 @@ HJ(오너), PM 소라, CTO Cap, 심사위원. 역할과 흐름은 아래 문서�
 - `docs/team/WORKFLOW.md`: Issue와 PR의 흐름
 - `docs/team/HANDOFF_CTO.md`: CTO 인수인계
 - `docs/team/LEARNINGS.md`: 시행착오 기록
+
+## 로컬 개발 실행
+
+Node.js 24와 npm을 사용한다. 최초 설치는 `npm ci`, 이후 실행은 아래 한 명령이다.
+
+```powershell
+npm run dev
+```
+
+<http://127.0.0.1:3000>에서 질의를 입력하고 **조사 결과 확인**을 누른다. 환경변수 설정 없이 준비된 예시와 출처가 표시된다. 예시는 입력 질의의 실제 검색 결과가 아니며, 실제 Liner 호출 성공을 뜻하지 않는다. 오늘 세팅에는 카드 생성과 제품 디자인이 포함되지 않는다.
+
+Liner 사용 승인을 받은 뒤 실제 검색을 확인하려면 `.env.example`을 `.env.local`로 복사하고, 로컬 파일에 `LINER_MODE=live` 및 `LINER_API_KEY`를 설정한 뒤 서버를 다시 실행한다. 키와 `.env.local`은 커밋하지 않는다. 기본 `sample` 모드는 키가 있어도 외부 API를 호출하지 않는다. 실시간 모드에서 키가 없거나 호출이 실패하면 예시 안내와 출처가 표시된다.
+
+```powershell
+npm run lint
+npm run typecheck
+npm test
+npm run build
+npm start
+```
+
+`npm start`는 빌드 후 프로덕션 서버를 로컬에 실행한다. 자동 테스트는 외부 API 호출과 비용 없이 실행된다.
+
+- [기획 초안](docs/product/PLAN.md)
+- [기술 구조·공수·위험](docs/tech/ARCHITECTURE.md)
+- [Liner 공식 사양과 검증 상태](docs/tech/LINER_API.md)
