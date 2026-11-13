@@ -89,6 +89,21 @@ th{color:var(--muted);font-weight:500;font-size:12.5px;border-top:0}
 .gantt .bar.w{background:var(--warn)}
 ul{margin:0;padding-left:20px}
 li{margin:2px 0}
+.stage{display:grid;grid-template-columns:130px 1fr 1.2fr 1.4fr;gap:8px 10px;min-width:900px;font-size:12.5px}
+.sh{font-size:12px;color:var(--muted);font-weight:500}
+.sl{font-weight:700;font-size:13.5px;padding-top:6px;border-top:1px solid var(--line)}
+.sl .n{font-family:var(--mono);color:var(--accent);margin-right:4px}
+.sc{display:flex;flex-direction:column;gap:5px;border-top:1px solid var(--line);padding-top:6px}
+.stage .ev{margin:0;background:var(--ink);color:var(--paper);border:0}
+.ck{border:1px dashed var(--line);border-radius:8px;padding:6px 10px}
+.up{border:1.5px solid var(--accent);background:var(--accent-soft);border-radius:8px;padding:6px 10px}
+.up b{color:var(--accent)}
+.days{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;min-width:900px;position:relative}
+.day{border:1px solid var(--line);border-radius:10px;overflow:hidden;display:flex;flex-direction:column;font-size:12.5px}
+.dh{background:var(--soft);font-weight:700;padding:5px 10px;font-family:var(--mono);font-size:12px}
+.dc{padding:6px 10px;border-bottom:1px dashed var(--line)}
+.du{padding:6px 10px;background:var(--accent-soft);flex:1}
+.du b{color:var(--accent)}
 .dec{border:1.5px solid var(--warn);background:var(--warn-soft);border-radius:10px;padding:12px 14px}
 @media (max-width:720px){.grid2,.grid3{grid-template-columns:minmax(0,1fr)} section{padding:18px 16px} h1{font-size:24px}}
 </style>
@@ -158,6 +173,36 @@ li{margin:2px 0}
       </div>
       <div class="loop">↺ <b>다시 ②로:</b> 체크·반응·되묻기 답이 월드 모델을 고치고, 다음 제안이 바뀐다. 완료한 일은 회사 이력이 되어 같은 제안이 다시 나오지 않는다.</div>
     </div>
+
+    <h3 style="margin-top:10px">③④⑤ 단계별 결과와 중간 업데이트</h3>
+    <p class="small muted">각 단계에서 대표가 무엇을 하면, 미리내가 무엇을 확인하고, 어디가 어떻게 바뀌는지.</p>
+    <div class="scroll"><div class="stage">
+      <div class="sh"></div><div class="sh">대표의 행동</div><div class="sh">미리내의 중간 체크</div><div class="sh">결과 · 업데이트</div>
+
+      <div class="sl"><span class="n">③</span>업무 제안</div>
+      <div class="sc"><div class="ev">이 일 하기</div><div class="ev">나중에</div><div class="ev">필요 없어요 + 이유</div><div class="ev">되묻기에 답</div></div>
+      <div class="sc"><div class="ck">자격이 아직 맞나? 마감이 남았나?</div><div class="ck">이유가 회사 정보와 어긋나나? (예: "이미 신청함")</div><div class="ck">답으로 자격 판정이 바뀌나?</div></div>
+      <div class="sc"><div class="up">제안 → <b>진행 중</b>, ④ 업무 지도 생성</div><div class="up">제안 숨김 → 마감 7일 전 <b>다시 나옴</b></div><div class="up">회사 정보 판단 기준에 이유 저장 → 같은 종류 <b>덜 제안</b></div><div class="up">자격 ? → ✔ 또는 <b>제외</b>, 월드 모델에 새 사실</div></div>
+
+      <div class="sl"><span class="n">④</span>업무 지도 펼치기</div>
+      <div class="sc"><div class="ev">지도 확인</div><div class="ev">단계·항목 고치기 (추가, 삭제, 날짜 변경)</div></div>
+      <div class="sc"><div class="ck">마감에서 거꾸로 단계별 날짜 계산</div><div class="ck">회사 정보로 이미 된 항목이 있나? (예: 법인 서류 보유)</div><div class="ck">다른 제안과 겹치는 항목이 있나?</div></div>
+      <div class="sc"><div class="up">단계별 <b>목표 날짜</b>, 이미 된 항목 <b>자동 체크</b></div><div class="up">겹치는 항목은 <b>연결된 일</b>로 표시 (한쪽을 끝내면 양쪽 체크)</div><div class="up">홈 "진행 중"과 "다가오는 마감"에 등록</div></div>
+
+      <div class="sl"><span class="n">⑤</span>체크리스트 추적</div>
+      <div class="sc"><div class="ev">항목 체크</div><div class="ev">막힘 표시 ("도움 필요")</div><div class="ev">모두 완료</div></div>
+      <div class="sc"><div class="ck">단계 목표 날짜보다 늦나?</div><div class="ck">막힌 항목을 도울 자료·사례가 있나? (Liner 검색)</div><div class="ck">원문 공고가 바뀌었나? (지금 찾기 때 다시 확인)</div></div>
+      <div class="sc"><div class="up">진행률이 지도·홈·마감 목록에 <b>동시 반영</b></div><div class="up">늦으면 홈 맨 위 <b>"막힌 단계" 제안</b>, 막힘엔 도움 자료 제안</div><div class="up">공고 변경 시 지도에 <b>경고</b>와 바뀐 항목</div><div class="up">완료 → 회사 <b>이력</b> 추가, 같은 제안 안 나옴, 다음 일 제안 (결과 발표일)</div></div>
+    </div></div>
+
+    <h3 style="margin-top:10px">예시: 데이터 A가 15일 동안 겪는 업데이트</h3>
+    <div class="scroll"><div class="days">
+      <div class="day"><div class="dh">1일 (D-15)</div><div class="dc">제안: ○○ 지원사업 <span class="tag t-w">자격 ?</span></div><div class="dc">되묻기 "서울인가요?" → 네</div><div class="du">자격 ✔, 회사 정보 "서울" 추가 → <b>이 일 하기</b> → 지도 6단계, 진행 0%</div></div>
+      <div class="day"><div class="dh">3일 (D-13)</div><div class="dc">공고 확인 ✔, 자격 대조 ✔</div><div class="du">진행 33%, 홈·마감 목록 동시 반영. 법인 서류는 "해당 없음"(예비창업)으로 자동 정리</div></div>
+      <div class="day"><div class="dh">7일 (D-9)</div><div class="dc">사업계획서 단계 목표일 지남, 체크 없음</div><div class="du">홈 맨 위 <b>"막힌 단계"</b>: "사업계획서가 3일 늦어요" + 합격 사업계획서 구조 자료 2건(Liner)</div></div>
+      <div class="day"><div class="dh">10일 (D-6)</div><div class="dc">지금 찾기 → 공고 수정 공지 발견</div><div class="du">지도에 <b>경고</b>: "제출 서류에 ○○ 확인서 추가" → 증빙 단계에 항목 1개 추가</div></div>
+      <div class="day"><div class="dh">14일 (D-1)</div><div class="dc">모두 완료, 제출</div><div class="du">회사 이력 "○○ 지원사업 신청함" 추가. 다음 제안: <b>결과 발표일 챙기기</b>, 떨어지면 비슷한 공고</div></div>
+    </div></div>
   </section>
 
   <section>
