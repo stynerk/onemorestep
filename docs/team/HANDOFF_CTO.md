@@ -6,6 +6,7 @@
 
 - HJ 요청: 해커톤은 Liner를 사용하되 다른 API로도 변경할 수 있게 연결을 구성한다.
 - 브랜치 issue-9-api-providers는 최신 origin/main에서 분리했다. 목업 작업 브랜치 issue-7-web-mockup 및 PR #8은 보존했다.
+- 검토 PR: https://github.com/stynerk/onemorestep/pull/10 . Issue #9를 review로 전환했으며 병합하지 않았다.
 - src/lib/providers에 검색/모델 계약·환경 설정·HTTP 전송·어댑터를 분리했다. 검색과 계획 생성은 독립 선택이며 기본은 Liner다.
 - 검색은 Liner 또는 정해진 HTTP JSON 계약(http-json), 모델은 Liner 또는 JSON Schema를 지원하는 Chat Completions 계약(chat-completions)이다. API 주소·키·모델은 서버 설정만 읽는다.
 - 형식이 같은 API는 설정으로 바꾸고, 다른 요청/응답·인증 방식은 전용 어댑터를 추가한다. 아무 API나 URL만 바꿔 호환된다고 표현하지 않는다.
