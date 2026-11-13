@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>미리내 전체 구조</title>
+<style>
+  :root { --ink:#222; --mid:#777; --line:#bbb; --fill:#eee; --bg:#fafafa; }
+  * { box-sizing:border-box; }
+  body { margin:0; padding:28px; background:var(--bg); color:var(--ink); width:1240px;
+         font-family:"Malgun Gothic","Apple SD Gothic Neo",sans-serif; word-break:keep-all; }
+  h1 { font-size:20px; margin:0 0 4px; }
+  .sub { color:var(--mid); font-size:13px; margin-bottom:18px; }
+  .layer { display:flex; gap:14px; align-items:stretch; }
+  .lname { width:120px; flex:none; font-size:12px; font-weight:700; color:var(--mid); padding-top:10px; }
+  .lname small { display:block; font-weight:400; margin-top:2px; }
+  .boxes { flex:1; display:flex; gap:10px; }
+  .box { flex:1; border:1.5px solid var(--ink); border-radius:10px; background:#fff; padding:10px 12px; font-size:12px; line-height:1.5; }
+  .box h3 { font-size:13.5px; margin:0 0 4px; }
+  .box .m { color:var(--mid); font-size:11.5px; }
+  .box.ext { border-style:dashed; }
+  .box.key { border-width:2.5px; }
+  .box.q { background:var(--fill); }
+  .st { display:inline-block; font-size:10.5px; font-weight:700; border-radius:3px; padding:0 5px; margin-left:4px; vertical-align:1px; }
+  .st.have { background:var(--ink); color:#fff; }
+  .st.make { border:1.5px solid var(--ink); }
+  .st.need { background:#fff; border:1.5px dashed var(--ink); }
+  .arrow { margin:4px 0 4px 134px; font-size:12px; color:var(--mid); }
+  .steps { display:flex; gap:6px; align-items:stretch; }
+  .step { flex:1; border:1.5px solid var(--ink); border-radius:8px; background:#fff; padding:8px 10px; font-size:11.5px; line-height:1.45; }
+  .step b { display:block; font-size:12.5px; margin-bottom:2px; }
+  .step.ext { border-style:dashed; }
+  .step.q { background:var(--fill); border-style:dashed; }
+  .to { align-self:center; color:var(--mid); }
+  .loop { margin:6px 0 0 134px; border:1.5px dashed var(--ink); border-radius:8px; padding:7px 12px; font-size:12px; background:#fff; }
+  .legend { margin-top:16px; font-size:11.5px; color:#555; display:flex; gap:16px; flex-wrap:wrap; }
+  .rm { margin-top:14px; display:flex; gap:10px; }
+  .rm .box { border-color:var(--line); color:var(--mid); }
+  .decbox { margin-top:14px; border:2px solid var(--ink); border-radius:10px; background:#fff; padding:10px 14px; font-size:12.5px; line-height:1.6; }
+</style>
+</head>
+<body>
+<h1>미리내 전체 구조 (v0.1, PM 정리)</h1>
+<div class="sub">사용자가 묻기 전에, 회사 모델에 비춰 세상의 변화를 "지금 할 일"로 바꿔 준다 · Cap의 docs/tech/ARCHITECTURE.md를 기준으로 오늘 논의(회사 모델, 테마)를 더함</div>
+
+<!-- 화면 -->
+<div class="layer">
+  <div class="lname">① 화면<small>반응형 웹 하나</small></div>
+  <div class="boxes">
+    <div class="box"><h3>처음 설정 <span class="st make">만들 것</span></h3>질문 6개 · 3분<div class="m">한 줄 소개, 고객, 단계·등록 여부, 지역·대표 조건, 3개월 목표, 경쟁사</div></div>
+    <div class="box key"><h3>메인: 아침 브리핑 <span class="st make">만들 것</span></h3>오늘 가장 중요한 일 1 + 테마별 한 줄<div class="m">시장 동향·경쟁사 / 스타트업 지원 / 우리 회사에 필요한 것</div></div>
+    <div class="box"><h3>카드 상세 · 테마 보기 <span class="st make">만들 것</span></h3>왜 나에게 · 할 일 · 출처<div class="m">반응: 했어요 / 나중에 / 필요 없어요 + 되묻기 답</div></div>
+  </div>
+</div>
+<div class="arrow">↓ 입력과 반응 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ↑ 카드</div>
+
+<!-- 회사 모델 -->
+<div class="layer">
+  <div class="lname">② 회사 모델<small>미리내의 기억</small></div>
+  <div class="boxes">
+    <div class="box key" style="flex:3"><h3>우리 회사 모델 <span class="st make">만들 것</span></h3>
+      우리는 무엇인가 · 지금 상태와 자격 · 3개월 목표 · 경쟁사 · 이미 아는 것/정한 것 · 자신 없는 분야 · 카드 반응 기록
+      <div class="m">MVP는 로그인·DB 없이 서버의 JSON 파일 하나(사용자 1명, 가상 데이터). 저장 방식은 Cap이 정함</div></div>
+  </div>
+</div>
+<div class="arrow">↓ 매일 아침(데모에서는 "지금 찾기" 버튼)</div>
+
+<!-- 엔진 -->
+<div class="layer">
+  <div class="lname">③ 카드 만들기<small>서버 (Next.js API)</small></div>
+  <div class="steps" style="flex:1">
+    <div class="step"><b>1. 질의 만들기</b>회사 모델 → 테마별 검색어<br><span style="color:var(--mid)">"예비창업 서울 AI 지원사업 모집", "△△사 신기능"</span></div>
+    <div class="to">→</div>
+    <div class="step ext"><b>2. Liner 웹 검색</b>테마별로 여러 번 호출, 출처 수집<br><span style="color:var(--mid)">외부 · $1/1천 회</span> <span class="st have">있음</span></div>
+    <div class="to">→</div>
+    <div class="step"><b>3. 출처 거르기</b>날짜·금액·자격이 원문에 있는가, 지난 공고인가, 같은 출처 반복인가</div>
+    <div class="to">→</div>
+    <div class="step q"><b>4. 회사 모델에 대 보기</b>자격 대조, 목표 연결, "왜 나에게", 할 일 한 줄 <span class="st need">결정 필요</span></div>
+    <div class="to">→</div>
+    <div class="step"><b>5. 고르기</b>목표·마감 기준 우선순위 → 가장 중요한 일 1 + 테마별</div>
+  </div>
+</div>
+<div class="loop">↺ <b>되묻기 루프:</b> 카드가 모르는 걸 묻는다("등록 전만 신청 가능해요. 등록하셨나요?") → 답이 ② 회사 모델에 쌓인다 → 다음 카드가 더 정확해진다. 데모에서 "모델이 자란다"를 보여 주는 장면.</div>
+
+<div class="decbox"><b>결정 필요 — 4단계를 누가 하나?</b> Liner API는 검색 결과(출처)를 준다. "왜 나에게 해당하는지"와 "할 일 한 줄"을 쓰려면 글을 읽고 판단하는 단계가 필요하다.<br>
+① 규칙과 템플릿만: 비용 0, 결과가 딱딱하고 카드 종류가 좁다.<br>
+② LLM API 추가: 카드 품질이 가장 좋다. 별도 키와 비용이 생기고 심사 환경에서도 그 키가 필요하다 → HJ 관문.<br>
+③ Liner 플랫폼에 요약·답변 기능이 있으면 그것을 쓴다: Liner 활용 점수에도 유리. <b>Cap 확인 필요.</b><br>
+추천: ③을 먼저 확인하고, 없으면 ②를 HJ에게 비용과 함께 올린다. ①은 키가 없을 때의 대체 경로로 둔다.</div>
+
+<div class="rm">
+  <div class="box"><h3>로드맵 (기획서 확장성)</h3>대표의 문서·노트 연결로 지식 쌓기 · 반응으로 우선순위 학습 · 캘린더/메일 연동 · 지원사업 사이트 직접 연동 · 다른 직무(영업, 연구)로 확장</div>
+  <div class="box"><h3>심사 환경</h3>운영팀이 Liner 키만 넣고 실행 → 실제 검색으로 동작해야 함. 키가 없으면 "예시 결과"로 표시. 지금 기본값은 예시 모드라 Cap 확인 필요</div>
+</div>
+
+<div class="legend"><span><span class="st have">있음</span> 오늘 저장소에 있음(PR #5)</span><span><span class="st make">만들 것</span> MVP 범위</span><span><span class="st need">결정 필요</span> HJ·Cap 판단 필요</span><span>점선 상자 = 외부 서비스</span></div>
+</body>
+</html>
