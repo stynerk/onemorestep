@@ -27,7 +27,7 @@
       <button class="nav-button" data-view="tasks"><span class="nav-symbol" aria-hidden="true">☷</span>준비 중인 일</button>
       <button class="nav-button" data-profile><span class="nav-symbol" aria-hidden="true">▤</span>우리 회사</button>
     </nav>
-    <div class="sidebar-foot">검토용 웹 목업<br>회사·기회·출처는 모두 가상 예시<br><button data-reset>처음 상태로 되돌리기</button></div>
+    <div class="sidebar-foot">검토용 웹 목업<br>기회는 가상 예시 · 추가 자료는 직접 확인<br><button data-reset>처음 상태로 되돌리기</button></div>
   </aside>
   <div class="workspace">
     <header class="topbar">
@@ -60,7 +60,7 @@
         <section class="below" aria-label="이어서 준비하기"><div class="section-top"><h2>이어서 준비하기</h2><span class="small" id="task-count"></span></div><div id="home-tasks"></div></section>
       </div>
       <section id="tasks-view" aria-label="준비 중인 일" hidden><div id="all-tasks"></div></section>
-      <p class="footer-note">모든 내용은 화면 흐름을 검토하기 위한 가상 예시입니다. 검색·신청·외부 전송은 실행되지 않습니다.<br><button class="text-button" data-reset style="padding-left:0">목업 데이터 초기화</button></p>
+      <section class="below reason"><strong>프로필만으로 설명하기 어려운 우리 회사의 맥락</strong><p class="small">회사 소개, 지난 활동, 시장 조사 메모를 가져와 기회와 함께 확인해 보세요.</p><button class="text-button" data-view="knowledge">회사 자료 가져오기 ↗</button></section><p class="footer-note">기회·검색 결과는 가상 예시입니다. 추가한 회사 자료는 이 브라우저에만 저장됩니다. 자동 분석·신청·외부 전송은 실행되지 않습니다.<br><button class="text-button" data-reset style="padding-left:0">목업 데이터 초기화</button></p>
     </main>
   </div>
 </div>
@@ -126,6 +126,7 @@
     if(state.region==='seoul'){$('#brief-title').textContent='서울 지역 조건을 확인했어요. 준비할 항목을 살펴보세요.';$('#brief-description').textContent='가상 프로그램의 지역 조건과 회사 정보가 연결됐어요. 나머지 자격은 아직 직접 확인해야 해요.';}
     else if(state.region==='other'){$('#brief-title').textContent='이 가상 프로그램은 지역 조건이 맞지 않아요.';$('#brief-description').textContent='모든 기회를 추천하지 않아요. 지원 카드를 보류하고 다른 지역의 기회를 찾는 흐름을 검토해 보세요.';}
     else{$('#brief-title').textContent='지금 목표: '+state.profile.goal;$('#brief-description').textContent='기회마다 우리 회사의 어떤 정보와 연결됐는지 살펴보세요. 부족한 정보는 검토하면서 추가로 확인해요.';}
+    window.renderKnowledge?.();
   }
   function openDialog(dialog){if(!dialog.open)dialog.showModal();}
   function openProfile(){
@@ -180,5 +181,6 @@
   });
   render();
 </script>
+<script src="knowledge.js"></script>
 </body>
 </html>
