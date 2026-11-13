@@ -91,4 +91,3 @@ node docs/product/mockup/build-pages.cjs
 소라가 먼저 남긴 참고용 초안 `index.html`(daa37ab)은 원문 그대로 보존했다. 클릭·반응형·저장 검증을 진행한 이 문서의 대상은 `interactive.html`이며, 로컬 서버의 기본 화면도 이 파일이다. 기획의 최종 정리와 선택은 소라가 맡는다.
 
 [업무 지도 PC 화면](work-map-desktop.jpg) · [업무 지도 모바일 화면](work-map-mobile.jpg)
-
