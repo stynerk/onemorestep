@@ -1,0 +1,330 @@
+<title>미리내 목업</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;700&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* 레이아웃: PC는 왼쪽 메뉴 + 본문 + 오른쪽 패널, 좁으면 한 줄로 쌓고 아래 탭 */
+:root{
+  --bg:#f5f6f8; --surface:#ffffff; --ink:#18202e; --muted:#5d6676; --line:#dde1e8;
+  --accent:#2f4fd6; --accent-soft:#e7ecfd; --star:#b7791f; --star-soft:#fbf1df;
+  --ok:#1f7a4d; --ok-soft:#e3f3ea; --warn:#a15c00; --warn-soft:#fdf0dc;
+  --font:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#10141c; --surface:#181e29; --ink:#e7ebf2; --muted:#9aa3b3; --line:#2a3242;
+  --accent:#8ea4ff; --accent-soft:#232c4a; --star:#e3b25c; --star-soft:#3a2f1c;
+  --ok:#6cc79a; --ok-soft:#1b3328; --warn:#f0b35c; --warn-soft:#3a2c17; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#10141c; --surface:#181e29; --ink:#e7ebf2; --muted:#9aa3b3; --line:#2a3242;
+  --accent:#8ea4ff; --accent-soft:#232c4a; --star:#e3b25c; --star-soft:#3a2f1c;
+  --ok:#6cc79a; --ok-soft:#1b3328; --warn:#f0b35c; --warn-soft:#3a2c17; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:14.5px;line-height:1.6;word-break:keep-all;margin:0}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+h1,h2,h3{text-wrap:balance;margin:0;line-height:1.35}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.muted{color:var(--muted)}
+.notice{background:var(--star-soft);color:var(--ink);font-size:12.5px;text-align:center;padding-block:6px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.app{max-width:1240px;margin:0 auto;padding-block:20px 90px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+header.top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:18px;flex-wrap:wrap}
+.brand{font-weight:700;font-size:19px;letter-spacing:-.3px;display:flex;align-items:center;gap:8px}
+.brand i{width:9px;height:9px;border-radius:50%;background:var(--star);display:inline-block;box-shadow:12px -5px 0 -2px var(--star),22px 2px 0 -3px var(--star)}
+.brand span{margin-left:16px}
+.pill{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:4px 12px;font-size:12.5px;color:var(--muted)}
+.layout{display:grid;grid-template-columns:180px minmax(0,1fr) 300px;gap:20px;align-items:start}
+nav.side{display:flex;flex-direction:column;gap:2px;position:sticky;top:env(safe-area-inset-top,0px)}
+nav.side button,.tabs button{background:none;border:0;text-align:left;padding:9px 12px;border-radius:8px;display:flex;justify-content:space-between;color:var(--muted)}
+nav.side button[aria-current="true"]{background:var(--surface);color:var(--ink);font-weight:700;box-shadow:inset 3px 0 0 var(--accent)}
+.count{font-family:var(--mono);font-size:12px}
+main{min-width:0;display:flex;flex-direction:column;gap:16px}
+aside{display:flex;flex-direction:column;gap:14px;min-width:0}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px}
+.panel h3{font-size:14px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:baseline}
+.panel h3 small{font-weight:400;color:var(--muted);font-size:12px}
+.eyebrow{font-size:11.5px;letter-spacing:.6px;color:var(--muted);font-weight:500}
+.lead{border:1.5px solid var(--accent);background:var(--surface);border-radius:14px;padding:20px}
+.lead h2{font-size:21px;margin:6px 0 8px}
+.tag{display:inline-block;font-size:11.5px;font-weight:700;border-radius:5px;padding:1px 7px;margin-right:6px}
+.t-chance{background:var(--accent-soft);color:var(--accent)}
+.t-market{background:var(--star-soft);color:var(--star)}
+.t-need{background:var(--ok-soft);color:var(--ok)}
+.btn{border:0;background:var(--accent);color:#fff;border-radius:9px;padding:10px 16px;font-weight:700}
+:root[data-theme="dark"] .btn{color:#10141c}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .btn{color:#10141c}}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line);font-weight:500}
+.btn:disabled{opacity:.5;cursor:default}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.why{color:var(--muted);font-size:13.5px}
+.todo{background:var(--bg);border-radius:8px;padding:8px 12px;margin:10px 0;font-size:13.5px}
+.todo b{margin-right:6px}
+.theme-line{display:grid;grid-template-columns:130px minmax(0,1fr) auto;gap:12px;align-items:center;padding:12px 0;border-top:1px solid var(--line)}
+.theme-line:first-of-type{border-top:0}
+.theme-line .act{font-size:12.5px;color:var(--muted)}
+.linkish{background:none;border:0;color:var(--accent);padding:0;font-weight:500}
+.tl{display:flex;gap:10px;padding:7px 0;border-top:1px dashed var(--line);font-size:13.5px}
+.tl:first-of-type{border-top:0}
+.tl .d{width:44px;flex:none;font-weight:700}
+.bar{height:6px;border-radius:3px;background:var(--bg);margin:8px 0}
+.bar i{display:block;height:6px;border-radius:3px;background:var(--accent);transition:width .3s}
+.cols{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.item{border:1px solid var(--line);border-radius:10px;padding:12px;background:var(--surface);display:flex;flex-direction:column;gap:4px}
+.item h4{margin:2px 0;font-size:14px}
+.check{display:flex;gap:8px;align-items:flex-start;padding:6px 0;font-size:13.5px}
+.mark{width:20px;height:20px;flex:none;border-radius:50%;display:inline-grid;place-items:center;font-size:12px;font-weight:700}
+.m-ok{background:var(--ok-soft);color:var(--ok)}
+.m-q{background:var(--warn-soft);color:var(--warn)}
+.ask{border:1.5px dashed var(--warn);background:var(--warn-soft);border-radius:10px;padding:12px 14px;margin-top:8px}
+.src{display:flex;justify-content:space-between;gap:10px;border:1px solid var(--line);border-radius:8px;padding:8px 12px;font-size:13px;margin-top:6px}
+.src span:last-child{color:var(--muted);font-size:12px;text-align:right}
+.cb{display:flex;gap:10px;align-items:center;padding:6px 0;font-size:13.5px}
+.cb input{width:17px;height:17px;accent-color:var(--accent)}
+.draft{background:var(--bg);border-radius:8px;padding:10px 14px;font-size:13px;margin-top:6px}
+.draft ol{margin:4px 0;padding-left:20px}
+.fact{display:grid;grid-template-columns:120px minmax(0,1fr) auto;gap:10px;padding:9px 0;border-top:1px solid var(--line);font-size:13.5px;align-items:baseline}
+.fact:first-of-type{border-top:0}
+.kind{font-size:11.5px;border-radius:5px;padding:1px 7px;white-space:nowrap}
+.k-fact{background:var(--ok-soft);color:var(--ok)}
+.k-guess{background:var(--warn-soft);color:var(--warn)}
+.new{animation:flash 1.4s ease-out}
+@keyframes flash{from{background:var(--star-soft)}to{background:transparent}}
+.q{display:flex;flex-direction:column;gap:6px;padding:12px 0;border-top:1px solid var(--line)}
+.q:first-of-type{border-top:0}
+.q label{font-weight:500;font-size:13.5px}
+.q textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px 10px;resize:vertical;min-height:40px}
+.seg{display:flex;gap:4px}
+.seg button{border:1px solid var(--line);background:var(--surface);border-radius:6px;padding:2px 10px;font-size:12px;color:var(--muted)}
+.seg button[aria-pressed="true"]{border-color:var(--ink);color:var(--ink);font-weight:700}
+.search-list{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+.search-list div{display:flex;justify-content:space-between;border:1px solid var(--line);border-radius:8px;padding:10px 12px;font-size:13.5px;transition:opacity .3s}
+.search-list div[data-done="false"]{opacity:.35}
+.tabs{display:none}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(76px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:8px 16px;border-radius:8px;font-size:13px}
+@media (max-width:980px){
+  .layout{grid-template-columns:minmax(0,1fr)}
+  nav.side{display:none}
+  aside{order:2}
+  .cols{grid-template-columns:minmax(0,1fr)}
+  .theme-line{grid-template-columns:minmax(0,1fr)}
+  .tabs{display:flex;position:fixed;left:0;right:0;bottom:0;background:var(--surface);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px);padding-left:max(8px,env(safe-area-inset-left,0px));padding-right:max(8px,env(safe-area-inset-right,0px))}
+  .tabs button{flex:1;justify-content:center;padding:12px 4px;font-size:12.5px}
+  .tabs button[aria-current="true"]{color:var(--accent);font-weight:700}
+  .fact{grid-template-columns:minmax(0,1fr) auto}
+  .fact .muted.ts{display:none}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<div class="notice">목업입니다 · 회사·공고·경쟁사는 모두 가상 데이터 · 실제 Liner 호출 없음</div>
+<div class="app">
+  <header class="top">
+    <div class="brand"><i></i><span>미리내</span></div>
+    <div class="row"><span class="pill" id="profilePill">예비창업 · AI 업무 자동화</span><button class="btn ghost" id="restart" type="button">처음부터</button></div>
+  </header>
+  <div class="layout" id="layout">
+    <nav class="side" id="nav" aria-label="메뉴"></nav>
+    <main id="main"></main>
+    <aside id="aside"></aside>
+  </div>
+</div>
+<nav class="tabs" id="tabs" aria-label="메뉴"></nav>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+const S = {
+  view:'setup', region:null, preparing:false, checks:[false,false,false], draft:false, handled:{}
+};
+const QUESTIONS = [
+  {id:'q1',q:'무슨 사업인가요? (누구의 어떤 문제를)',a:'AI로 동네 가게 사장님의 예약·재고 업무를 자동화',k:'fact'},
+  {id:'q2',q:'지금 어디까지 왔나요?',a:'시제품 완성, 테스트 고객 없음, 사업자 등록 전',k:'fact'},
+  {id:'q3',q:'이번 달 가장 이루고 싶은 것은?',a:'초기 자금 확보 (지원사업 신청)',k:'fact'},
+  {id:'q4',q:'지금 결정하지 못하고 있는 것은?',a:'사업자 등록을 언제 할지',k:'fact'},
+  {id:'q5',q:'직접 할 수 있는 일과 도움이 필요한 일은?',a:'개발은 혼자 가능, 영업과 서류는 자신 없음',k:'fact'},
+  {id:'q6',q:'지켜볼 경쟁사나 비슷한 서비스는?',a:'△△사 (가게용 업무 자동화)',k:'fact'},
+];
+const EXTRA = {id:'q7',q:'고객이 이 문제에 돈을 낼까?',a:'아직 모름',k:'guess'};
+
+function el(html){const t=document.createElement('template');t.innerHTML=html.trim();return t.content.firstElementChild}
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.hidden=false;clearTimeout(toast._t);toast._t=setTimeout(()=>t.hidden=true,2200)}
+
+const MENU=[['home','오늘 브리핑'],['themes','테마별 보기'],['prep','준비 중'],['company','회사 정보']];
+function renderNav(){
+  const nav=document.getElementById('nav'), tabs=document.getElementById('tabs');
+  const show = !['setup','search'].includes(S.view);
+  nav.hidden = !show; tabs.hidden = !show;
+  const html = MENU.map(([v,l])=>`<button type="button" data-go="${v}" aria-current="${S.view===v||(S.view==='detail'&&v==='home')}">${l}${v==='prep'?`<span class="count">${S.preparing?2:1}</span>`:''}</button>`).join('');
+  nav.innerHTML=html; tabs.innerHTML=html;
+}
+
+function asideHTML(){
+  if(['setup','search'].includes(S.view)) return `
+    <div class="panel"><h3>이 목업에서 볼 것</h3>
+    <div class="tl"><span class="d mono">1</span>시작 질문에 답하기</div>
+    <div class="tl"><span class="d mono">2</span>Liner로 찾는 과정</div>
+    <div class="tl"><span class="d mono">3</span>오늘 브리핑</div>
+    <div class="tl"><span class="d mono">4</span>카드 상세와 근거</div>
+    <div class="tl"><span class="d mono">5</span>되묻기로 회사 정보 갱신</div>
+    <div class="tl"><span class="d mono">6</span>준비 시작</div>
+    <div class="tl"><span class="d mono">7</span>테마별 보기</div></div>`;
+  return `
+    <div class="panel"><h3>다가오는 마감 <small>2주</small></h3>
+      <div class="tl"><span class="d mono">D-5</span>IR 자료 초안 <span class="muted">· 할 일 목록</span></div>
+      <div class="tl"><span class="d mono">D-7</span>□□ 청년창업 지원사업 · 준비 2/3</div>
+      <div class="tl"><span class="d mono">D-15</span>○○ 예비창업 지원사업${S.preparing?' · 준비 중':''}</div>
+    </div>
+    <div class="panel"><h3>미리내가 기억하는 것 <small><button class="linkish" type="button" data-go="company">전체</button></small></h3>
+      <div class="why">목표: 초기 자금 확보</div>
+      <div class="why">고민: 사업자 등록 시점</div>
+      <div class="why">경쟁사: △△사</div>
+      ${S.region?'<div class="why new">지역: 서울 <span class="kind k-fact">방금 확인</span></div>':'<div class="why">지역: <span class="kind k-guess">아직 모름</span></div>'}
+    </div>`;
+}
+
+const V = {
+setup(){return `
+  <div class="panel">
+    <div class="eyebrow">처음 한 번 · 약 3분</div>
+    <h2 style="font-size:20px;margin:4px 0 4px">회사에 대해 알려 주세요</h2>
+    <p class="muted" style="margin:0 0 6px">미리내가 무엇을 지켜볼지 정하는 데 써요. 확실하지 않은 답은 "아직 추측"으로 표시해 주세요.</p>
+    ${[...QUESTIONS,EXTRA].map(x=>`
+    <div class="q"><div class="row" style="justify-content:space-between"><label for="${x.id}">${x.q}</label>
+      <div class="seg" role="group" aria-label="사실 여부"><button type="button" data-kind="${x.id}" data-v="fact" aria-pressed="${x.k==='fact'}">확인된 사실</button><button type="button" data-kind="${x.id}" data-v="guess" aria-pressed="${x.k==='guess'}">아직 추측</button></div></div>
+      <textarea id="${x.id}" rows="1">${x.a}</textarea></div>`).join('')}
+    <div class="row" style="margin-top:10px"><button class="btn" type="button" data-go="search">저장하고 지금 찾기</button><span class="muted" style="font-size:12.5px">예시 답이 채워져 있어요</span></div>
+  </div>`},
+
+search(){return `
+  <div class="panel">
+    <div class="eyebrow">지금 찾기</div>
+    <h2 style="font-size:20px;margin:4px 0">회사 정보에 맞춰 찾고 있어요</h2>
+    <div class="search-list" id="slist">
+      <div data-done="false"><span>스타트업 지원 · "예비창업 AI 지원사업 모집 11월"</span><span class="mono">검색 4회</span></div>
+      <div data-done="false"><span>시장·경쟁사 · "△△사 신기능", "가게 업무 자동화 동향"</span><span class="mono">검색 3회</span></div>
+      <div data-done="false"><span>우리 회사에 필요한 것 · "예비창업 사업자 등록 시점 지원사업"</span><span class="mono">검색 2회</span></div>
+      <div data-done="false"><span><b>출처 21건 확인 → 날짜·조건이 원문에 있는 6건 선택</b></span><span class="mono">완료</span></div>
+    </div>
+    <p class="muted" style="font-size:12.5px;margin:10px 0 0">검색어에는 회사 이름이나 개인정보를 넣지 않아요.</p>
+  </div>`},
+
+home(){return `
+  <div><div class="eyebrow">11월 13일 (금) · 오전 브리핑</div><h2 style="font-size:22px">오늘 미리 챙길 일</h2></div>
+  <div class="lead">
+    <div class="row"><span class="tag t-chance">스타트업 지원</span><span class="muted mono" style="font-size:12.5px">마감 D-15</span></div>
+    <h2>○○ 예비창업 지원사업이 열렸어요. 사업계획서 3장이 필요해요.</h2>
+    <div class="why">이번 달 목표(초기 자금)와 맞고, 사업자 등록 전이라 지금 신청할 수 있어요. 고민하시던 등록 시점은 신청 뒤로 미루는 게 유리해요.</div>
+    <div class="todo"><b>할 일</b>이번 주에 사업계획서 목차를 잡고 문제·해결 2장 쓰기</div>
+    <div class="row"><button class="btn" type="button" data-go="detail">${S.preparing?'준비 이어서 하기':'자세히 보고 준비 시작'}</button><span class="muted" style="font-size:12.5px">출처 2 · 공고 원문</span></div>
+  </div>
+  <div class="panel">
+    <h3>테마별 한 줄 <small><button class="linkish" type="button" data-go="themes">테마별 보기 →</button></small></h3>
+    ${line('t-market','시장·경쟁사','△△사가 가게용 예약 자동화 기능을 냈어요','차별점 한 줄 다시 쓰기','m1')}
+    ${line('t-chance','스타트업 지원','창업 공간 입주 모집 (상시)','조건 확인 필요','c2')}
+    ${line('t-need','우리 회사에 필요한 것','서비스 이름 상표 검색','출시 전에 하면 비용이 적어요','n1')}
+  </div>
+  <p class="muted" style="font-size:12.5px;margin:0">오늘 Liner 검색 9회 · 출처 21건 중 6건을 골랐어요</p>`},
+
+detail(){
+  const ok = S.region==='서울';
+  return `
+  <div><button class="linkish" type="button" data-go="home">← 오늘 브리핑</button></div>
+  <div class="panel">
+    <div class="row"><span class="tag t-chance">스타트업 지원</span><span class="muted mono" style="font-size:12.5px">마감 11월 28일 · D-15 · 확인일 11월 13일</span></div>
+    <h2 style="font-size:20px;margin:6px 0 4px">○○ 예비창업 지원사업</h2>
+    <div class="why">연결된 회사 정보: 목표 "초기 자금 확보" · 단계 "사업자 등록 전" · 고민 "등록 시점"</div>
+  </div>
+  <div class="panel"><h3>신청할 수 있나요</h3>
+    <div class="check"><span class="mark m-ok">✓</span><span>예비창업자(사업자 등록 전) 대상 <span class="muted">— 회사 정보: 등록 전</span></span></div>
+    <div class="check"><span class="mark m-ok">✓</span><span>AI·소프트웨어 분야 <span class="muted">— 회사 정보: AI 업무 자동화</span></span></div>
+    <div class="check" id="regionRow"><span class="mark ${ok?'m-ok':'m-q'}">${ok?'✓':'?'}</span><span>서울 소재 <span class="muted">— ${ok?'회사 정보: 서울 (방금 확인)':'원문 조건, 회사 정보에 없음'}</span></span></div>
+    ${S.region?'':`<div class="ask"><b>미리내가 물어요</b><div style="margin:4px 0 8px">이 공고는 서울 소재 예비창업자만 신청할 수 있어요. 서울에서 창업하실 건가요?</div>
+      <div class="row"><button class="btn" type="button" data-region="서울">네, 서울이에요</button><button class="btn ghost" type="button" data-region="other">아니요</button></div></div>`}
+    ${S.region==='other'?'<div class="ask">알겠어요. 이 공고는 제외하고, 다음 찾기부터 지역 조건을 반영할게요.</div>':''}
+  </div>
+  <div class="panel"><h3>이번 주 할 일 <small>${S.checks.filter(Boolean).length} / 3</small></h3>
+    ${['사업계획서 목차 잡기','문제·해결 2장 초안','마감 3일 전 최종 검토'].map((t,i)=>`<label class="cb"><input type="checkbox" id="ck${i}" data-ck="${i}" ${S.checks[i]?'checked':''} ${S.preparing?'':'disabled'}>${t}</label>`).join('')}
+    <button class="linkish" type="button" id="draftBtn">${S.draft?'초안 접기':'사업계획서 목차 초안 보기'}</button>
+    ${S.draft?`<div class="draft"><b>목차 초안</b> <span class="muted">· 공고의 평가 항목 순서를 따름</span><ol><li>문제: 동네 가게 사장님의 예약·재고 업무 시간</li><li>해결: AI가 예약 확인과 재고 알림을 대신 처리</li><li>시장: 대상 업종과 규모 <span class="muted">(근거 자료 필요)</span></li><li>팀과 실행 계획</li></ol></div>`:''}
+  </div>
+  <div class="panel"><h3>근거와 출처 <small>Liner 웹 검색</small></h3>
+    <div class="src"><span>○○ 예비창업 지원사업 공고 원문 — 주관 기관 누리집</span><span>자격·마감의 출처</span></div>
+    <div class="src"><span>올해 창업지원사업 통합공고 요약 기사</span><span>지원 규모의 출처</span></div>
+    <p class="muted" style="font-size:12px;margin:8px 0 0">목업이라 출처 이름만 보여요. 실제 화면에서는 원문 링크로 이어져요.</p>
+  </div>
+  <div class="row">
+    ${S.preparing?'<span class="kind k-fact" style="font-size:13px;padding:6px 12px">준비 중이에요</span>':`<button class="btn" type="button" id="startPrep" ${S.region==='other'?'disabled':''}>신청 준비 시작하기</button>`}
+    <button class="btn ghost" type="button" data-go="home">나중에</button>
+  </div>`},
+
+themes(){return `
+  <div><div class="eyebrow">같은 회사 정보로 찾은 결과를 테마별로</div><h2 style="font-size:22px">테마별 보기</h2></div>
+  <div class="cols">
+    <div class="panel"><h3>시장·경쟁사 <small>새 2</small></h3>
+      ${item('t-market','경쟁사','△△사, 가게용 예약 자동화 기능 공개','내 핵심 기능과 겹쳐요 · 출처 3','차별점 한 줄 다시 쓰고 고객 3명에게 확인')}
+      ${item('t-market','시장','소상공인 디지털 전환 지원 예산 확대','내 고객의 도입 비용 부담이 줄 수 있어요 · 출처 2','고객 인터뷰 질문에 반영')}
+    </div>
+    <div class="panel"><h3>스타트업 지원 <small>마감 2</small></h3>
+      ${item('t-chance','D-15','○○ 예비창업 지원사업', S.preparing?'준비 중':'조건 맞음 · 출처 2', S.preparing?'':'사업계획서 목차 잡기')}
+      ${item('t-chance','D-7','□□ 청년창업 지원사업','준비 중 · 2/3','')}
+      ${item('t-chance','상시','창업 공간 입주 모집','조건 일부 확인 필요','')}
+    </div>
+    <div class="panel"><h3>우리 회사에 필요한 것 <small>예비창업 단계</small></h3>
+      ${item('t-need','법·행정','사업자 등록 시점 정하기','○○ 지원사업은 등록 전이 조건이에요','신청 뒤에 등록하기로 순서 정하기')}
+      ${item('t-need','보호','서비스 이름 상표 검색','출시 전에 하면 비용이 적어요 · 출처 2','')}
+      ${item('t-need','계약','공동창업 계약서','팀이 생기기 전에 미리 알아 두기','')}
+    </div>
+  </div>`},
+
+prep(){return `
+  <div><h2 style="font-size:22px">준비 중</h2><p class="muted" style="margin:2px 0 0">카드에서 "준비 시작"을 누른 일이 여기 모여요.</p></div>
+  ${S.preparing?`<div class="panel new"><div class="row" style="justify-content:space-between"><b>○○ 예비창업 지원사업</b><span class="mono muted">D-15</span></div>
+    <div class="bar"><i style="width:${S.checks.filter(Boolean).length/3*100}%"></i></div>
+    <div class="why">체크리스트 ${S.checks.filter(Boolean).length} / 3 · 다음: ${['사업계획서 목차 잡기','문제·해결 2장 초안','마감 3일 전 최종 검토'][S.checks.indexOf(false)]||'모두 끝났어요'}</div>
+    <div style="margin-top:8px"><button class="linkish" type="button" data-go="detail">체크리스트 열기 →</button></div></div>`:''}
+  <div class="panel"><div class="row" style="justify-content:space-between"><b>□□ 청년창업 지원사업</b><span class="mono muted">D-7</span></div>
+    <div class="bar"><i style="width:66%"></i></div><div class="why">체크리스트 2 / 3 · 다음: 마감 3일 전 최종 검토</div></div>`},
+
+company(){
+  const facts=[...QUESTIONS,EXTRA].map(x=>({k:x.q.replace(/\?.*$/,'?'),v:document.getElementById(x.id)?.value||x.a,kind:x.k,ts:'11월 13일 처음 설정'}));
+  if(S.region) facts.push({k:'지역',v:S.region==='서울'?'서울':'서울 아님',kind:'fact',ts:'방금 · 카드에서 답함',fresh:true});
+  return `
+  <div><h2 style="font-size:22px">회사 정보</h2><p class="muted" style="margin:2px 0 0">미리내가 판단할 때 읽는 기록이에요. 추측은 사실로 굳히지 않아요.</p></div>
+  <div class="panel">${facts.map(f=>`<div class="fact ${f.fresh?'new':''}"><span class="muted">${f.k}</span><span>${f.v} <span class="kind ${f.kind==='fact'?'k-fact':'k-guess'}">${f.kind==='fact'?'확인된 사실':'아직 추측'}</span></span><span class="muted ts" style="font-size:12px">${f.ts}</span></div>`).join('')}</div>`}
+};
+
+function line(cls,theme,title,act,id){return `<div class="theme-line"><span><span class="tag ${cls}">${theme}</span></span><span>${title}</span><span class="act">→ ${act}</span></div>`}
+function item(cls,tag,title,why,todo){return `<div class="item" style="margin-top:8px"><div><span class="tag ${cls}">${tag}</span></div><h4>${title}</h4><div class="why">${why}</div>${todo?`<div class="todo" style="margin:4px 0 0"><b>할 일</b>${todo}</div>`:''}</div>`}
+
+function render(){
+  document.getElementById('main').innerHTML=V[S.view]();
+  document.getElementById('aside').innerHTML=asideHTML();
+  renderNav();
+  if(S.view==='search') runSearch();
+}
+function go(v){S.view=v;render();window.scrollTo({top:0})}
+
+function runSearch(){
+  const rows=[...document.querySelectorAll('#slist div')];
+  const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  rows.forEach((r,i)=>setTimeout(()=>{r.dataset.done='true'; if(i===rows.length-1) setTimeout(()=>go('home'),reduce?200:700)}, reduce?0:(i+1)*550));
+}
+
+document.addEventListener('click',e=>{
+  const g=e.target.closest('[data-go]'); if(g){go(g.dataset.go);return}
+  const k=e.target.closest('[data-kind]'); if(k){const all=[...QUESTIONS,EXTRA];const x=all.find(q=>q.id===k.dataset.kind);
+    const ta=document.getElementById(x.id); x.a=ta.value; x.k=k.dataset.v;
+    k.parentElement.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',b===k));return}
+  const r=e.target.closest('[data-region]'); if(r){S.region=r.dataset.region;render();toast(S.region==='서울'?'회사 정보에 "지역: 서울"을 저장했어요':'이 공고는 제외했어요');return}
+  if(e.target.id==='startPrep'){S.preparing=true;render();toast('준비 중 목록에 넣었어요');return}
+  if(e.target.id==='draftBtn'){S.draft=!S.draft;render();return}
+  if(e.target.id==='restart'){Object.assign(S,{view:'setup',region:null,preparing:false,checks:[false,false,false],draft:false});render();return}
+});
+document.addEventListener('change',e=>{
+  if(e.target.dataset.ck!==undefined){S.checks[+e.target.dataset.ck]=e.target.checked;
+    document.querySelector('.panel h3 small') && render();}
+});
+document.addEventListener('input',e=>{
+  const x=[...QUESTIONS,EXTRA].find(q=>q.id===e.target.id); if(x) x.a=e.target.value;
+});
+render();
+</script>
