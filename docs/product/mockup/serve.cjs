@@ -9,6 +9,7 @@ const files = new Map([
   ['/interactive.html', ['interactive.html', 'text/html; charset=utf-8']],
   ['/knowledge.js', ['knowledge.js', 'text/javascript; charset=utf-8']],
   ['/work-map.js', ['work-map.js', 'text/javascript; charset=utf-8']],
+  ['/scenarios.js', ['scenarios.js', 'text/javascript; charset=utf-8']],
   ['/desktop-preview.png', ['desktop-preview.png', 'image/png']],
   ['/mobile-preview.png', ['mobile-preview.png', 'image/png']],
 ]);

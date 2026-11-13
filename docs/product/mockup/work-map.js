@@ -1,6 +1,6 @@
 'use strict';
 // The work map shares profile and preparation state with the existing prototype.
-const mapDefaults=()=>({dates:[],routines:['매주 고객 가설과 인터뷰 질문 검토'],topics:['스타트업 지원','시장·경쟁사','고객 검증']});
+const mapDefaults=()=>SCENARIO.workMap?JSON.parse(JSON.stringify(SCENARIO.workMap)):({dates:[],routines:['매주 고객 가설과 인터뷰 질문 검토'],topics:['스타트업 지원','시장·경쟁사','고객 검증']});
 function loadWorkMap(){
   const clean=mapDefaults();
   try{

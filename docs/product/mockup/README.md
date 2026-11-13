@@ -50,6 +50,8 @@ node docs/product/mockup/build-pages.cjs
 
 ## 눌러볼 흐름
 
+상단 ‘테스트 회사’에서 기존 소상공인 AI 서비스와 [루프오토 자율주행 운영 관리 시나리오](https://stynerk.github.io/onemorestep/?scenario=autonomy)를 전환할 수 있다. 회사별 입력·준비 상태는 별도 저장한다. 데이터 구성과 검증 범위는 [SCENARIOS.md](SCENARIOS.md)를 참고한다. 배포 산출물에는 `scenarios.js`도 포함한다.
+
 1. **설정 보기 / 우리 회사**: 6개 질문을 수정하고 사실·가설을 선택해 저장한다.
 2. **지금 찾기**: 외부 검색 없이 준비된 예시 브리핑을 표시한다.
 3. **테마 선택**: 스타트업 지원, 시장·경쟁사, 우리 회사에 필요한 것 중 선택한다.

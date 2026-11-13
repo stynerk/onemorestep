@@ -51,7 +51,8 @@ function cleanReference(item){
   return {id:item.id.slice(0,100),title:item.title.slice(0,120),content:item.content.slice(0,8000),url:safeReferenceUrl(item.url),channel:channelNames[item.channel]?item.channel:'paste',type:typeNames[item.type]?item.type:'company',theme:['all','support','market','company'].includes(item.theme)?item.theme:'all',kind:item.kind==='fact'?'fact':'hypothesis',date:typeof item.date==='string'?item.date.slice(0,30):''};
 }
 // Migrate the existing prototype state without dropping its profile or drafts.
-try{const stored=JSON.parse(localStorage.getItem(STORAGE_KEY)||'null');state.references=Array.isArray(stored?.references)?stored.references.slice(0,30).map(cleanReference).filter(Boolean):[];}catch{state.references=[];}
+const defaultReferences=()=>JSON.parse(JSON.stringify(SCENARIO.references||[])).map(cleanReference).filter(Boolean);
+try{const stored=JSON.parse(localStorage.getItem(STORAGE_KEY)||'null');state.references=Array.isArray(stored?.references)?stored.references.slice(0,30).map(cleanReference).filter(Boolean):defaultReferences();}catch{state.references=defaultReferences();}
 function companyReferences(card){return (state.references||[]).filter(item=>item.theme==='all'||item.theme===card.id);}
 const baseDraft=makeDraft;
 makeDraft=function(card){const refs=companyReferences(card).slice(0,3);return baseDraft(card)+(refs.length?'\n\n会社資料'.replace('会社資料','회사 자료')+' · 검토할 원문 발췌 (자동 분석 아님)\n'+refs.map(item=>`\n[${item.title} · ${item.kind==='fact'?'내가 확인한 사실':'검증 전'}]\n${item.content.slice(0,500)}\n출처: ${item.url||channelNames[item.channel]}`).join('\n'):'');};
@@ -90,7 +91,7 @@ document.addEventListener('click',event=>{
   if(button.id==='skip-import')nextImport();
   if(button.dataset.editReference){pendingImports=[];const item=state.references.find(item=>item.id===button.dataset.editReference);if(item)previewReference(item);}
   if(button.dataset.removeReference){state.references=state.references.filter(item=>item.id!==button.dataset.removeReference);save();render();showToast('자료를 삭제했어요. 기존 초안의 발췌는 직접 수정해 주세요.');}
-  if(button.id==='confirm-reset'){state.references=[];pendingImports=[];save();render();}
+  if(button.id==='confirm-reset'){state.references=defaultReferences();pendingImports=[];save();render();}
 });
 $('#knowledge-files').addEventListener('change',event=>{readKnowledgeFiles(event.target.files,'file');event.target.value='';});
 $('#knowledge-folder').addEventListener('change',event=>{readKnowledgeFiles(event.target.files,'folder');event.target.value='';});
