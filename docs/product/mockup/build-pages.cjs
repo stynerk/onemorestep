@@ -5,5 +5,6 @@ const destination = path.resolve(__dirname, '../../../.cache/mirinae-pages');
 fs.mkdirSync(destination, { recursive: true });
 fs.copyFileSync(path.join(__dirname, 'interactive.html'), path.join(destination, 'index.html'));
 fs.copyFileSync(path.join(__dirname, 'knowledge.js'), path.join(destination, 'knowledge.js'));
+fs.copyFileSync(path.join(__dirname, 'work-map.js'), path.join(destination, 'work-map.js'));
 fs.writeFileSync(path.join(destination, '.nojekyll'), '');
-console.log('Static Pages files: .cache/mirinae-pages (index.html, knowledge.js, .nojekyll)');
+console.log('Static Pages files: .cache/mirinae-pages (index.html, knowledge.js, work-map.js, .nojekyll)');
