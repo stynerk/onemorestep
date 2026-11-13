@@ -1,4 +1,5 @@
 import { research, validQuery } from "../../../lib/research";
+import { aiMode, searchConfig } from "../../../lib/providers/config";
 
 export const runtime = "nodejs";
 
@@ -13,8 +14,8 @@ export async function POST(request: Request): Promise<Response> {
     return Response.json({ error: "조사할 내용을 2~300자로 입력해 주세요." }, { status: 400 });
   }
   const result = await research(body.query, {
-    mode: process.env.LINER_MODE,
-    apiKey: process.env.LINER_API_KEY,
+    mode: aiMode(process.env),
+    config: searchConfig(process.env),
   });
   return Response.json(result, { headers: { "Cache-Control": "no-store" } });
 }
