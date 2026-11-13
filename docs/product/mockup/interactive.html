@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>미리내 · 다음 한 걸음을 먼저</title>
+<style>
+  :root{--bg:#f6f7f4;--paper:#fff;--ink:#202a27;--muted:#6a756f;--line:#e0e6df;--green:#315f4c;--pale:#eaf1ea;--sand:#f8f0de;--radius:18px;font-family:system-ui,-apple-system,"Segoe UI","Malgun Gothic",sans-serif;color:var(--ink);background:var(--bg);font-synthesis:none}
+  *{box-sizing:border-box}body{margin:0;word-break:keep-all;overflow-wrap:anywhere}button,input,textarea,select{font:inherit}button,a,input,textarea,select{-webkit-tap-highlight-color:transparent}button{cursor:pointer}button:disabled{cursor:wait;opacity:.6}button,a{touch-action:manipulation}button{color:inherit}a{color:var(--green)}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #8dad98;outline-offset:3px}button{border:0}h1,h2,h3,p{margin:0}p{line-height:1.65}h1{font-size:30px;letter-spacing:-1.3px;line-height:1.35}h2{font-size:19px;letter-spacing:-.6px}h3{font-size:18px;line-height:1.5;letter-spacing:-.5px}[hidden]{display:none!important}
+  .layout{display:grid;grid-template-columns:212px 1fr;min-height:100vh}.sidebar{position:sticky;top:0;height:100dvh;padding:34px 20px 24px;border-right:1px solid var(--line);background:#fff;display:flex;flex-direction:column}.brand{display:flex;gap:10px;align-items:center;font-size:24px;font-weight:800;letter-spacing:-1px}.brand-icon{width:29px;height:29px;display:grid;place-items:center;border-radius:10px;background:var(--green);color:white;font-size:20px}.sidebar small{font-size:11px;color:var(--muted);margin:9px 0 32px 39px}.navigation{display:grid;gap:8px}.nav-button{background:transparent;text-align:left;padding:13px 14px;border-radius:10px;color:var(--muted);display:flex;align-items:center;gap:12px}.nav-button.active{background:var(--pale);color:var(--green);font-weight:700}.nav-symbol{font-size:19px;width:20px;text-align:center}.sidebar-foot{margin-top:auto;padding:20px 12px 0;color:var(--muted);font-size:11px;line-height:1.8}.sidebar-foot button{padding:6px 0;background:none;color:var(--muted);text-decoration:underline}
+  .workspace{min-width:0}.topbar{height:78px;display:flex;align-items:center;justify-content:space-between;padding:0 42px;border-bottom:1px solid var(--line);background:#ffffffb3}.breadcrumb{font-size:13px;color:var(--muted)}.top-actions{display:flex;align-items:center;gap:14px}.demo-label{font-size:11px;background:var(--sand);color:#79623a;padding:6px 10px;border-radius:6px;white-space:nowrap}.avatar{background:#e9ece7;width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-size:12px}.mobile-brand{display:none}.content{max-width:1280px;padding:36px 42px 60px;margin:auto}.intro{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;margin-bottom:26px}.eyebrow{font-size:11px;font-weight:700;letter-spacing:1.8px;color:var(--green);margin-bottom:10px}.intro p{font-size:14px;color:var(--muted);margin-top:9px}.button{background:var(--green);color:white;border-radius:9px;padding:11px 17px;font-size:13px;font-weight:650;min-height:43px;white-space:nowrap}.button.secondary{background:white;color:var(--ink);border:1px solid var(--line)}.button.quiet{background:var(--pale);color:var(--green)}.company{display:flex;align-items:center;gap:16px;background:#fff;padding:19px 22px;border:1px solid var(--line);border-radius:var(--radius);margin-bottom:24px}.company-icon{width:45px;height:45px;flex-shrink:0;border-radius:13px;display:grid;place-items:center;background:var(--bg);font-size:23px}.company-info{min-width:0;flex:1}.company-name{font-size:13px;font-weight:700;margin-bottom:4px}.company-description{font-size:12px;color:var(--muted);line-height:1.7}.text-button{background:none;color:var(--green);font-size:12px;padding:9px 0 9px 12px;white-space:nowrap}.briefing{display:grid;grid-template-columns:1fr auto;gap:18px;align-items:center;border-radius:var(--radius);padding:25px 26px;background:#e8efe7;border:1px solid #dbe5d8;margin-bottom:30px}.briefing .tag{margin-bottom:9px}.briefing h2{font-size:22px;margin-bottom:9px}.briefing p{max-width:650px;color:#56685b;font-size:13px}.briefing-symbol{font-size:48px;color:#6e927a;padding:0 12px}.section-top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:17px}.small{font-size:12px;color:var(--muted)}.filter-row::-webkit-scrollbar{display:none}.filter-row{scrollbar-width:none;display:flex;gap:8px;flex-wrap:wrap;margin:0 0 20px}.filter{background:transparent;border:1px solid var(--line);border-radius:8px;padding:9px 13px;font-size:12px;min-height:39px}.filter.active{background:var(--ink);border-color:var(--ink);color:white}.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:21px;display:flex;flex-direction:column;min-width:0}.card-top{display:flex;justify-content:space-between;align-items:center;gap:6px;margin-bottom:14px}.tag{font-size:10px;font-weight:650;color:var(--green);background:var(--pale);padding:5px 8px;border-radius:5px;display:inline-block}.tag.warm{background:var(--sand);color:#846b36}.tag.gray{background:#f0f1ee;color:#737e77}.card .description{font-size:12px;color:var(--muted);margin:10px 0 17px;line-height:1.7;flex:1}.connection{font-size:11px;color:var(--green);padding:9px 10px;background:#f4f7f1;border-radius:7px;line-height:1.6;margin-bottom:12px}.todo{font-size:12px;line-height:1.65;margin-bottom:20px}.card-footer{padding-top:14px;border-top:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:8px}.card-footer .button{padding:9px 12px;font-size:11px;min-height:38px}.source-note{font-size:10px;color:var(--muted)}.below{margin-top:30px}.empty{padding:30px;border:1px dashed #c7d3c9;border-radius:var(--radius);background:#fff;color:var(--muted);text-align:center;font-size:13px}.task{background:white;border:1px solid var(--line);border-radius:12px;padding:17px 20px;display:flex;align-items:center;gap:14px;margin-top:10px}.task-main{flex:1;min-width:0}.task h3{font-size:14px;margin-bottom:5px}.task .small{font-size:11px}.task-progress{width:34px;height:34px;display:grid;place-items:center;border-radius:10px;background:var(--pale);color:var(--green);font-size:13px}.footer-note{margin-top:25px;color:var(--muted);font-size:11px;line-height:1.8}.mobile-nav{display:none}.toast{position:fixed;bottom:25px;left:50%;transform:translateX(-50%);background:var(--ink);color:white;border-radius:10px;padding:12px 18px;z-index:20;font-size:12px;max-width:90vw;text-align:center}
+  dialog{border:0;padding:0;color:var(--ink);background:#fff;box-shadow:0 25px 90px #17251c35;border-radius:22px;max-height:90dvh;width:min(650px,calc(100vw - 32px))}dialog::backdrop{background:#18241d66;backdrop-filter:blur(2px)}.dialog-head{position:sticky;top:0;display:flex;align-items:flex-start;gap:20px;padding:23px 26px;background:#fffffff5;border-bottom:1px solid var(--line);z-index:2}.dialog-head>div{flex:1}.dialog-head h2{margin-top:8px;font-size:22px}.close{width:35px;height:35px;flex-shrink:0;background:#f1f3ef;border-radius:50%;font-size:23px;color:var(--muted)}.dialog-body{padding:22px 26px 27px}.detail-section{margin:23px 0 0}.detail-section h3{font-size:14px;margin-bottom:10px}.detail-section p,.detail-section li{font-size:13px;line-height:1.8}.detail-section ul{padding-left:20px;margin:8px 0}.detail-source{padding:13px;background:#f7f7f3;border:1px solid var(--line);border-radius:10px;margin-top:8px;font-size:12px;line-height:1.75}.detail-source span{display:block;color:var(--muted);font-size:11px}.reason{padding:16px;background:var(--pale);border-radius:11px;font-size:13px;line-height:1.9}.reason strong{color:var(--green)}.qualification{display:flex;justify-content:space-between;gap:16px;border-bottom:1px solid var(--line);padding:10px 0;font-size:12px}.qualification strong{color:var(--green);text-align:right}.question{padding:16px;background:var(--sand);border-radius:12px;margin-top:17px;font-size:13px;line-height:1.8}.question .inline{display:flex;gap:8px;margin-top:12px}.question select{flex:1;min-width:0}.field{margin-top:18px}.field:first-child{margin-top:0}.field label{display:block;font-size:13px;font-weight:650;margin-bottom:9px}.field input,.field textarea,.field select,.question select,.draft{width:100%;border:1px solid #cdd5cd;border-radius:8px;padding:11px;background:white;color:var(--ink);font-size:13px}.field textarea{min-height:70px;resize:vertical}.field-meta{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:8px 0;color:var(--muted);font-size:11px}.field-meta select{width:auto;padding:6px;font-size:11px}.check{display:flex;gap:10px;align-items:flex-start;padding:9px 0;font-size:13px;line-height:1.5}.check input{margin-top:3px;accent-color:var(--green);width:16px;height:16px;flex-shrink:0}.draft{min-height:155px;line-height:1.9;resize:vertical}.dialog-actions{display:flex;gap:10px;margin-top:23px}.dialog-actions .button{flex:1}.hint{color:var(--muted);font-size:11px;line-height:1.8;margin-top:10px}.progress-status{color:var(--green);font-size:12px;padding:10px 0}.visually-hidden{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+  @media(min-width:1500px){.content{padding-top:46px}.cards{gap:22px}.card{padding:25px}}
+  @media(max-width:1100px){.layout{grid-template-columns:175px 1fr}.sidebar{padding-left:12px;padding-right:12px}.topbar{padding:0 27px}.content{padding:28px 26px 45px}.cards{grid-template-columns:1fr}.card{display:grid;grid-template-columns:1fr 1fr;column-gap:20px}.card-top,.card h3,.card .description{grid-column:1}.card .connection,.card .todo{grid-column:2}.card .connection{grid-row:1/3;margin-bottom:8px;align-self:start}.card .todo{grid-row:3/5}.card .description{margin-bottom:12px}.card-footer{grid-column:1/-1}.briefing h2{font-size:20px}}
+  @media(max-width:680px){.layout{display:block}.sidebar{display:none}.topbar{height:65px;padding:0 20px;background:white}.breadcrumb{display:none}.mobile-brand{display:flex;font-size:21px}.mobile-brand .brand-icon{width:26px;height:26px;font-size:17px}.top-actions{gap:9px}.avatar{width:28px;height:28px}.demo-label{font-size:10px;padding:5px 7px}.content{padding:25px 18px 95px}.intro{align-items:flex-start;gap:12px;margin-bottom:20px}.intro .button{padding:10px 12px;font-size:11px;margin-top:19px}h1{font-size:25px;letter-spacing:-1.1px}.intro p{font-size:12px;max-width:235px}.eyebrow{font-size:10px;letter-spacing:1.3px}.company{padding:14px;gap:12px;margin-bottom:18px}.company-icon{width:36px;height:36px;font-size:19px;border-radius:10px}.company-description{font-size:11px}.company-name{font-size:12px}.text-button{font-size:11px}.briefing{padding:20px;display:block;margin-bottom:25px}.briefing h2{font-size:20px;line-height:1.5}.briefing p{font-size:12px}.briefing-symbol{display:none}.section-top h2{font-size:18px}.small{font-size:11px}.filter-row{gap:6px;flex-wrap:nowrap;overflow:auto;padding-bottom:5px;margin-bottom:13px}.filter{flex-shrink:0;padding:8px 11px;font-size:11px}.cards{gap:13px}.card{display:flex;padding:20px}.card-top{margin-bottom:12px}.card .description{font-size:12px;margin-bottom:14px}.connection{margin-bottom:10px}.card .todo{margin-bottom:16px}.card-footer .button{font-size:12px}.task{padding:14px;gap:10px}.task .button{padding:9px 11px;font-size:11px}.task h3{font-size:12px}.mobile-nav{position:fixed;bottom:0;left:0;right:0;display:grid;grid-template-columns:repeat(3,1fr);background:#ffffffef;border-top:1px solid var(--line);padding:9px 12px max(10px,env(safe-area-inset-bottom));backdrop-filter:blur(12px);z-index:5}.mobile-nav button{background:transparent;color:var(--muted);font-size:10px;display:grid;justify-items:center;gap:3px;padding:5px}.mobile-nav button.active{color:var(--green);font-weight:750}.mobile-nav .nav-symbol{font-size:20px}.toast{bottom:85px;width:max-content}.dialog-head{padding:19px 20px}.dialog-head h2{font-size:19px}.dialog-body{padding:19px 20px 23px}dialog{border-radius:18px;max-height:88dvh}.question .inline{flex-wrap:wrap}.question .button{flex:1}.dialog-actions{flex-wrap:wrap}}
+  @media(prefers-reduced-motion:no-preference){.card{transition:transform .16s,box-shadow .16s}.card:hover{transform:translateY(-2px);box-shadow:0 9px 24px #223e2910}.button{transition:filter .15s}.button:hover{filter:brightness(.95)}}
+</style>
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar" aria-label="주 메뉴">
+    <div class="brand"><span class="brand-icon" aria-hidden="true">✦</span>미리내</div>
+    <small>다음 한 걸음을 먼저</small>
+    <nav class="navigation">
+      <button class="nav-button active" data-view="home"><span class="nav-symbol" aria-hidden="true">⌂</span>오늘의 브리핑</button>
+      <button class="nav-button" data-view="tasks"><span class="nav-symbol" aria-hidden="true">☷</span>준비 중인 일</button>
+      <button class="nav-button" data-profile><span class="nav-symbol" aria-hidden="true">▤</span>우리 회사</button>
+    </nav>
+    <div class="sidebar-foot">검토용 웹 목업<br>기회는 가상 예시 · 추가 자료는 직접 확인<br><button data-reset>처음 상태로 되돌리기</button></div>
+  </aside>
+  <div class="workspace">
+    <header class="topbar">
+      <div class="breadcrumb">우리 회사의 다음 한 걸음 <span aria-hidden="true"> / </span> <span id="breadcrumb-page">브리핑</span></div>
+      <div class="brand mobile-brand"><span class="brand-icon" aria-hidden="true">✦</span>미리내</div>
+      <div class="top-actions"><span class="demo-label">가상 데이터 · 목업</span><span class="avatar" aria-label="가상 대표 계정">나</span></div>
+    </header>
+    <main class="content" id="main-content">
+      <section class="intro">
+        <div><div class="eyebrow">A LITTLE AHEAD, TOGETHER</div><h1 id="page-title">오늘, 어떤 기회를 준비할까요?</h1><p id="page-subtitle">우리 사업의 상황을 바탕으로 다음 한 걸음을 살펴보세요.</p></div>
+        <button class="button" id="find-button">✦ 지금 찾기</button>
+      </section>
+      <section class="company" aria-label="우리 회사 요약">
+        <div class="company-icon" aria-hidden="true">▤</div><div class="company-info"><div class="company-name">우리 회사 <span class="tag gray">가상 프로필</span></div><p class="company-description" id="company-summary"></p></div><button class="text-button" data-profile>설정 보기 ↗</button>
+      </section>
+      <div id="home-view">
+        <section class="briefing" aria-label="가장 중요한 일">
+          <div><span class="tag">오늘 먼저 살펴볼 일</span><h2 id="brief-title">초기 자금 확보, 지원 조건부터 확인해 보세요.</h2><p id="brief-description">사업자 등록 여부에 따라 검토할 기회가 달라질 수 있어요. 가상 프로그램을 열어 우리 회사와 어떻게 연결되는지 확인해 보세요.</p><div class="progress-status" id="research-status" role="status" aria-live="polite">준비된 예시 브리핑입니다. 실제 검색은 실행되지 않습니다.</div></div><div class="briefing-symbol" aria-hidden="true">✳</div>
+        </section>
+        <section aria-label="테마별 기회">
+          <div class="section-top"><h2>우리 사업에 연결된 기회</h2><span class="small" id="card-count"></span></div>
+          <div class="filter-row" role="group" aria-label="브리핑 테마">
+            <button class="filter active" data-theme="all" aria-pressed="true">전체 보기</button>
+            <button class="filter" data-theme="support" aria-pressed="false">스타트업 지원</button>
+            <button class="filter" data-theme="market" aria-pressed="false">시장·경쟁사</button>
+            <button class="filter" data-theme="company" aria-pressed="false">우리 회사에 필요한 것</button>
+          </div>
+          <div class="cards" id="cards"></div>
+        </section>
+        <section class="below" aria-label="이어서 준비하기"><div class="section-top"><h2>이어서 준비하기</h2><span class="small" id="task-count"></span></div><div id="home-tasks"></div></section>
+      </div>
+      <section id="tasks-view" aria-label="준비 중인 일" hidden><div id="all-tasks"></div></section>
+      <section class="below reason"><strong>프로필만으로 설명하기 어려운 우리 회사의 맥락</strong><p class="small">회사 소개, 지난 활동, 시장 조사 메모를 가져와 기회와 함께 확인해 보세요.</p><button class="text-button" data-view="knowledge">회사 자료 가져오기 ↗</button></section><p class="footer-note">기회·검색 결과는 가상 예시입니다. 추가한 회사 자료는 이 브라우저에만 저장됩니다. 자동 분석·신청·외부 전송은 실행되지 않습니다.<br><button class="text-button" data-reset style="padding-left:0">목업 데이터 초기화</button></p>
+    </main>
+  </div>
+</div>
+<nav class="mobile-nav" aria-label="모바일 메뉴"><button class="active" data-view="home"><span class="nav-symbol" aria-hidden="true">⌂</span>브리핑</button><button data-view="tasks"><span class="nav-symbol" aria-hidden="true">☷</span>준비 중</button><button data-profile><span class="nav-symbol" aria-hidden="true">▤</span>우리 회사</button></nav>
+<dialog id="profile-dialog" aria-labelledby="profile-title">
+  <div class="dialog-head"><div><span class="tag">회사 맥락 · 가상 정보로 체험</span><h2 id="profile-title">우리 회사의 지금을 알려주세요</h2></div><button class="close" data-close aria-label="회사 설정 닫기">×</button></div>
+  <form id="profile-form" class="dialog-body"><p class="small">시작 질문 6개를 확인하고 수정해 보세요. 답은 이 브라우저에만 저장됩니다.</p><div id="profile-fields"></div><p class="hint">부족한 정보는 기회를 검토하면서 추가로 물어봐요. 입력한 가설을 확인된 사실로 바꾸지 않습니다.</p><div class="dialog-actions"><button type="button" class="button secondary" data-close>취소</button><button type="submit" class="button">저장하고 브리핑 보기</button></div></form>
+</dialog>
+<dialog id="detail-dialog" aria-labelledby="detail-title"><div class="dialog-head"><div><span class="tag" id="detail-theme"></span><h2 id="detail-title"></h2></div><button class="close" data-close aria-label="기회 상세 닫기">×</button></div><div class="dialog-body" id="detail-body"></div></dialog>
+<dialog id="reset-dialog" aria-labelledby="reset-title"><div class="dialog-head"><div><span class="tag gray">목업 초기화</span><h2 id="reset-title">가상 체험을 처음부터 시작할까요?</h2></div><button class="close" data-close aria-label="초기화 창 닫기">×</button></div><div class="dialog-body"><p>이 목업에서 수정한 회사 정보, 준비 상태와 초안만 초기화합니다.</p><div class="dialog-actions"><button class="button secondary" data-close>계속 살펴보기</button><button class="button" id="confirm-reset">초기화하기</button></div></div></dialog>
+<div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+<script src="scenarios.js"></script>
+<script>
+  'use strict';
+  const SCENARIO_ID = new URLSearchParams(location.search).get('scenario')==='autonomy'?'autonomy':'default';
+  const SCENARIO = window.MIRINAE_SCENARIOS[SCENARIO_ID];
+  const STORAGE_KEY = 'mirinae.simple-mockup.v1'+(SCENARIO_ID==='default'?'':'.'+SCENARIO_ID);
+  const fields = [
+    ['intro','1. 무슨 사업인가요?','소상공인의 반복 업무를 AI로 돕는 서비스'],
+    ['stage','2. 지금 어디까지 왔나요?','시제품 완성 · 사업자 등록 전 · 테스트 고객 없음'],
+    ['goal','3. 이번 달 가장 이루고 싶은 것은?','초기 자금 확보와 지원사업 신청 준비'],
+    ['decision','4. 지금 결정하지 못하고 있는 것은?','사업자 등록을 언제 하는 게 좋을지'],
+    ['resources','5. 직접 할 수 있는 일과 도움이 필요한 일은?','개발은 가능하지만 영업 경험은 부족함'],
+    ['competitor','6. 지켜볼 경쟁사나 비슷한 서비스는?','가상 ○○ 업무 도우미']
+  ];
+  const cards = [
+    {id:'support',theme:'스타트업 지원',title:'사업자 등록 전, 검토할 지원 프로그램',description:'초기 자금 확보를 목표로 하는 가상 회사의 지원 준비를 살펴봐요.',action:'자격을 대조하고 사업 소개 목차부터 준비하기',source:'가상 프로그램 안내',checks:['지원 자격과 지역 조건 확인','필요한 제출 서류 목록 정리','사업 소개 초안 검토'],draftTitle:'사업 소개 목차 초안'},
+    {id:'market',theme:'시장·경쟁사',title:'비슷한 서비스의 변화, 우리 차별점은?',description:'가상 경쟁 서비스가 매장 운영 기능을 확장했다는 상황을 검토해요.',action:'공통 기능과 우리만 해결할 문제 비교하기',source:'가상 경쟁 서비스 업데이트',checks:['발표한 기능과 우리 기능 비교','목표 고객이 겹치는지 확인','인터뷰에서 확인할 질문 정리'],draftTitle:'고객 인터뷰 질문 초안'},
+    {id:'company',theme:'우리 회사에 필요한 것',title:'고객이 없을 때, 먼저 확인할 가설',description:'시제품은 있지만 테스트 고객이 없는 가상 회사의 다음 준비예요.',action:'가장 불확실한 고객 가설 하나를 검증하기',source:'가상 검증 가이드',checks:['확인할 고객 가설 하나 선택','만나볼 목표 고객 정리','고객 인터뷰 질문 검토'],draftTitle:'첫 고객 검증 계획 초안'}
+  ];
+  if(SCENARIO.cards)cards.splice(0,cards.length,...SCENARIO.cards);
+  const $ = (selector) => document.querySelector(selector);
+  const esc = (value) => String(value).replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+  function freshState(){return {profile:Object.fromEntries(fields.map(([key,,value])=>[key,SCENARIO.profile?.[key]||value])),assumptions:{...(SCENARIO.assumptions||{goal:true})},region:'',statuses:{...SCENARIO.statuses},checks:JSON.parse(JSON.stringify(SCENARIO.checks||{})),drafts:{}};}
+  function loadState(){
+    const clean=freshState();
+    try{
+      const raw=JSON.parse(localStorage.getItem(STORAGE_KEY)||'null');
+      if(!raw||typeof raw!=='object')return clean;
+      for(const [key] of fields){if(typeof raw.profile?.[key]==='string')clean.profile[key]=raw.profile[key].slice(0,300);if(typeof raw.assumptions?.[key]==='boolean')clean.assumptions[key]=raw.assumptions[key];}
+      if(['','seoul','other'].includes(raw.region))clean.region=raw.region;
+      for(const card of cards){if(['preparing','done','later'].includes(raw.statuses?.[card.id]))clean.statuses[card.id]=raw.statuses[card.id];if(Array.isArray(raw.checks?.[card.id]))clean.checks[card.id]=card.checks.map((_,i)=>raw.checks[card.id][i]===true);if(typeof raw.drafts?.[card.id]==='string')clean.drafts[card.id]=raw.drafts[card.id].slice(0,5000);}
+    }catch{/* Storage may be blocked, or previously saved content may be invalid. */}
+    return clean;
+  }
+  let state=loadState();let view='home';let theme='all';let activeCard=null;let toastTimer;let searching=false;
+  function save(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state));}catch{showToast('브라우저 저장이 제한돼 현재 화면에서만 유지됩니다.');}}
+  function showToast(message){$('#toast').textContent=message;$('#toast').hidden=false;clearTimeout(toastTimer);toastTimer=setTimeout(()=>{$('#toast').hidden=true;},2800);}
+  function statusLabel(id){return {preparing:'준비 중',done:'완료',later:'보류'}[state.statuses[id]]||'검토할 기회';}
+  function connection(card){return card.id==='support'?state.profile.goal:card.id==='market'?state.profile.competitor:state.profile.decision;}
+  function render(){
+    $('#company-summary').textContent=state.profile.intro+' · '+state.profile.stage;
+    $('#home-view').hidden=view!=='home';$('#tasks-view').hidden=view!=='tasks';
+    $('#page-title').textContent=view==='home'?'오늘, 어떤 기회를 준비할까요?':'시작한 준비를 이어가세요';
+    $('#page-subtitle').textContent=view==='home'?'우리 사업의 상황을 바탕으로 다음 한 걸음을 살펴보세요.':'검토한 기회를 실제 준비로 옮기는 공간이에요.';
+    $('#breadcrumb-page').textContent=view==='home'?'브리핑':'준비 중인 일';$('#find-button').hidden=view!=='home';
+    document.querySelectorAll('[data-view]').forEach(button=>{button.classList.toggle('active',button.dataset.view===view);if(button.dataset.view===view)button.setAttribute('aria-current','page');else button.removeAttribute('aria-current');});
+    document.querySelectorAll('[data-theme]').forEach(button=>{button.classList.toggle('active',button.dataset.theme===theme);button.setAttribute('aria-pressed',String(button.dataset.theme===theme));});
+    const visible=cards.filter(card=>(theme==='all'||card.id===theme)&&!['done','later'].includes(state.statuses[card.id]));
+    $('#card-count').textContent='가상 예시 '+visible.length+'건';
+    $('#cards').innerHTML=visible.length?visible.map(card=>`<article class="card"><div class="card-top"><span class="tag">${card.theme}</span><span class="small">${statusLabel(card.id)}</span></div><h3>${card.title}</h3><p class="description">${card.description}</p><div class="connection">연결된 회사 정보<br><strong>${esc(connection(card))}</strong></div><p class="todo">↳ ${card.action}</p><div class="card-footer"><span class="source-note">${card.source} · 예시</span><button class="button secondary" data-open="${card.id}">자세히 보기 ↗</button></div></article>`).join(''):'<div class="empty">지금 검토할 예시가 없어요. 준비 중인 일에서 이어가거나 다른 테마를 살펴보세요.</div>';
+    const started=cards.filter(card=>state.statuses[card.id]);
+    const count=cards.filter(card=>state.statuses[card.id]==='preparing').length;
+    $('#task-count').textContent='준비 중 '+count+'건';
+    const taskHtml=started.length?started.map(card=>{const done=(state.checks[card.id]||[]).filter(Boolean).length;return `<article class="task"><span class="task-progress" aria-hidden="true">${done}/3</span><div class="task-main"><h3>${card.title}</h3><span class="small">${statusLabel(card.id)} · 체크리스트 ${done}/3</span></div><button class="button secondary" data-open="${card.id}">이어서 보기</button></article>`;}).join(''):'<div class="empty">아직 시작한 준비가 없어요.<br>기회를 열고 ‘준비 시작’을 눌러보세요.</div>';
+    $('#home-tasks').innerHTML=taskHtml;$('#all-tasks').innerHTML=taskHtml;
+    if(state.region==='seoul'){$('#brief-title').textContent='서울 지역 조건을 확인했어요. 준비할 항목을 살펴보세요.';$('#brief-description').textContent='가상 프로그램의 지역 조건과 회사 정보가 연결됐어요. 나머지 자격은 아직 직접 확인해야 해요.';}
+    else if(state.region==='other'){$('#brief-title').textContent='이 가상 프로그램은 지역 조건이 맞지 않아요.';$('#brief-description').textContent='모든 기회를 추천하지 않아요. 지원 카드를 보류하고 다른 지역의 기회를 찾는 흐름을 검토해 보세요.';}
+    else{$('#brief-title').textContent='지금 목표: '+state.profile.goal;$('#brief-description').textContent='기회마다 우리 회사의 어떤 정보와 연결됐는지 살펴보세요. 부족한 정보는 검토하면서 추가로 확인해요.';}
+    window.renderKnowledge?.();
+  }
+  function openDialog(dialog){if(!dialog.open)dialog.showModal();}
+  function openProfile(){
+    $('#profile-fields').innerHTML=fields.map(([key,label])=>`<div class="field"><label for="profile-${key}">${label}</label><textarea id="profile-${key}" name="${key}" maxlength="300" required>${esc(state.profile[key])}</textarea><div class="field-meta"><span>어느 정도 확인된 정보인가요?</span><select name="kind-${key}" aria-label="${label}의 사실 또는 가설"><option value="fact" ${!state.assumptions[key]?'selected':''}>확인된 사실</option><option value="hypothesis" ${state.assumptions[key]?'selected':''}>아직 추측</option></select></div></div>`).join('');
+    openDialog($('#profile-dialog'));
+  }
+  function makeDraft(card){
+    if(SCENARIO_ID==='autonomy'){
+      const header='[가상 테스트 초안 · 실제 공고/차량 운영 지침 아님]\n\n회사: '+state.profile.intro+'\n단계: '+state.profile.stage+'\n목표: '+state.profile.goal+'\n고민: '+state.profile.decision+'\n자원·제약: '+state.profile.resources+'\n\n';
+      if(card.id==='support')return header+'실증 협력 제안서 목차\n1. 운영사가 겪는 문제와 확인할 고객 가설\n2. 관제·배차·정비 이력 관리의 제안 범위\n3. 운영사·주행 기술 협력사·우리 팀의 역할\n4. 파트너가 제공할 차량·환경과 별도 검토 필요 사항\n5. 파일럿 평가 항목과 협의 일정\n\n실제 모집 조건과 허가·안전 요건은 이 가상 자료로 확인할 수 없습니다.';
+      if(card.id==='market')return header+'살펴볼 가상 비교 서비스: '+state.profile.competitor+'\n\n1. 최근 관제·정비 기록을 함께 확인해야 했던 업무는 무엇인가요?\n2. 현재 어떤 도구와 인수인계 방식으로 처리하나요?\n3. 통합 이력과 예외 처리 담당자 지정 중 무엇을 먼저 확인해야 하나요?\n4. 도입 검토·구매를 결정하는 역할은 누구인가요?\n\n경쟁사 발표와 고객 니즈는 가상 상황·검증 전 가설입니다.';
+      return header+'파일럿 사전 협의 질문\n1. 시제품 화면에서 검토한 범위와 아직 검증하지 않은 범위는?\n2. 예외 상황의 판단·승인·현장 조치는 누가 맡는가?\n3. 운영 이력과 정비 요청을 누가 기록하고 확인하는가?\n4. 실제 운영 전에 필요한 별도 검토와 협의 항목은?\n5. 고객과 함께 합의할 파일럿 성공 기준은?\n\n이 문서는 협의 질문이며 실제 차량 제어·안전 대응 절차를 제공하지 않습니다.';
+    }
+    if(card.id==='support')return `사업 소개 목차 · 가상 준비 초안\n\n1. 해결할 문제와 대상 고객\n${state.profile.intro}\n\n2. 현재 개발·검증 단계\n${state.profile.stage}\n\n3. 이번 달 목표\n${state.profile.goal}\n\n4. 확인할 가설과 준비 자료\n${state.profile.decision}\n\n5. 신청 전 확인\n자격, 지역, 제출 서류를 실제 공고에서 확인해야 합니다.`;
+    if(card.id==='market')return `고객 인터뷰 질문 · 가상 초안\n\n살펴볼 유사 서비스: ${state.profile.competitor}\n\n1. 최근 이 문제를 겪었던 순간은 언제인가요?\n2. 지금은 어떤 방법으로 해결하나요?\n3. 기존 방법에서 가장 번거로운 점은 무엇인가요?\n4. 어떤 차이가 생기면 바꿔볼 의향이 있나요?\n\n다음 준비: 우리 제품이 해결할 문제 한 가지를 정리합니다.`;
+    return `첫 고객 검증 계획 · 가상 초안\n\n확인할 고민: ${state.profile.decision}\n현재 자원과 제약: ${state.profile.resources}\n\n1. 가장 불확실한 가설 한 가지를 적습니다.\n2. 그 문제를 경험한 고객에게 최근 실제 사례를 묻습니다.\n3. 들은 사실과 우리의 해석을 나눠 기록합니다.\n4. 제품을 보여준 뒤 실제 사용 행동을 관찰합니다.`;
+  }
+  function openDetail(id){
+    const card=cards.find(item=>item.id===id);if(!card)return;activeCard=id;
+    $('#detail-theme').textContent=card.theme+' · 가상 예시';$('#detail-title').textContent=card.title;
+    const key=card.id==='support'?'goal':card.id==='market'?'competitor':'decision';
+    const qualification=card.id==='support'?`<div class="detail-section"><h3>가상 프로그램과 자격 대조</h3><div class="qualification"><span>사업자 등록 여부</span><strong>직접 확인 필요</strong></div><div class="qualification"><span>사업 지역: 서울이라는 가상 조건</span><strong>${state.region==='seoul'?'회사 입력과 일치':state.region==='other'?'입력한 지역과 불일치':'확인 필요'}</strong></div><p class="hint">실제 지원 자격을 판정한 결과가 아닙니다. 지역이 맞아도 다른 조건은 별도 확인해야 합니다.</p></div><form class="question" id="region-form"><strong>회사 정보가 조금 더 필요해요.</strong><p>이 가상 프로그램은 서울 지역을 대상으로 해요. 회사의 사업 지역은 어디인가요?</p><div class="inline"><select id="region" aria-label="사업 지역" required><option value="">선택해 주세요</option><option value="seoul" ${state.region==='seoul'?'selected':''}>서울</option><option value="other" ${state.region==='other'?'selected':''}>다른 지역</option></select><button class="button" type="submit">답변 반영</button></div></form>`:'';
+    const draft=state.drafts[id]||makeDraft(card);
+    $('#detail-body').innerHTML=`<div class="reason"><strong>왜 우리 회사에 연결됐나요?</strong><br>${esc(connection(card))}<br><span class="small">회사가 입력한 ${state.assumptions[key]?'가설을':'정보를'} 바탕으로 구성한 예시예요.</span></div>${qualification}<section class="detail-section"><h3>확인할 근거</h3><div class="detail-source">${card.source}<span>가상 문서 · UI 검토용, 실제 공고나 발표가 아닙니다.</span></div><div class="detail-source">회사 설정의 연결 정보<span>${esc(connection(card))} · ${state.assumptions[key]?'아직 추측':'확인된 사실로 입력'}</span></div></section><section class="detail-section"><h3>다음 행동 체크리스트</h3>${card.checks.map((label,i)=>`<label class="check"><input type="checkbox" data-check="${i}" ${(state.checks[id]||[])[i]?'checked':''}><span>${label}</span></label>`).join('')}</section><section class="detail-section"><h3><label for="draft">${card.draftTitle}</label></h3><textarea id="draft" class="draft" maxlength="5000">${esc(draft)}</textarea><p class="hint">미리 작성한 템플릿에 회사 정보를 넣은 초안입니다. AI 생성·제출·외부 전송은 하지 않습니다.</p><button class="text-button" id="save-draft">초안 저장</button></section><div class="dialog-actions"><button class="button secondary" id="later-button">나중에</button><button class="button" id="start-button">${state.statuses[id]==='preparing'?'준비 중 · 목록 보기':state.region==='other'&&id==='support'?'조건 확인 후 검토 시작':'준비 시작'}</button></div>${state.statuses[id]?'<button class="text-button" id="done-button">이 준비를 완료로 표시</button>':''}`;
+    openDialog($('#detail-dialog'));
+  }
+  document.addEventListener('click',event=>{
+    const target=event.target.closest('button');if(!target)return;
+    if(target.hasAttribute('data-close')){target.closest('dialog')?.close();return;}
+    if(target.hasAttribute('data-profile')){openProfile();return;}
+    if(target.dataset.view){view=target.dataset.view;render();window.scrollTo({top:0,behavior:'auto'});return;}
+    if(target.dataset.theme){theme=target.dataset.theme;render();return;}
+    if(target.dataset.open){openDetail(target.dataset.open);return;}
+    if(target.hasAttribute('data-reset')){openDialog($('#reset-dialog'));return;}
+    if(target.id==='confirm-reset'){state=freshState();theme='all';view='home';save();document.querySelectorAll('dialog[open]').forEach(dialog=>dialog.close());render();$('#research-status').textContent='준비된 예시 브리핑입니다. 실제 검색은 실행되지 않습니다.';showToast('가상 체험을 처음 상태로 되돌렸어요.');return;}
+    if(target.id==='save-draft'){state.drafts[activeCard]=$('#draft').value;save();showToast('이 브라우저에 초안을 저장했어요.');return;}
+    if(['start-button','later-button','done-button'].includes(target.id)){
+      state.drafts[activeCard]=$('#draft').value;
+      state.statuses[activeCard]=target.id==='later-button'?'later':target.id==='done-button'?'done':'preparing';
+      save();$('#detail-dialog').close();view=target.id==='start-button'?'tasks':view;render();showToast(target.id==='start-button'?'준비 중인 일에 추가했어요.':target.id==='later-button'?'기회를 보류했어요.':'준비를 완료로 표시했어요.');return;
+    }
+    if(target.id==='find-button'&&!searching){
+      searching=true;target.disabled=true;target.textContent='예시 정리 중…';$('#research-status').textContent='저장된 가상 데이터를 정리하고 있어요. 외부 검색은 실행하지 않습니다.';
+      setTimeout(()=>{searching=false;target.disabled=false;target.textContent='✦ 지금 찾기';render();$('#research-status').textContent='예시 브리핑을 확인했어요. 실제 Liner 검색은 실행하지 않았습니다.';showToast('가상 기회 3종을 살펴보세요.');},600);
+    }
+  });
+  $('#profile-form').addEventListener('submit',event=>{
+    event.preventDefault();const data=new FormData(event.currentTarget);
+    for(const [key] of fields){const value=String(data.get(key)||'').trim();if(!value){$(`#profile-${key}`).focus();showToast('각 질문에 짧게 답해 주세요.');return;}}
+    for(const [key] of fields){state.profile[key]=String(data.get(key)).trim().slice(0,300);state.assumptions[key]=data.get('kind-'+key)==='hypothesis';}
+    save();$('#profile-dialog').close();view='home';render();showToast('회사 정보를 브리핑에 반영했어요.');
+  });
+  $('#detail-body').addEventListener('submit',event=>{
+    if(event.target.id!=='region-form')return;event.preventDefault();state.drafts.support=$('#draft').value;state.region=$('#region').value;save();render();openDetail('support');showToast('지역 답변을 회사 정보에 반영했어요.');
+  });
+  $('#detail-body').addEventListener('change',event=>{
+    if(!event.target.matches('[data-check]'))return;const card=cards.find(item=>item.id===activeCard);state.checks[activeCard]=state.checks[activeCard]||card.checks.map(()=>false);state.checks[activeCard][Number(event.target.dataset.check)]=event.target.checked;save();render();
+  });
+  render();
+</script>
+<script src="knowledge.js"></script>
+<script src="work-map.js"></script>
+</body>
+</html>
