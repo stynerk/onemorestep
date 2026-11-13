@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>미리내 메인 컨셉</title>
+<style>
+  :root { --ink:#222; --mid:#777; --line:#bbb; --fill:#eee; --bg:#fafafa; }
+  * { box-sizing:border-box; }
+  body { margin:0; padding:28px; background:var(--bg); color:var(--ink);
+         font-family:"Malgun Gothic","Apple SD Gothic Neo",sans-serif; word-break:keep-all; }
+  h1 { font-size:20px; margin:0 0 4px; }
+  h2 { font-size:17px; margin:30px 0 4px; }
+  .sub { color:var(--mid); font-size:13px; margin-bottom:12px; }
+  .row { display:flex; gap:28px; align-items:flex-start; }
+  .label { font-size:12px; font-weight:700; margin-bottom:6px; color:var(--mid); }
+  .muted { color:var(--mid); font-size:11.5px; }
+  .anno { font-size:11.5px; color:#555; margin-top:8px; line-height:1.55; max-width:1000px; }
+  .anno b { color:var(--ink); }
+
+  .browser { width:1000px; border:2px solid var(--ink); border-radius:10px; background:#fff; overflow:hidden; }
+  .top { height:46px; border-bottom:1.5px solid var(--line); display:flex; align-items:center; justify-content:space-between; padding:0 18px; }
+  .logo { font-weight:800; font-size:15px; }
+  .prof { font-size:11.5px; border:1.5px solid var(--line); border-radius:14px; padding:3px 10px; }
+  .pad { padding:14px 18px 18px; }
+  .greet { font-size:16px; font-weight:700; }
+
+  .phone { width:300px; border:2px solid var(--ink); border-radius:22px; background:#fff; overflow:hidden; }
+  .mpad { padding:14px; }
+
+  .col { border:1.5px solid var(--line); border-radius:10px; padding:10px; background:#fff; }
+  .colh { font-size:13px; font-weight:700; display:flex; justify-content:space-between; align-items:center; padding-bottom:6px; border-bottom:1.5px solid var(--ink); margin-bottom:8px; }
+  .colh span { font-weight:400; font-size:11px; color:var(--mid); }
+  .item { border:1.5px solid var(--ink); border-radius:8px; padding:8px 10px; margin-top:8px; }
+  .item.lite { border-color:var(--line); }
+  .item h4 { font-size:12.5px; margin:0 0 3px; }
+  .why { font-size:11.5px; color:var(--mid); }
+  .todo { font-size:11.5px; margin-top:5px; padding:4px 7px; background:var(--fill); border-radius:5px; }
+  .tag { display:inline-block; font-size:10.5px; font-weight:700; border:1.5px solid var(--ink); border-radius:4px; padding:0 5px; margin-right:4px; }
+  .tag.lite { border-color:var(--line); color:var(--mid); font-weight:400; }
+  .new { font-size:10px; font-weight:700; background:var(--ink); color:#fff; border-radius:3px; padding:0 4px; margin-left:4px; }
+  .more { font-size:11.5px; color:var(--mid); text-align:center; margin-top:8px; }
+  .tabs { display:flex; gap:6px; margin:10px 0 4px; }
+  .tabs div { border:1.5px solid var(--line); border-radius:14px; padding:3px 10px; font-size:11.5px; white-space:nowrap; }
+  .tabs div.on { background:var(--ink); color:#fff; border-color:var(--ink); font-weight:700; }
+  .chk { font-size:12px; margin:4px 0; }
+  .bar { height:6px; background:var(--fill); border-radius:3px; margin:6px 0; }
+  .bar i { display:block; height:6px; background:var(--ink); border-radius:3px; }
+
+  /* 브리핑 */
+  .paper { display:grid; grid-template-columns:1.25fr 1fr; gap:14px; margin-top:12px; }
+  .lead { border:2px solid var(--ink); border-radius:10px; padding:14px; }
+  .lead .kick { font-size:11px; font-weight:700; letter-spacing:1px; color:var(--mid); }
+  .lead h3 { font-size:18px; margin:6px 0; line-height:1.35; }
+  .btn { display:inline-block; border:2px solid var(--ink); border-radius:7px; padding:6px 14px; font-weight:700; font-size:12.5px; margin-top:8px; }
+  .sect { border-top:1.5px solid var(--ink); padding:8px 0 4px; }
+  .sect .sh { font-size:12px; font-weight:700; display:flex; justify-content:space-between; }
+  .sect .sh span { font-weight:400; color:var(--mid); font-size:11px; }
+  .line { font-size:12.5px; padding:5px 0; border-bottom:1px dashed var(--line); }
+  .line:last-child { border-bottom:0; }
+  .line .a { display:block; font-size:11px; color:var(--mid); margin-top:1px; }
+</style>
+</head>
+<body>
+<h1>미리내 메인 화면 — 테마별 컨셉 2개</h1>
+<div class="sub">흑백 저해상도 · 가상 데이터 · 기존안(오늘의 카드 3장 섞어 보기)을 A로 두고 B, C를 비교</div>
+
+<!-- B. 테마 보드 -->
+<h2>B. 테마 보드 — 세 칸을 나란히</h2>
+<div class="sub">테마마다 한 칸. 새로 생긴 것만 표시하고, 칸 안에서 위에 있을수록 급하다.</div>
+<div class="row">
+  <div>
+    <div class="label">PC 웹</div>
+    <div class="browser">
+      <div class="top"><div class="logo">미리내</div><div class="prof">예비창업 · AI 에이전트 · 서울 ⚙</div></div>
+      <div class="pad">
+        <div class="greet">11월 13일 (금) · 새 소식 5건, 지금 할 일 3건</div>
+        <div class="muted">오전 6시에 Liner로 세 테마를 찾아봤어요</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:12px">
+
+          <div class="col">
+            <div class="colh">시장 동향 · 경쟁사 <span>새 2</span></div>
+            <div class="item"><span class="tag">경쟁사</span><span class="new">NEW</span>
+              <h4>△△사, 에이전트 업무 자동화 기능 공개</h4>
+              <div class="why">내 핵심 기능과 겹쳐요 · 출처 3</div>
+              <div class="todo">할 일: 차별점 한 줄 다시 쓰기</div></div>
+            <div class="item"><span class="tag">시장</span><span class="new">NEW</span>
+              <h4>소상공인 AI 도입 지원 예산 확대</h4>
+              <div class="why">내 고객층의 구매 여력이 늘어요 · 출처 2</div>
+              <div class="todo">할 일: 고객 인터뷰 질문에 반영</div></div>
+            <div class="item lite"><span class="tag lite">경쟁사</span>
+              <h4>□□사 시드 투자 유치</h4>
+              <div class="why">지난주 · 확인함</div></div>
+            <div class="more">경쟁사 3곳 지켜보는 중 · 편집</div>
+          </div>
+
+          <div class="col">
+            <div class="colh">스타트업 지원 <span>새 1 · 마감 2</span></div>
+            <div class="item"><span class="tag">D-7</span>
+              <h4>□□ 청년창업 지원사업</h4>
+              <div class="why">준비 중 · 체크리스트 2/3</div>
+              <div class="bar"><i style="width:66%"></i></div></div>
+            <div class="item"><span class="tag">D-15</span><span class="new">NEW</span>
+              <h4>○○ 예비창업 지원사업</h4>
+              <div class="why">예비창업 · 서울 · AI 조건 맞음 · 출처 2</div>
+              <div class="todo">할 일: 사업계획서 3장 초안 시작</div></div>
+            <div class="item lite"><span class="tag lite">상시</span>
+              <h4>창업 공간 입주 모집</h4>
+              <div class="why">조건 일부 확인 필요</div></div>
+          </div>
+
+          <div class="col">
+            <div class="colh">우리 회사에 필요한 것 <span>예비창업 단계</span></div>
+            <div class="muted">지금 단계에서 대표들이 보통 챙기는 일</div>
+            <div class="bar"><i style="width:40%"></i></div>
+            <div class="item"><span class="tag">법·행정</span>
+              <h4>사업자 등록 시점 정하기</h4>
+              <div class="why">○○ 지원사업은 "등록 전"이 조건이에요</div>
+              <div class="todo">할 일: 신청 후 등록으로 순서 정하기</div></div>
+            <div class="item"><span class="tag">보호</span>
+              <h4>서비스 이름 상표 검색</h4>
+              <div class="why">출시 전에 하는 게 싸요 · 출처 2</div></div>
+            <div class="chk">✔ 첫 고객 인터뷰 5명</div>
+            <div class="chk">☐ 공동창업 계약서</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div>
+    <div class="label">모바일 — 테마를 탭으로</div>
+    <div class="phone"><div class="mpad">
+      <div class="logo">미리내</div>
+      <div class="tabs"><div>전체</div><div class="on">시장·경쟁 2</div><div>지원 1</div><div>필요한 것</div></div>
+      <div class="item"><span class="tag">경쟁사</span><span class="new">NEW</span>
+        <h4>△△사, 에이전트 업무 자동화 기능 공개</h4>
+        <div class="why">내 핵심 기능과 겹쳐요 · 출처 3</div>
+        <div class="todo">할 일: 차별점 한 줄 다시 쓰기</div></div>
+      <div class="item"><span class="tag">시장</span><span class="new">NEW</span>
+        <h4>소상공인 AI 도입 지원 예산 확대</h4>
+        <div class="todo">할 일: 고객 인터뷰 질문에 반영</div></div>
+      <div class="item lite"><span class="tag lite">경쟁사</span><h4>□□사 시드 투자 유치</h4><div class="why">지난주 · 확인함</div></div>
+      <div class="more">← 옆으로 넘겨 다른 테마</div>
+    </div></div>
+  </div>
+</div>
+<div class="anno"><b>좋은 점:</b> HJ가 말한 "테마별로 보기"에 가장 가깝다. 경쟁사를 지정해 지켜볼 수 있다. <b>약점:</b> 정보 양이 많아 보여 "뉴스레터와 뭐가 다르냐"는 질문을 받기 쉽다. 그래서 모든 항목에 할 일 한 줄을 붙인다.</div>
+
+<!-- C. 아침 브리핑 -->
+<h2>C. 아침 브리핑 — 오늘 가장 중요한 하나 + 테마별 한 줄</h2>
+<div class="sub">신문 1면처럼. 맨 위에 오늘 꼭 할 일 하나, 아래에 테마별 요약 몇 줄. 자세한 건 눌러서 본다.</div>
+<div class="row">
+  <div>
+    <div class="label">PC 웹</div>
+    <div class="browser">
+      <div class="top"><div class="logo">미리내 · 11월 13일 아침 브리핑</div><div class="prof">예비창업 · AI 에이전트 · 서울 ⚙</div></div>
+      <div class="pad">
+        <div class="paper">
+          <div>
+            <div class="lead">
+              <div class="kick">오늘 가장 중요한 일</div>
+              <h3>○○ 예비창업 지원사업이 열렸어요. 마감까지 15일, 사업계획서 3장이 필요해요.</h3>
+              <div class="why">예비창업 · 서울 · AI 분야 조건에 맞아요. 대표님은 사업자 등록 전이라 지금이 신청할 수 있는 시기예요.</div>
+              <div class="btn">신청 준비 시작하기</div> <span class="muted">&nbsp; 출처 2 · 공고 원문</span>
+            </div>
+            <div class="sect" style="margin-top:12px">
+              <div class="sh">이번 주 마감 <span>2건</span></div>
+              <div class="line">D-5 · IR 자료 초안 <span class="a">할 일 목록</span></div>
+              <div class="line">D-7 · □□ 청년창업 지원사업 · 준비 2/3</div>
+            </div>
+          </div>
+          <div>
+            <div class="sect">
+              <div class="sh">시장 동향 · 경쟁사 <span>더 보기 →</span></div>
+              <div class="line">△△사가 에이전트 업무 자동화 기능을 냈어요<span class="a">→ 차별점 한 줄 다시 쓰기</span></div>
+              <div class="line">소상공인 AI 도입 지원 예산이 늘어요<span class="a">→ 고객 인터뷰 질문에 반영</span></div>
+            </div>
+            <div class="sect">
+              <div class="sh">스타트업 지원 <span>더 보기 →</span></div>
+              <div class="line">창업 공간 입주 모집 (상시)<span class="a">→ 조건 확인 필요</span></div>
+            </div>
+            <div class="sect">
+              <div class="sh">우리 회사에 필요한 것 <span>더 보기 →</span></div>
+              <div class="line">서비스 이름 상표 검색<span class="a">→ 출시 전에 하면 비용이 적어요</span></div>
+            </div>
+            <div class="muted" style="margin-top:8px">Liner 검색 9회 · 출처 21건 중 6건을 골랐어요</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div>
+    <div class="label">모바일 — 위에서 아래로 읽기</div>
+    <div class="phone"><div class="mpad">
+      <div class="logo">미리내</div><div class="muted">11월 13일 아침 브리핑 · 1분</div>
+      <div class="lead" style="margin-top:10px;padding:12px">
+        <div class="kick">오늘 가장 중요한 일</div>
+        <h3 style="font-size:15px">○○ 예비창업 지원사업, 마감 15일. 사업계획서 3장 필요</h3>
+        <div class="btn" style="display:block;text-align:center">신청 준비 시작하기</div>
+      </div>
+      <div class="sect" style="margin-top:12px"><div class="sh">시장 동향 · 경쟁사</div>
+        <div class="line">△△사 에이전트 자동화 기능 공개<span class="a">→ 차별점 한 줄 다시 쓰기</span></div></div>
+      <div class="sect"><div class="sh">스타트업 지원</div>
+        <div class="line">창업 공간 입주 모집 (상시)</div></div>
+      <div class="sect"><div class="sh">우리 회사에 필요한 것</div>
+        <div class="line">서비스 이름 상표 검색</div></div>
+    </div></div>
+  </div>
+</div>
+<div class="anno"><b>좋은 점:</b> 1분 안에 읽고 행동 하나를 고른다. "알려 주고 끝나는 뉴스레터"와의 차이가 맨 위 버튼에서 바로 보인다. 데모 영상에서 설명하기 쉽다. <b>약점:</b> 테마별로 깊게 보려면 한 번 더 눌러야 한다.</div>
+
+</body>
+</html>
