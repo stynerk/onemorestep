@@ -46,7 +46,7 @@ node docs/product/mockup/serve.cjs
 node docs/product/mockup/build-pages.cjs
 ```
 
-`.cache/mirinae-pages`에 `index.html`, `knowledge.js`, `work-map.js`, `.nojekyll`만 생성한다. 검토 후 HJ가 승인한 배포 작업에서 이 파일들만 `gh-pages` 브랜치에 올린다. 이 명령 자체는 배포하지 않는다. 소라의 원본 초안 `index.html` 대신 검증 버전 `interactive.html`을 사이트 첫 화면으로 복사한다.
+`.cache/mirinae-pages`에 `index.html`, `knowledge.js`, `work-map.js`, `scenarios.js`, `.nojekyll`만 생성한다. 검토 후 HJ가 승인한 배포 작업에서 이 파일들만 `gh-pages` 브랜치에 올린다. 이 명령 자체는 배포하지 않는다. 소라의 원본 초안 `index.html` 대신 검증 버전 `interactive.html`을 사이트 첫 화면으로 복사한다.
 
 ## 눌러볼 흐름
 
