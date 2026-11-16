@@ -1,3 +1,5 @@
+> **보관 문서 (2026-11-16)**: 이 문서의 내용은 hq 저장소로 옮겼다. 정본은 hq `playbooks/workflow.md`와 hq `playbooks/discord.md`. 여기는 더 이상 갱신하지 않는다.
+
 # 작업 흐름
 
 개발 작업의 원장은 GitHub Issue다. 관문과 비개발 작업은 구글 드라이브의 팀 로그 시트에서 관리한다.

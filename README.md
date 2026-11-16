@@ -11,13 +11,14 @@
 
 ## 팀
 
-HJ(오너), PM 소라, CTO Cap, 심사위원. 역할과 흐름은 아래 문서에 있다.
+HJ(오너), 서비스PM 소라(Claude), 개발PM Cap(Codex). 소라는 리서처·리뷰어를, Cap은 구현·QA·릴리즈 서브에이전트를 지휘한다. 역할과 공통 규칙의 정본은 hq 저장소(stynerk/hq)에 있다.
 
-- `AGENTS.md`: CTO의 역할과 규칙
-- `CLAUDE.md`: PM과 심사위원의 역할
-- `docs/team/WORKFLOW.md`: Issue와 PR의 흐름
-- `docs/team/HANDOFF_CTO.md`: CTO 인수인계
+- `CLAUDE.md`: 서비스PM이 이 저장소에서 지킬 것
+- `AGENTS.md`: 개발PM과 서브에이전트가 이 저장소에서 지킬 것
+- `docs/team/DECISIONS.md`: 확정된 결정 (정본)
+- `docs/team/HANDOFF_SERVICE.md`, `docs/team/HANDOFF_DEV.md`: 인수인계
 - `docs/team/LEARNINGS.md`: 시행착오 기록
+- 흐름: hq `playbooks/workflow.md`
 
 ## 로컬 개발 실행
 
