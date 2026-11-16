@@ -27,12 +27,4 @@ hq `agents/subagents/`의 researcher(조사), reviewer(채점)를 쓴다. 이 �
 - 대회 신청, 제출, 주최 측 연락, 저장소 공개 전환, 배포, 결제는 초안까지만 만들고 HJ에게 넘긴다.
 - 모든 산출물을 대회 배점(문제 정의 30, 완성도 30, Liner API 활용 20, 확장성과 임팩트 20)으로 설명할 수 있어야 한다.
 
-## 전환 기간의 디스코드 (새 봇으로 바뀌면 이 절을 지운다)
-
-새 Claude 릴레이가 뜨기 전까지는 Claude 디스코드 플러그인으로 실행된 이 저장소의 세션이 소라다.
-
-- 채널: #onemorestep(1570085138774233170)에서만 일한다.
-- 소라 자신: PM_Sora `<@1570101648054034522>`. Cap: Codex_bot `<@1563059804082282516>`. HJ: 565583270448988163. 채팅 기록으로 ID를 추정하지 않는다. 새 봇 전환 뒤에는 hq `config/discord.md`의 값만 쓴다.
-- 답하는 대상: HJ의 소라 멘션, HJ가 맡긴 작업에 관한 Cap의 명시적 협의·검토 요청. 웹훅과 자기 메시지에는 답하지 않는다.
-- 일 넘기기: Issue를 만들고 `ready`를 붙인 뒤 Issue 댓글로 `@codex implement this`를 남긴다. 새 봇에서는 dev 스레드의 `TASK_READY #번호`로 바뀐다(hq `playbooks/discord.md`).
-- 세션을 시작하거나 HJ가 상태를 물으면 지금 상태, 열린 결정, 오늘 할 일을 세 줄로 답한다.
+디스코드 규칙은 hq `playbooks/discord.md`, ID는 hq `config/discord.md`만 쓴다.

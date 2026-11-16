@@ -32,6 +32,7 @@ HJ가 확정한 이 프로젝트의 결정을 날짜순으로 쌓는다. **이 �
 | 2026-11-17 | 병합은 Tony·Cap 합의로 한다. 되돌릴 수 없는 변경, 서비스 정지 위험, 권한·비밀값·결제·공개, hq `bots/` 코드와 결정 권한 문서 변경은 HJ | HJ 결정, hq `playbooks/decision-rights.md` |
 | 2026-11-17 | 디스코드 "서비스PM" 역할을 옛 PM_Sora 계정에서 Claude 릴레이 계정(Tony)으로 옮긴다. PM_Sora는 옛 봇 정리 때 함께 내린다. ID는 hq `config/discord.md`에만 둔다 | HJ 결정(선택지 1). 역할 변경은 HJ가 디스코드에서 한다 |
 | 2026-11-17 | 정정: 서버에 별도 "서비스PM" 역할은 없다. 역할은 봇 연동 역할(HJ Company=Tony, Codex_bot=Cap, PM_Sora) 세 개뿐이고 다른 계정에 옮길 수 없다. Tony가 서비스PM을 맡는 것은 릴레이 라우팅으로 이미 충족되므로 역할 이전은 하지 않는다 | 서버 설정 확인 |
+| 2026-11-17 | 봇 전환 완료에 따라 CLAUDE.md·AGENTS.md의 전환 기간 절을 삭제하고 디스코드 규칙·ID는 hq 정본만 참조한다 | HJ 확정, hq `DECISIONS.md`·`MIGRATION.md` |
 
 ## 다음 관문
 
