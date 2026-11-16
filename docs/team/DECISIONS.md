@@ -28,6 +28,8 @@ HJ가 확정한 이 프로젝트의 결정을 날짜순으로 쌓는다. **이 �
 | 2026-11-16 | 운영 구조 전환: 서비스PM 소라(Claude)와 개발PM Cap(Codex)이 각각 서브에이전트(리서처·리뷰어 / 구현·QA·릴리즈)를 지휘한다. 역할 규칙의 정본은 hq, 이 저장소의 정본은 `docs/team/`. 드라이브 팀 로그 시트는 보관 | HJ 결정. 기획 단계라 해커톤 중이지만 지금 전환(hq `DECISIONS.md` 2026-11-16) |
 | 2026-11-16 | 봇끼리는 dev 스레드에서 대화하고, 작업 실행은 `TASK_READY #번호` 등 키워드로만. 새 봇이 뜨기 전까지는 `@codex implement this`를 그대로 쓴다 | HJ 결정, hq `playbooks/discord.md` |
 | 2026-11-16 | 병합은 소라 승인 + Cap의 QA 통과로 한다. 배포와 저장소 공개 전환은 HJ | HJ 결정, hq `playbooks/decision-rights.md` |
+| 2026-11-17 | 서비스PM 이름을 소라에서 CPO Tony로 바꾼다(Claude 쪽 대표 하나가 #hq 총괄과 모든 프로젝트 서비스PM). 개발PM은 CTO Cap | HJ 결정, hq `DECISIONS.md` |
+| 2026-11-17 | 병합은 Tony·Cap 합의로 한다. 되돌릴 수 없는 변경, 서비스 정지 위험, 권한·비밀값·결제·공개만 HJ | HJ 결정, hq `playbooks/decision-rights.md` |
 
 ## 다음 관문
 
