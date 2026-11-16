@@ -1,6 +1,6 @@
 ---
 name: 작업 지시
-about: 서비스PM(소라)이 개발PM(Cap)에게 넘기는 개발 작업
+about: 서비스PM(Tony)이 개발PM(Cap)에게 넘기는 개발 작업
 labels: ready
 ---
 

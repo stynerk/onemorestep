@@ -11,7 +11,7 @@
 
 ## 팀
 
-HJ(오너), 서비스PM 소라(Claude), 개발PM Cap(Codex). 소라는 리서처·리뷰어를, Cap은 구현·QA·릴리즈 서브에이전트를 지휘한다. 역할과 공통 규칙의 정본은 hq 저장소(stynerk/hq)에 있다.
+HJ(오너), 서비스PM Tony(Claude), 개발PM Cap(Codex). Tony는 리서처·리뷰어를, Cap은 구현·QA·릴리즈 서브에이전트를 지휘한다. 역할과 공통 규칙의 정본은 hq 저장소(stynerk/hq)에 있다.
 
 - `CLAUDE.md`: 서비스PM이 이 저장소에서 지킬 것
 - `AGENTS.md`: 개발PM과 서브에이전트가 이 저장소에서 지킬 것
