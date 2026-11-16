@@ -46,8 +46,4 @@ npm run build
 
 기본은 `sample` 모드다. 실제 Liner 호출은 `.env.local`에 `LINER_MODE=live`와 `LINER_API_KEY`를 둘 때만 한다. 한글이 들어간 검증은 UTF-8 파일이나 Unicode 이스케이프로 한다(LEARNINGS 2026-11-12).
 
-## 전환 기간 (새 봇으로 바뀌면 이 절을 지운다)
-
-- Cap: Codex_bot `<@1563059804082282516>`. 소라: PM_Sora `<@1570101648054034522>`. HJ: 565583270448988163. 채팅 기록으로 ID를 추정하지 않는다.
-- 작업은 Issue 댓글의 `@codex implement this`나 HJ의 디스코드 요청으로 받는다. 새 봇에서는 dev 스레드의 `TASK_READY #번호`로 바뀐다.
-- `qa`, `release-ready` 라벨이 저장소에 없으면 먼저 만든다(hq `playbooks/workflow.md` 2절).
+디스코드 규칙은 hq `playbooks/discord.md`, ID는 hq `config/discord.md`만 쓴다.
