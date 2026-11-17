@@ -50,14 +50,14 @@
 | L14 | 테스트 | mrn-demo-14@example.com | 대한민국 | PM-50 | 테스트 문의 | 무효: 스팸 | 무효 | |
 | L15 | Zxq Medical Group | mrn-demo-15@zxq-medical.test | 대한민국 | US-200 | 대량 구매 가능, 연락 바람 | 무효: 실재하지 않음 | 무효(소속 확인 못 함) | |
 | L16 | ㅇㅇ병원 | mrn-demo-16@example.com | 대한민국 | PM-50 | 견적 | 무효: 실재하지 않음 | 무효 | |
-| L17 | Mirinae Demo Clinic | mrn-demo-17@mirinae-demo.test | 대한민국 | IS-3 | 도입 검토 중 | 무효: 실재하지 않음 | 애매 또는 무효 (메모는 그럴듯함) | |
+| L17 | Mirinae Demo Clinic | mrn-demo-17@mirinae-demo.test | 대한민국 | IS-3 | 도입 검토 중 | 무효: 실재하지 않음 | 무효 (메모는 그럴듯함) | 같음 (기관이 실재하지 않으면 무효) |
 | L18 | 현대자동차 | mrn-demo-18@hyundai.com | 대한민국 | PM-50 | 협업 제안드립니다 | 무효: 업종 무관 | 무효 | |
 | L19 | 신한은행 | mrn-demo-19@shinhan.com | 대한민국 | US-200 | 기업 대출 상품 안내 | 무효: 업종 무관 | 무효 | |
 | L20 | 이마트 | mrn-demo-20@emart.com | 대한민국 | PM-50 | 입점 제안 | 무효: 업종 무관 | 무효 | |
 | L21 | 삼성전자 | mrn-demo-21@samsung.com | 대한민국 | US-200 | 부품 공급 제안 | 무효: 업종 무관 | 무효 | |
-| L22 | Mayo Clinic | mrn-demo-22@mayo.edu | 대한민국 | US-200 | Please send price list | 무효: 소재지 불일치 | 무효(해외 리전 대상) | |
-| L23 | Charité – Universitätsmedizin Berlin | mrn-demo-23@charite.de | 대한민국 | PM-50 | Interested in demo | 무효: 소재지 불일치 | 무효(해외 리전 대상) | |
-| L24 | Singapore General Hospital | mrn-demo-24@sgh.com.sg | 대한민국 | US-200 | Quotation please | 무효: 소재지 불일치 | 무효(해외 리전 대상) | |
+| L22 | Mayo Clinic | mrn-demo-22@mayo.edu | 대한민국 | US-200 | Please send price list | 국가 확인: 소재지 불일치 | 국가 확인 메일 발송 → 회신 대기 | 같음 (HJ 결정) |
+| L23 | Charité – Universitätsmedizin Berlin | mrn-demo-23@charite.de | 대한민국 | PM-50 | Interested in demo | 국가 확인: 소재지 불일치 | 국가 확인 메일 발송 → 회신 대기 | 같음 (HJ 결정) |
+| L24 | Singapore General Hospital | mrn-demo-24@sgh.com.sg | 대한민국 | US-200 | Quotation please | 국가 확인: 소재지 불일치 | 국가 확인 메일 발송 → 회신 대기 | 같음 (HJ 결정) |
 | L25 | 연세대학교 | mrn-demo-25@yonsei.ac.kr | 대한민국 | US-200 | 졸업 논문 자료 요청 | 무효: 학생 | 무효 | |
 | L26 | 고려대학교 | mrn-demo-26@korea.ac.kr | 대한민국 | IS-3 | 수업 과제로 사양 문의 | 무효: 학생 | 무효 | |
 | L27 | 서울대학교 | mrn-demo-27@snu.ac.kr | 대한민국 | PM-50 | 영업직 채용 문의 | 무효: 구직 | 무효 | |
@@ -66,15 +66,16 @@
 | L30 | 서울대학교병원 | mrn-demo-30@snuh-hospital.test | 대한민국 | PM-50 | 대량 구매 예정, 개인 메일로 회신 | 무효: 사칭 의심 | 무효(도메인 불일치) | |
 | L06 | 국민건강보험 일산병원 | mrn-demo-06@nhimc.or.kr | 대한민국 | US-200 | 입찰 전 사양 확인 요청, 이번 주 회신 필요 | 유효(놓칠 뻔한 리드) | 유효 → E메디컬 | |
 
-구성: 유효 6, 애매 4, 무효 20.
+구성: 유효 6, 애매 4, 국가 확인 3, 무효 17.
+
+국가 확인(HJ 결정 2026-11-18): 소속 기관의 소재지와 리드 국가가 다르면 무효로 버리지 않는다. 지금 업무는 리드 국가에 따라 담당자에게 넘기므로, 미리내가 리드에게 **국가 확인 메일**을 자동으로 보내고 회신이 올 때까지 "국가 확인 대기"로 둔다. 회신으로 국가가 바뀌면 그 국가 기준으로 다시 판정한다. 테스트 환경에서는 이 메일도 테스트 수신함으로만 간다.
 
 ## HJ에게 부탁
 
 "HJ 정답" 칸에 유효 / 애매 / 무효와 넘길 딜러를 적어 주세요. Tony 제안과 같으면 "같음"만 적어도 된다. 특히 실무 감각으로 볼 것:
 
-- L17(그럴듯한 메모 + 실재하지 않는 기관): 애매인가 무효인가
-- L22 ~ L24(해외 기관 + 국가는 대한민국): 무효인가, 해외 리전으로 넘기는 건가
-- L18(현대자동차): 사내 의무실 같은 실제 수요일 수도 있는데 무효로 봐도 되나
+- ~~L17~~ → 무효(HJ). ~~L22 ~ L24~~ → 국가 확인 메일(HJ)
+- L18 ~ L21(비의료 회사): 비의료 업종이라도 메모에 구매 의도가 있으면(예: "사내 부속의원용 모니터 2대") 애매로 전화 확인, 영업·제휴·입점 제안이면 무효. 이 규칙이 맞는지
 - 빠진 유형이 있으면 추가
 
 ## 출처 (도메인 확인, 2026-11-18)
