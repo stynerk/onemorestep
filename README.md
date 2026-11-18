@@ -66,7 +66,7 @@ const reset = store.reset();       // '시연 초기화' 버튼에서 호출할 
 
 `POST /api/forwarding/assess`에 JSON으로 `{"leadId":"L01"}`을 보내면 해당 리드의 `assessment`와 `workflow`를 받는다. 국가 회신 확인에는 지원 국가를 `country`로 함께 보낼 수 있다. 여러 리드는 요청별 응답이 도착하는 순서대로 화면과 저장소에 반영한다. 한 서버 프로세스에서 Liner 외부 요청은 최대 2개가 동시에 실행된다.
 
-판정은 현행 `LINER_MODE=live`와 키가 모두 있을 때 Liner를 쓴다. `details.sourceKind`는 실제 검색(`liner`), 서버 캐시(`cache`), 실제 검색과 캐시 혼합(`mixed`), 수동으로 확인한 공개 페이지(`curated`), 소속 없음처럼 외부 조사가 불필요한 내부 규칙(`local`)을 구분한다. 두 질의 모두 이번 요청에서 성공한 건만 `liner`와 `externalStatus=complete`가 함께 붙는다. `curated`의 시각은 기준일이며 Liner 검색 완료 시각과 의미가 다르다. 저장 자료가 없는 기관은 `saved-unavailable`이고 실시간 두 질의가 정상 응답했지만 기관 일치 결과가 없는 경우만 미발견으로 판정한다. 검색 일부 또는 전체 실패는 `failed`로 표시한다.
+판정은 현행 `LINER_MODE=live`와 키가 모두 있을 때 Liner를 쓴다. `details.sourceKind`는 실제 검색(`liner`), 서버 캐시(`cache`), 실제 검색과 캐시 혼합(`mixed`), 수동 검토한 공개 페이지와 저장 검색 결과(`curated`), 소속 없음처럼 외부 조사가 불필요한 내부 규칙(`local`)을 구분한다. 두 질의 모두 이번 요청에서 성공한 건만 `liner`와 `externalStatus=complete`가 함께 붙는다. 수동 검토한 공개 페이지에는 검토 기준일을, 저장 검색 결과에는 당시 검색 시각을 표시한다. 저장 자료가 없는 기관은 `saved-unavailable`이다. 두 질의가 정상 완료되고 기관 일치 근거가 없으면 미발견으로 판정한다. 저장 모드는 [공개 검색 기록](docs/qa/LINER_SAVED_NONMATCHES_2026-11-19.md)과 같은 기관명·국가 조합일 때만 검색 미발견을 재생한다. 검색 일부 또는 전체 실패는 `failed`로 표시한다.
 
 정답 30건과의 혼동행렬은 출시 키 설정과 관계없이 로컬에서 저장 근거와 내부 규칙으로 검증할 수 있다.
 

@@ -1,7 +1,7 @@
 import { searchLiner } from "../liner-search";
 import type { LinerSearchResult, Source } from "../liner-search";
 import { locales } from "./institution-policy";
-import { savedInstitutionSources, savedSourcesReviewedAt } from "./saved-institution-sources";
+import { savedInstitutionSources, savedNonMatchSearchedAt, savedSourcesReviewedAt } from "./saved-institution-sources";
 import type { LeadInput } from "./types";
 import { classifyLead } from "./verdict";
 
@@ -107,9 +107,10 @@ export function createAssessmentService(options: Options = {}) {
       const apiKey = config.apiKey?.trim();
       if (config.mode?.trim() !== "live" || !apiKey) {
         const sources = savedInstitutionSources(lead.institution);
+        const savedAt = sources.length ? savedSourcesReviewedAt : savedNonMatchSearchedAt(lead.institution, lead.country);
         return classifyLead(lead, {
-          sources, searchedAt: sources.length ? savedSourcesReviewedAt : nowIso(), kind: "curated",
-          status: sources.length ? "complete" : "saved-unavailable",
+          sources, searchedAt: savedAt ?? nowIso(), kind: "curated",
+          status: savedAt ? "complete" : "saved-unavailable",
         });
       }
 
