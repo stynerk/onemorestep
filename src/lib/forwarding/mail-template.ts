@@ -22,8 +22,7 @@ export function isMailKind(value: unknown): value is MailKind {
 export function renderForwardingMail(kind: MailKind, lead: Pick<LeadInput, "id" | "institution" | "country" | "memo"> & { product: string }) {
   const { to: recipientKind, title, instruction } = templates[kind];
   const lines = [
-    "가상 리드, 실제 딜러에게 보내지 않음",
-    `원래 수신자: ${recipientLabels[recipientKind]}`,
+    `가상 리드 테스트 메일, 원래 수신자: ${recipientLabels[recipientKind]}`,
     "",
     instruction,
     "",
