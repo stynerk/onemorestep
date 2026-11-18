@@ -45,7 +45,9 @@ function sample(query: string, notice: string): ResearchResult {
 export async function research(query: string, options: Options = {}): Promise<ResearchResult> {
   if (!validQuery(query)) throw new Error("Query must be 2–300 characters");
   query = query.trim();
-  if (options.mode !== "live") return sample(query, "예시 모드입니다.");
+  const mode = options.mode?.trim() || "auto";
+  if (mode === "sample") return sample(query, "예시 모드입니다.");
+  if (mode !== "auto" && mode !== "live") return sample(query, "알 수 없는 Liner 모드로 외부 호출을 하지 않았습니다.");
   if (!options.apiKey?.trim()) return sample(query, "API 키가 설정되지 않았습니다.");
 
   const result = await searchLiner(query, {

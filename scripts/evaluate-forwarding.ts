@@ -19,7 +19,7 @@ async function main() {
     if (target === assessment.verdict) correct += 1;
     else mismatches.push({ id: lead.id, expected: target, actual: assessment.verdict, reason: assessment.reason });
   }
-  console.log("Mode: saved public pages and local rules (zero live calls). Rows: expected. Columns: actual.");
+  console.log("Mode: saved public pages, recorded searches and local rules (zero live calls). Rows: expected. Columns: actual.");
   console.table(matrix);
   console.log(JSON.stringify({ total: leads.length, correct, validToInvalid: matrix.valid.invalid, mismatches }, null, 2));
 }

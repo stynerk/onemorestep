@@ -29,4 +29,18 @@ export function savedInstitutionSources(institution: string): Source[] {
   return [{ title, url, description }];
 }
 
+// Two successful Liner queries per institution and country, reviewed for matching institutions.
+// See docs/qa/LINER_SAVED_NONMATCHES_2026-11-19.md for the query and screening record.
+const checkedNonMatches = [
+  { institution: "asdf", country: "브라질", searchedAt: "2026-11-18T19:55:59.773Z" },
+  { institution: "Zxq Medical Group", country: "아랍에미리트", searchedAt: "2026-11-18T19:56:02.981Z" },
+  { institution: "Mirinae Demo Clinic", country: "베트남", searchedAt: "2026-11-18T19:56:05.477Z" },
+  { institution: "Sakura Test Hospital", country: "일본", searchedAt: "2026-11-18T19:56:08.212Z" },
+  { institution: "Dentra Imaging", country: "독일", searchedAt: "2026-11-18T19:56:12.737Z" },
+];
+
+export function savedNonMatchSearchedAt(institution: string, country: string): string | undefined {
+  return checkedNonMatches.find((entry) => entry.institution === institution && entry.country === country)?.searchedAt;
+}
+
 export const savedSourcesReviewedAt = "2026-11-18T00:00:00.000Z";

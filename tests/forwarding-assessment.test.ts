@@ -92,7 +92,7 @@ test("two successes without a match differ from partial failure, authentication 
   assert.equal(timeout.assessment.verdict, "ambiguous");
   assert.equal(timeout.assessment.details?.externalStatus, "failed");
   const noSaved = await createAssessmentService({ fetcher: async () => assert.fail("offline mode must not call upstream") })
-    .assess(getLead("L18"), { mode: "sample", apiKey: "ignored" });
+    .assess({ ...getLead("L18"), country: "프랑스" }, { mode: "sample", apiKey: "ignored" });
   assert.equal(noSaved.assessment.mode, "saved");
   assert.equal(noSaved.assessment.verdict, "ambiguous");
   assert.equal(noSaved.assessment.details?.externalStatus, "saved-unavailable");
@@ -187,6 +187,30 @@ test("rate limiting honors Retry-After once and leaves long delays for manual re
   assert.equal(hits, 2, "long Retry-After is not retried");
   await limited.assess(getLead("L12"), live);
   assert.equal(hits, 2, "subsequent work respects the shared cooldown");
+});
+
+test("stored Liner non-matches only replay the reviewed institution and country combinations", async () => {
+  let calls = 0;
+  const service = createAssessmentService({
+    now: () => Date.parse("2026-11-21T00:00:00Z"),
+    fetcher: async () => { calls++; return res([]); },
+  });
+  for (const id of ["L17", "L18", "L19", "L20", "L27"]) {
+    const lead = getLead(id);
+    const { assessment } = await service.assess(lead, { mode: "sample", apiKey: "test-key" });
+    assert.equal(assessment.verdict, "invalid", id);
+    assert.equal(assessment.reason, "공개 정보에서 기관을 찾지 못함", id);
+    assert.equal(assessment.mode, "saved", id);
+    assert.equal(assessment.details?.sourceKind, "curated", id);
+    assert.equal(assessment.details?.externalStatus, "complete", id);
+    assert.ok(assessment.searchedAt?.startsWith("2026-11-18T19:5"), id);
+    assert.deepEqual(assessment.sources, [], id);
+
+    const changedCountry = await service.assess({ ...lead, country: "프랑스" }, { mode: "sample" });
+    assert.equal(changedCountry.assessment.verdict, "ambiguous", id);
+    assert.equal(changedCountry.assessment.details?.externalStatus, "saved-unavailable", id);
+  }
+  assert.equal(calls, 0);
 });
 
 test("assessment route accepts seed IDs only and its response survives store hydration", async () => {

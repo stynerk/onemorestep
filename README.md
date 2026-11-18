@@ -30,7 +30,16 @@ npm run dev
 
 <http://127.0.0.1:3000>에서 미리내 문의함을 연다. **판정 시작**을 누르면 가상 리드 30건이 근거와 함께 다섯 묶음으로 분류된다. 결정, 회신과 딜러 결과는 이 브라우저에 저장되며 **시연 초기화**로 지울 수 있다. Liner 단일 검색 화면은 <http://127.0.0.1:3000/research>에서 계속 사용할 수 있다.
 
-Liner 사용 승인을 받은 뒤 실제 검색을 확인하려면 `.env.example`을 `.env.local`로 복사하고, 로컬 파일에 `LINER_MODE=live` 및 `LINER_API_KEY`를 설정한 뒤 서버를 다시 실행한다. 키와 `.env.local`은 커밋하지 않는다. 기본 `sample` 모드는 키가 있어도 외부 API를 호출하지 않는다. 실시간 모드에서 키가 없거나 호출이 실패하면 예시 안내와 출처가 표시된다.
+실제 검색을 확인하려면 `.env.example`을 `.env.local`로 복사하고 서버용 `LINER_API_KEY`를 넣은 뒤 서버를 다시 실행한다. 위 검색 화면(`/api/research`)은 기본 `LINER_MODE=auto`에서 키가 있으면 실제 검색, 없으면 예시로 동작한다. `LINER_MODE` 미설정·빈 값도 `auto`와 같다. 키와 `.env.local`은 커밋하지 않는다. 기존 로컬 파일에 `LINER_MODE=sample`이 있다면 그대로 오프라인이며, 키만 넣어도 실제 검색하려면 이를 `auto`로 바꾸거나 모드 설정을 지운다. 이 변경이 기존 로컬 환경 파일을 자동 수정하지는 않는다.
+
+| 모드 | 키 있음 | 키 없음 |
+|---|---|---|
+| 미설정·빈 값·`auto` | 실제 검색 | 예시 |
+| `live` | 실제 검색 | 예시 |
+| `sample` | 외부 호출 없이 예시 | 예시 |
+| 알 수 없는 값 | 외부 호출 없이 예시·설정 안내 | 예시·설정 안내 |
+
+실시간 호출 실패·시간 초과·잘못된 응답도 실제 결과와 구분되는 예시 안내로 전환한다. 예시 재생은 인증·검색 성공이나 기관 부재로 집계하지 않는다. Search/Model 문서 확인과 5기관 평가 결과는 [Liner 검증 문서](docs/tech/LINER_API.md)를 읽는다.
 
 ```powershell
 npm run lint
@@ -66,13 +75,23 @@ const reset = store.reset();       // '시연 초기화' 버튼에서 호출할 
 
 `POST /api/forwarding/assess`에 JSON으로 `{"leadId":"L01"}`을 보내면 해당 리드의 `assessment`와 `workflow`를 받는다. 국가 회신 확인에는 지원 국가를 `country`로 함께 보낼 수 있다. 여러 리드는 요청별 응답이 도착하는 순서대로 화면과 저장소에 반영한다. 한 서버 프로세스에서 Liner 외부 요청은 최대 2개가 동시에 실행된다.
 
-판정은 현행 `LINER_MODE=live`와 키가 모두 있을 때 Liner를 쓴다. `details.sourceKind`는 실제 검색(`liner`), 서버 캐시(`cache`), 실제 검색과 캐시 혼합(`mixed`), 수동으로 확인한 공개 페이지(`curated`), 소속 없음처럼 외부 조사가 불필요한 내부 규칙(`local`)을 구분한다. 두 질의 모두 이번 요청에서 성공한 건만 `liner`와 `externalStatus=complete`가 함께 붙는다. `curated`의 시각은 기준일이며 Liner 검색 완료 시각과 의미가 다르다. 저장 자료가 없는 기관은 `saved-unavailable`이고 실시간 두 질의가 정상 응답했지만 기관 일치 결과가 없는 경우만 미발견으로 판정한다. 검색 일부 또는 전체 실패는 `failed`로 표시한다.
+리드 판정(`/api/forwarding/assess`)은 `LINER_MODE=live`를 명시하고 키가 있을 때만 Liner를 쓴다. 일괄 판정 영상처럼 저장 결과를 재생하려면 `LINER_MODE=sample`로 실행한다. `details.sourceKind`는 실제 검색(`liner`), 서버 캐시(`cache`), 실제 검색과 캐시 혼합(`mixed`), 수동 검토한 공개 페이지와 저장 검색 결과(`curated`), 소속 없음처럼 외부 조사가 불필요한 내부 규칙(`local`)을 구분한다. 두 질의 모두 이번 요청에서 성공한 건만 `liner`와 `externalStatus=complete`가 함께 붙는다. 수동 검토한 공개 페이지에는 검토 기준일을, 저장 검색 결과에는 당시 검색 시각을 표시한다. 저장 자료가 없는 기관은 `saved-unavailable`이다. 두 질의가 정상 완료되고 기관 일치 근거가 없으면 미발견으로 판정한다. 저장 모드는 [공개 검색 기록](docs/qa/LINER_SAVED_NONMATCHES_2026-11-19.md)과 같은 기관명·국가 조합일 때만 검색 미발견을 재생한다. 검색 일부 또는 전체 실패는 `failed`로 표시한다.
 
 정답 30건과의 혼동행렬은 출시 키 설정과 관계없이 로컬에서 저장 근거와 내부 규칙으로 검증할 수 있다.
 
 ```powershell
 npm exec -- tsx scripts/evaluate-forwarding.ts
 ```
+
+## 장면 6 딜러 결과 입력 (#30)
+
+시연 입력 한 번으로 추천 순위가 바뀌도록 V MedSource의 가상 이력 `delivery-030`을 거래 성사에서 미성사로 바꿨다. 아래 행과 L03 점수 예시를 기획 문서에 반영하면 된다. [DEMO_DATA 딜러 표](https://github.com/stynerk/onemorestep/blob/1da2b587b393b4e627338fada671031965c12c41/docs/product/DEMO_DATA.md)
+
+| 딜러 | 국가 | 최근 90일 전달 | deal | no deal | 진행 중 | 미응답 |
+|---|---|---:|---:|---:|---:|---:|
+| V MedSource | 미국 | 7 | 2 | 4 | 1 | 0 |
+
+L03(Cleveland Clinic)을 승인 대기로 두면 V MedSource 0.333이 U Health Supply 0.300보다 앞선다. V MedSource의 진행 중 이력 `delivery-034`을 미응답으로 한 번 저장하면 U Health Supply 0.300이 V MedSource 0.233보다 앞선다. 딜러 7곳과 전달 41건을 유지한다.
 
 - [기획 초안](docs/product/PLAN.md)
 - [기술 구조·공수·위험](docs/tech/ARCHITECTURE.md)

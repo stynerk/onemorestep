@@ -44,6 +44,6 @@ npm test           # 외부 API 호출과 비용 없이 실행
 npm run build
 ```
 
-기본은 `sample` 모드다. 실제 Liner 호출은 `.env.local`에 `LINER_MODE=live`와 `LINER_API_KEY`를 둘 때만 한다. 한글이 들어간 검증은 UTF-8 파일이나 Unicode 이스케이프로 한다(LEARNINGS 2026-11-12).
+기본은 `auto` 모드다(`LINER_MODE` 미설정·빈 값도 동일). 서버에 `LINER_API_KEY`가 있으면 실제 Liner를 호출하고 없으면 `sample`로 동작한다. 명시적인 `LINER_MODE=sample`은 키가 있어도 외부 호출하지 않으며, `live`도 키가 없으면 예시로 전환한다. 알 수 없는 모드는 외부 호출 없이 예시로 처리한다. 한글이 들어간 검증은 UTF-8 파일이나 Unicode 이스케이프로 한다(LEARNINGS 2026-11-12).
 
 디스코드 규칙은 hq `playbooks/discord.md`, ID는 hq `config/discord.md`만 쓴다.
