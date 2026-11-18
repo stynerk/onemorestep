@@ -13,3 +13,5 @@ build/
 *.tsbuildinfo
 next-env.d.ts
 *-body.tmp
+
+/.forwarding-mail/
