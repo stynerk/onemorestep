@@ -6,13 +6,27 @@ import { POST } from "../src/app/api/research/route";
 const source = { title: "공식 문서", url: "https://liner.com/developers/docs", description: "공개 문서" };
 const neverFetch: typeof fetch = async () => { throw new Error("must not call upstream"); };
 
-test("sample mode and missing keys never call a paid API", async () => {
-  for (const options of [{}, { mode: "live" }, { mode: "sample", apiKey: "test-key" }]) {
+test("sample mode, unknown modes and missing keys never call a paid API", async () => {
+  for (const options of [{}, { mode: "" }, { mode: "auto" }, { mode: "live" }, { mode: "auto", apiKey: "  " }, { mode: "sample", apiKey: "test-key" }, { mode: "invalid", apiKey: "test-key" }]) {
     const result = await research("전혀 다른 질의", { ...options, fetcher: neverFetch });
     assert.equal(result.mode, "sample");
     assert.match(result.notice, /실제 검색 결과가 아닙니다/);
     assert.notEqual(result.query, result.sampleQuery);
     assert.equal(result.sources.length, 2);
+  }
+});
+
+test("an available key selects live for unspecified, empty and auto modes", async () => {
+  for (const mode of [undefined, "", "  ", "auto", "live"]) {
+    let calls = 0;
+    const result = await research("공개 자료", { mode, apiKey: "test-key", fetcher: async () => {
+      calls++;
+      return Response.json({ results: [source] });
+    } });
+    assert.equal(calls, 1);
+    assert.equal(result.mode, "live");
+    assert.deepEqual(result.sources, [source]);
+    assert.doesNotMatch(JSON.stringify(result), /test-key/);
   }
 });
 
@@ -99,5 +113,36 @@ test("HTTP endpoint returns no-store sample without credentials", async () => {
   } finally {
     if (beforeMode === undefined) delete process.env.LINER_MODE;
     else process.env.LINER_MODE = beforeMode;
+  }
+});
+
+test("HTTP endpoint uses a server key in auto mode without leaking it", async () => {
+  const beforeMode = process.env.LINER_MODE;
+  const beforeKey = process.env.LINER_API_KEY;
+  const beforeFetch = globalThis.fetch;
+  let calls = 0;
+  try {
+    delete process.env.LINER_MODE;
+    process.env.LINER_API_KEY = "route-test-key";
+    globalThis.fetch = async (_url, init) => {
+      calls++;
+      assert.equal(new Headers(init?.headers).get("x-api-key"), "route-test-key");
+      return Response.json({ results: [source] });
+    };
+    const response = await POST(new Request("http://localhost/api/research", {
+      method: "POST", body: JSON.stringify({ query: "공개 자료" }),
+    }));
+    assert.equal(calls, 1);
+    assert.equal(response.status, 200);
+    assert.equal(response.headers.get("Cache-Control"), "no-store");
+    const body = await response.json();
+    assert.equal(body.mode, "live");
+    assert.doesNotMatch(JSON.stringify(body), /route-test-key/);
+  } finally {
+    if (beforeMode === undefined) delete process.env.LINER_MODE;
+    else process.env.LINER_MODE = beforeMode;
+    if (beforeKey === undefined) delete process.env.LINER_API_KEY;
+    else process.env.LINER_API_KEY = beforeKey;
+    globalThis.fetch = beforeFetch;
   }
 });
