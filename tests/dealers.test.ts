@@ -117,11 +117,11 @@ test("equal scores sort by deal count then dealer name", () => {
   ]);
 });
 
-test("saved result changes pending scores, preserves approved allocations, and replays after refresh", () => {
+test("one scene 6 no-response swaps pending recommendations and preserves approved allocations", () => {
   const { storage, store } = createStore();
   const base = createInitialForwardingState();
   const inProgress = base.deliveries.find((row) => row.dealerId === "dealer-v" && row.outcome === "in-progress")!;
-  const lastDeal = base.deliveries.find((row) => row.dealerId === "dealer-v" && row.outcome === "deal")!;
+  assert.equal(inProgress.id, "delivery-034");
   assert.equal(store.append(assessed("L03")).ok, true);
   assert.equal(store.append({ id: "approval", type: "decision", leadId: "L01", at, action: "approve", dealerId: "dealer-a", reason: "test approval" }).ok, true);
   const score = () => {
@@ -129,14 +129,13 @@ test("saved result changes pending scores, preserves approved allocations, and r
     assert.equal(result?.route, "dealer");
     return result;
   };
-  assert.equal(score().ranked[0].score, 0.5);
+  const order = () => score().ranked.map(({ dealer, score }) => [dealer.id, score]);
+  assert.deepEqual(order(), [["dealer-v", 0.333333333333], ["dealer-u", 0.3]]);
   const noResponse = { id: "result-pending", at, delivery: inProgress, outcome: "no-response" } as const;
   assert.equal(recordDealerOutcome(store, noResponse).ok, true);
+  assert.deepEqual(order(), [["dealer-u", 0.3], ["dealer-v", 0.233333333333]]);
+  assert.equal(store.snapshot().events.filter(({ type }) => type === "dealer-result").length, 1);
   assert.equal(recordDealerOutcome(store, noResponse).duplicate, true);
-  assert.equal(score().ranked[0].dealer.id, "dealer-v");
-  assert.equal(score().ranked[0].score, 0.4);
-  assert.equal(recordDealerOutcome(store, { id: "result-correction", at, delivery: lastDeal, outcome: "no-response" }).ok, true);
-  assert.equal(score().ranked[0].dealer.id, "dealer-u");
 
   const delivered = store.snapshot().deliveries.find(({ id }) => id === "delivery:approval")!;
   assert.equal(recordDealerOutcome(store, { id: "result-approved", at, delivery: delivered, outcome: "deal" }).ok, true);
@@ -146,7 +145,7 @@ test("saved result changes pending scores, preserves approved allocations, and r
   assert.equal(reopened.ok, true);
   assert.deepEqual(reopened.state, store.snapshot());
   assert.equal(reopened.state.deliveries.find(({ id }) => id === delivered.id)?.outcome, "no-deal");
-  assert.equal(reopened.state.events.filter(({ type }) => type === "dealer-result").length, 4);
+  assert.equal(reopened.state.events.filter(({ type }) => type === "dealer-result").length, 3);
 });
 
 test("new deliveries after the policy reference date join the normal 90-day window", () => {

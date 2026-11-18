@@ -14,10 +14,10 @@ const dealers: Dealer[] = [
   { id: "dealer-s", name: "S Medical Pte", countries: ["싱가포르"], products: ["PM-50", "US-200", "IS-3"], active: true },
 ];
 
-// Counts are the fictional DEMO_DATA dealer table, not measured sales figures.
+// Fictional DEMO_DATA dealer counts. Scene 6 (#30) changes one V MedSource deal to no-deal.
 const deliveryCounts = [
   ["dealer-a", 3, 4, 1, 0], ["dealer-d", 1, 2, 0, 3], ["dealer-j", 3, 3, 1, 0],
-  ["dealer-u", 2, 3, 0, 1], ["dealer-v", 3, 3, 1, 0], ["dealer-e", 2, 2, 1, 0], ["dealer-s", 1, 1, 0, 0],
+  ["dealer-u", 2, 3, 0, 1], ["dealer-v", 2, 4, 1, 0], ["dealer-e", 2, 2, 1, 0], ["dealer-s", 1, 1, 0, 0],
 ] as const;
 const outcomes: DealerOutcome[] = ["deal", "no-deal", "in-progress", "no-response"];
 
