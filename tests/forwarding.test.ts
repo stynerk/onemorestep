@@ -59,7 +59,7 @@ test("evaluation answers are complete and cannot be reached from runtime modules
   assert.equal(Object.values(runtime.leadStates).filter((lead) => lead.assessment !== null).length, 0);
 });
 
-test("seven dealers and 41 dated delivery rows reproduce every source count without reusing lead institutions", () => {
+test("seven dealers and 41 dated deliveries match the source with the scene 6 adjustment", () => {
   const state = createInitialForwardingState();
   assert.equal(state.dealers.length, 7);
   assert.equal(state.deliveries.length, 41);
@@ -70,7 +70,13 @@ test("seven dealers and 41 dated delivery rows reproduce every source count with
     assert.deepEqual(dealer.countries, [row[1]]);
     assert.equal(dealer.active, true);
     const deliveries = state.deliveries.filter((delivery) => delivery.dealerId === dealer.id);
-    assert.deepEqual([deliveries.length, ...["deal", "no-deal", "in-progress", "no-response"].map((outcome) => deliveries.filter((delivery) => delivery.outcome === outcome).length)], row.slice(2, 7).map(Number));
+    const expected = row.slice(2, 7).map(Number);
+    if (dealer.id === "dealer-v") {
+      // Scene 6 moves one existing deal to no-deal while retaining all seven deliveries.
+      expected[1] -= 1;
+      expected[2] += 1;
+    }
+    assert.deepEqual([deliveries.length, ...["deal", "no-deal", "in-progress", "no-response"].map((outcome) => deliveries.filter((delivery) => delivery.outcome === outcome).length)], expected);
   }
   const institutions = new Set(state.leads.map((lead) => lead.institution));
   assert.equal(new Set(state.deliveries.map((row) => row.id)).size, 41);

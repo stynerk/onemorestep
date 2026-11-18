@@ -71,6 +71,16 @@ const reset = store.reset();       // '시연 초기화' 버튼에서 호출할 
 
 이벤트에는 판정 근거·결정·딜러 결과·회신·메일 상태만 담으며 별도의 수신 주소나 인증 정보 필드는 없다. 메일 상태 `unknown`은 전송 여부 불명이다. SMTP 전송·재시도는 #25가 맡는다. 서버와 브라우저 저장소는 공유되지 않으므로 #31/#25 연결에서 서버가 검증한 전송 결과를 이벤트로 반영해야 한다. 이 계층은 메일·검색을 호출하지 않으며 import 시 window에 접근하지 않는다. 다중 사용자·다중 탭 동시 편집과 저장 형식 마이그레이션은 범위 밖이다.
 
+## 장면 6 딜러 결과 입력 (#30)
+
+시연 입력 한 번으로 추천 순위가 바뀌도록 V MedSource의 가상 이력 `delivery-030`을 거래 성사에서 미성사로 바꿨다. 아래 행과 L03 점수 예시를 기획 문서에 반영하면 된다. [DEMO_DATA 딜러 표](https://github.com/stynerk/onemorestep/blob/1da2b587b393b4e627338fada671031965c12c41/docs/product/DEMO_DATA.md)
+
+| 딜러 | 국가 | 최근 90일 전달 | deal | no deal | 진행 중 | 미응답 |
+|---|---|---:|---:|---:|---:|---:|
+| V MedSource | 미국 | 7 | 2 | 4 | 1 | 0 |
+
+L03(Cleveland Clinic)을 승인 대기로 두면 V MedSource 0.333이 U Health Supply 0.300보다 앞선다. V MedSource의 진행 중 이력 `delivery-034`을 미응답으로 한 번 저장하면 U Health Supply 0.300이 V MedSource 0.233보다 앞선다. 딜러 7곳과 전달 41건을 유지한다.
+
 - [기획 초안](docs/product/PLAN.md)
 - [기술 구조·공수·위험](docs/tech/ARCHITECTURE.md)
 - [Liner 공식 사양과 검증 상태](docs/tech/LINER_API.md)
