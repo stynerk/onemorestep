@@ -1,0 +1,182 @@
+[
+  {
+    "leadId": "L01",
+    "verdict": "valid",
+    "dealerId": "dealer-a",
+    "route": "dealer"
+  },
+  {
+    "leadId": "L02",
+    "verdict": "valid",
+    "dealerId": "dealer-j",
+    "route": "dealer"
+  },
+  {
+    "leadId": "L03",
+    "verdict": "valid",
+    "dealerId": "dealer-v",
+    "route": "dealer"
+  },
+  {
+    "leadId": "L04",
+    "verdict": "valid",
+    "dealerId": "dealer-e",
+    "route": "dealer"
+  },
+  {
+    "leadId": "L05",
+    "verdict": "valid",
+    "dealerId": "dealer-a",
+    "route": "dealer"
+  },
+  {
+    "leadId": "L07",
+    "verdict": "valid",
+    "dealerId": null,
+    "route": "manager-direct"
+  },
+  {
+    "leadId": "L08",
+    "verdict": "ambiguous",
+    "dealerId": null,
+    "route": null
+  },
+  {
+    "leadId": "L09",
+    "verdict": "ambiguous",
+    "dealerId": null,
+    "route": null
+  },
+  {
+    "leadId": "L10",
+    "verdict": "ambiguous",
+    "dealerId": null,
+    "route": null
+  },
+  {
+    "leadId": "L11",
+    "verdict": "valid",
+    "dealerId": "dealer-j",
+    "route": "dealer"
+  },
+  {
+    "leadId": "L12",
+    "dealerId": null,
+    "route": null,
+    "verdict": "country-check"
+  },
+  {
+    "leadId": "L13",
+    "dealerId": null,
+    "route": null,
+    "verdict": "country-check"
+  },
+  {
+    "leadId": "L14",
+    "dealerId": null,
+    "route": null,
+    "verdict": "country-check"
+  },
+  {
+    "leadId": "L15",
+    "verdict": "invalid",
+    "dealerId": null,
+    "route": null
+  },
+  {
+    "leadId": "L16",
+    "verdict": "invalid",
+    "dealerId": null,
+    "route": null
+  },
+  {
+    "leadId": "L17",
+    "verdict": "invalid",
+    "dealerId": null,
+    "route": null
+  },
+  {
+    "leadId": "L18",
+    "verdict": "invalid",
+    "dealerId": null,
+    "route": null
+  },
+  {
+    "leadId": "L19",
+    "verdict": "invalid",
+    "dealerId": null,
+    "route": null
+  },
+  {
+    "leadId": "L20",
+    "verdict": "invalid",
+    "dealerId": null,
+    "route": null
+  },
+  {
+    "leadId": "L21",
+    "verdict": "invalid",
+    "dealerId": null,
+    "route": null
+  },
+  {
+    "leadId": "L22",
+    "dealerId": null,
+    "route": null,
+    "verdict": "partnership-check"
+  },
+  {
+    "leadId": "L23",
+    "dealerId": null,
+    "route": null,
+    "verdict": "partnership-check"
+  },
+  {
+    "leadId": "L24",
+    "verdict": "invalid",
+    "dealerId": null,
+    "route": null
+  },
+  {
+    "leadId": "L25",
+    "verdict": "invalid",
+    "dealerId": null,
+    "route": null
+  },
+  {
+    "leadId": "L26",
+    "verdict": "invalid",
+    "dealerId": null,
+    "route": null
+  },
+  {
+    "leadId": "L27",
+    "verdict": "invalid",
+    "dealerId": null,
+    "route": null
+  },
+  {
+    "leadId": "L28",
+    "verdict": "invalid",
+    "dealerId": null,
+    "route": null
+  },
+  {
+    "leadId": "L29",
+    "verdict": "invalid",
+    "dealerId": null,
+    "route": null
+  },
+  {
+    "leadId": "L30",
+    "verdict": "invalid",
+    "dealerId": null,
+    "route": null
+  },
+  {
+    "leadId": "L06",
+    "verdict": "valid",
+    "dealerId": null,
+    "route": "manager-confirmation"
+  }
+]
