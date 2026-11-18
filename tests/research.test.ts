@@ -8,7 +8,12 @@ const neverFetch: typeof fetch = async () => { throw new Error("must not call up
 
 test("sample mode, unknown modes and missing keys never call a paid API", async () => {
   for (const options of [{}, { mode: "" }, { mode: "auto" }, { mode: "live" }, { mode: "auto", apiKey: "  " }, { mode: "sample", apiKey: "test-key" }, { mode: "invalid", apiKey: "test-key" }]) {
-    const result = await research("전혀 다른 질의", { ...options, fetcher: neverFetch });
+    let calls = 0;
+    const result = await research("전혀 다른 질의", { ...options, fetcher: async () => {
+      calls++;
+      return Response.json({ results: [source] });
+    } });
+    assert.equal(calls, 0);
     assert.equal(result.mode, "sample");
     assert.match(result.notice, /실제 검색 결과가 아닙니다/);
     assert.notEqual(result.query, result.sampleQuery);
