@@ -48,19 +48,20 @@ v0.2 변경: 국가를 여러 나라로 섞었다(HJ 요청). 업종을 의료�
 
 딜러 없음: 호주, 영국, 스웨덴, 베트남, 인도, 프랑스.
 
-## 세일즈 담당자 5명과 인접 국가 (가상)
+## 세일즈 담당자: 지역 단위 5명 (HJ 결정 2026-11-18, 가상)
 
-| 담당자 | 맡는 나라 |
-|---|---|
-| 담당 KR | 대한민국 |
-| 담당 JP | 일본 |
-| 담당 US | 미국 |
-| 담당 EU | 독일, 프랑스, 영국, 스웨덴 |
-| 담당 SEA | 베트남, 말레이시아, 인도네시아 |
+| 담당자 | 지역 | 시연 데이터의 나라 |
+|---|---|---|
+| 담당 NA | 북미 | 미국, 캐나다 |
+| 담당 LATAM | 라틴아메리카(멕시코 포함) | 멕시코, 브라질 |
+| 담당 APAC | 아시아태평양 | 대한민국, 일본, 싱가포르, 호주, 베트남, 인도 |
+| 담당 EU | 유럽 | 독일, 프랑스, 영국, 스웨덴 |
+| 담당 MEA | 중동·아프리카 | 아랍에미리트 |
 
-담당자가 없는 나라: 싱가포르, 호주, 인도. 인접 국가(설정에서 바꿈): 싱가포르 → 말레이시아·인도네시아, 호주 → 인도네시아, 인도 → 없음.
+- 나라 → 지역 매핑은 설정에서 바꾼다. 매핑에 없는 나라의 리드가 들어오면 "지역 미지정" 알림을 띄운다(HJ가 말한 "조직 연동이 안 돼 나라별 담당자를 손으로 맞추는" 문제, 흐름 ②). 시연에서는 L15(카자흐스탄)가 이 경우다.
+- [가정] 대한민국·일본은 APAC, 영국은 EU로 넣었다. 다르면 알려 달라.
 
-**인접 국가 담당자 문의 (HJ 결정 2026-11-18):** 리드 국가에 쓸 만한 딜러가 이력 적은 신규 딜러뿐이면, 미리내는 바로 넘기지 않고 **인접 국가 세일즈 담당자에게 확인 요청**을 보낸다("싱가포르 리드, 신규 딜러 S Medical Pte에 넘겨도 될까요?"). 담당자가 답하면 그대로 진행한다.
+**신규 딜러만 있을 때 (HJ 결정 2026-11-18, 지역 단위로 고침):** 리드 국가에 쓸 만한 딜러가 이력 적은 신규 딜러뿐이면, 미리내는 바로 넘기지 않고 **그 지역 세일즈 담당자에게 확인 요청**을 보낸다("싱가포르 리드, 신규 딜러 S Medical Pte에 넘겨도 될까요?"). 담당자가 답하면 그대로 진행한다.
 
 전달 내역 개별 행(날짜, 기관, 결과)은 위 요약과 맞게 Cap이 생성한다. 날짜는 2026-08-20 ~ 2026-11-17 안, 기관은 아래 리드와 겹치지 않게.
 
@@ -85,10 +86,10 @@ v0.2 변경: 국가를 여러 나라로 섞었다(HJ 요청). 업종을 의료�
 | L12 | Charité – Universitätsmedizin Berlin | 실제 | mrn-demo-12@charite.de | 대한민국 | PM-50 | Interested in a demo | 국가 확인 | 국가 확인 메일 → 회신 대기 | |
 | L13 | Vinmec International Hospital | 실제 | mrn-demo-13@vinmec.com | 미국 | US-200 | Quotation please | 국가 확인 | 국가 확인 메일 → 회신 대기 | |
 | L14 | Apollo Hospitals | 실제 | mrn-demo-14@apollohospitals.com | 일본 | PM-50 | Need pricing for 10 units | 국가 확인 | 국가 확인 메일 → 회신 대기 | |
-| L15 | (빈칸) | - | mrn-demo-15@example.com | 대한민국 | PM-50 | test | 무효: 소속 없음 | 무효 | |
-| L16 | Individual | - | mrn-demo-16@example.com | 미국 | IS-3 | just curious | 무효: 소속 없음 | 무효 | |
-| L17 | asdf | - | mrn-demo-17@example.com | 독일 | US-200 | asdf | 무효: 스팸 | 무효 | |
-| L18 | Zxq Medical Group | 가상 | mrn-demo-18@zxq-medical.test | 미국 | US-200 | Bulk purchase possible, contact me | 무효: 실재하지 않음 | 무효 | |
+| L15 | (빈칸) | - | mrn-demo-15@example.com | 카자흐스탄(지역 미지정) | PM-50 | test | 무효: 소속 없음 | 무효 | |
+| L16 | Individual | - | mrn-demo-16@example.com | 멕시코 | IS-3 | just curious | 무효: 소속 없음 | 무효 | |
+| L17 | asdf | - | mrn-demo-17@example.com | 브라질 | US-200 | asdf | 무효: 스팸 | 무효 | |
+| L18 | Zxq Medical Group | 가상 | mrn-demo-18@zxq-medical.test | 아랍에미리트 | US-200 | Bulk purchase possible, contact me | 무효: 실재하지 않음 | 무효 | |
 | L19 | Mirinae Demo Clinic | 가상 | mrn-demo-19@mirinae-demo.test | 베트남 | IS-3 | Considering adoption this year | 무효: 실재하지 않음(메모는 그럴듯함) | 무효 | |
 | L20 | Sakura Test Hospital | 가상 | mrn-demo-20@sakura-test.test | 일본 | PM-50 | 見積もりをお願いします | 무효: 실재하지 않음 | 무효 | |
 | L21 | HSBC | 실제 | mrn-demo-21@hsbc.com | 영국 | PM-50 | We'd like to offer corporate banking services | 무효: 판매·영업 | 무효 | |
@@ -101,11 +102,11 @@ v0.2 변경: 국가를 여러 나라로 섞었다(HJ 요청). 업종을 의료�
 | L28 | 서울아산병원 | 실제 이름, 가짜 도메인 | mrn-demo-28@asan-medical.test | 대한민국 | US-200 | 급히 견적 필요, 선입금 가능 | 무효: 사칭 의심 | 무효(도메인 불일치) | |
 | L29 | Cleveland Clinic | 실제 이름, 가짜 도메인 | mrn-demo-29@clevelandclinic-mail.test | 미국 | PM-50 | Urgent order, reply to this address only | 무효: 사칭 의심 | 무효(도메인 불일치) | |
 | L30 | Karolinska University Hospital | 실제 이름, 가짜 도메인 | mrn-demo-30@karolinska-hospital.test | 스웨덴 | US-200 | Large order, payment in advance | 무효: 사칭 의심 | 무효(도메인 불일치) | |
-| L06 | Singapore General Hospital | 실제 | mrn-demo-06@sgh.com.sg | 싱가포르 | PM-50 | Tender closes next week, need specs by Friday | 유효(놓칠 뻔한 리드) | 유효 → 인접 국가 담당자(담당 SEA)에게 신규 딜러 S Medical Pte 확인 요청 | 같음 (HJ 결정) |
+| L06 | Singapore General Hospital | 실제 | mrn-demo-06@sgh.com.sg | 싱가포르 | PM-50 | Tender closes next week, need specs by Friday | 유효(놓칠 뻔한 리드) | 유효 → 지역 담당자(담당 APAC)에게 신규 딜러 S Medical Pte 확인 요청 | 같음 (HJ 결정) |
 
-구성: 유효 8, 애매 3, 국가 확인 3, 제휴 확인 2, 무효 14. 국가 11곳, 실제 기관 23건, 가상 기관·소속 없음 7건.
+구성: 유효 8, 애매 3, 국가 확인 3, 제휴 확인 2, 무효 14. 국가 15곳(지역 5개 모두 포함, 지역 미지정 1), 실제 기관 23건, 가상 기관·소속 없음 7건.
 
-자동으로 나가는 메일(테스트 환경에서는 모두 테스트 수신함으로): 딜러용 리드 요약, 국가 확인(리드에게), 제휴 상세 요청(리드에게), 인접 국가 담당자 확인 요청(사내), 운영 알림.
+자동으로 나가는 메일(테스트 환경에서는 모두 테스트 수신함으로): 딜러용 리드 요약, 국가 확인(리드에게), 제휴 상세 요청(리드에게), 지역 담당자 확인 요청(사내), 운영 알림(지역 미지정 등).
 
 ## 판정 규칙에 주는 영향 (Cap 참고)
 
@@ -114,7 +115,8 @@ v0.2 변경: 국가를 여러 나라로 섞었다(HJ 요청). 업종을 의료�
   - 설정에 **기관 도메인 별칭**(기관명 → 알려진 도메인)을 두어 담당자가 한 번 고치면 다음부터 맞게 한다.
 - 이메일 도메인이 기관 도메인의 하위 도메인이면 일치로 본다(예: mail.toyota.co.jp, h.u-tokyo.ac.jp).
 - 리드 국가에 딜러가 없으면 "딜러 없음 → 담당자 직접 처리"(L07).
-- 이력 적은 딜러만 있는 나라는 인접 국가 세일즈 담당자에게 확인 요청을 보낸다(L06).
+- 이력 적은 딜러만 있는 나라는 그 지역 세일즈 담당자에게 확인 요청을 보낸다(L06).
+- 지역 매핑에 없는 나라는 "지역 미지정" 운영 알림(L15).
 - 업종은 판정에 쓰지 않고 카드에 참고로만 보인다(L11).
 
 ## HJ에게 부탁
@@ -122,7 +124,7 @@ v0.2 변경: 국가를 여러 나라로 섞었다(HJ 요청). 업종을 의료�
 "HJ 정답" 칸에 유효 / 애매 / 국가 확인 / 무효와 넘길 딜러를 적어 주세요. Tony 제안과 같으면 "같음"만 적어도 된다. 특히 볼 것:
 
 - ~~L04, L06, L11, L23~~ → HJ 답 반영(2026-11-18)
-- L07(호주, 딜러도 담당자도 없음): L06처럼 인접 국가 담당자(담당 SEA)에게 문의하나, 본사 담당자가 직접 처리하나
+- L07(호주, 딜러 없음): 지역 담당자(담당 APAC)가 직접 처리하나, 담당 APAC에게 다른 나라 딜러를 붙일지 확인 요청하나
 - L21(HSBC, 우리에게 금융 상품을 팔려는 영업): 무효가 맞나(제휴 제안과 구분)
 
 ## 출처 (도메인 확인, 2026-11-18)
