@@ -12,7 +12,11 @@ const invalid = () => Response.json({ message: "시연 업무 기록을 확인�
 
 export async function POST(request: Request) {
   const origin = request.headers.get("origin");
-  if (origin !== new URL(request.url).origin || request.headers.get("sec-fetch-site") === "cross-site") {
+  const url = new URL(request.url);
+  const incomingHost = request.headers.get("host") ?? url.host;
+  // Next may canonicalize the URL hostname, while Chrome uses the address entered in its URL bar.
+  const expectedOrigin = url.protocol + "//" + incomingHost;
+  if (origin !== expectedOrigin || request.headers.get("sec-fetch-site") === "cross-site") {
     return Response.json({ message: "같은 화면에서만 메일을 요청할 수 있습니다." }, { status: 403, headers });
   }
   if (request.headers.get("content-type")?.split(";")[0].trim().toLowerCase() !== "application/json") return invalid();

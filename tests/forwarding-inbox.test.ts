@@ -54,6 +54,11 @@ test("forwarding mail accepts a matching business event and rejects cross-origin
   assert.equal((await post("https://example.test", { event: decision })).status, 403);
   assert.equal((await post("http://127.0.0.1", { event: decision, to: "recipient@example.test" })).status, 400);
   assert.equal((await post("http://127.0.0.1", { event: { ...decision, bcc: ["recipient@example.test"] } })).status, 400);
+  const canonicalized = await sendMail(new Request("http://localhost:3041/api/forwarding/mail", {
+    method: "POST", headers: { origin: "http://127.0.0.1:3041", host: "127.0.0.1:3041", "content-type": "application/json" },
+    body: "{}",
+  }));
+  assert.equal(canonicalized.status, 400);
 });
 
 test("the partnership reassessment accepts only a structured signal, and the displayed contacts are masked", async () => {
