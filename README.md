@@ -83,6 +83,27 @@ const reset = store.reset();       // '시연 초기화' 버튼에서 호출할 
 npm exec -- tsx scripts/evaluate-forwarding.ts
 ```
 
+## 장면 6 딜러 결과 입력 (#30)
+
+시연 입력 한 번으로 추천 순위가 바뀌도록 V MedSource의 가상 이력 `delivery-030`을 거래 성사에서 미성사로 바꿨다. 아래 행과 L03 점수 예시를 기획 문서에 반영하면 된다. [DEMO_DATA 딜러 표](https://github.com/stynerk/onemorestep/blob/1da2b587b393b4e627338fada671031965c12c41/docs/product/DEMO_DATA.md)
+
+| 딜러 | 국가 | 최근 90일 전달 | deal | no deal | 진행 중 | 미응답 |
+|---|---|---:|---:|---:|---:|---:|
+| V MedSource | 미국 | 7 | 2 | 4 | 1 | 0 |
+
+L03(Cleveland Clinic)을 승인 대기로 두면 V MedSource 0.333이 U Health Supply 0.300보다 앞선다. V MedSource의 진행 중 이력 `delivery-034`을 미응답으로 한 번 저장하면 U Health Supply 0.300이 V MedSource 0.233보다 앞선다. 딜러 7곳과 전달 41건을 유지한다.
+
 - [기획 초안](docs/product/PLAN.md)
 - [기술 구조·공수·위험](docs/tech/ARCHITECTURE.md)
 - [Liner 공식 사양과 검증 상태](docs/tech/LINER_API.md)
+
+## 테스트 수신함 메일 (#25)
+
+HJ가 지정한 테스트 수신함과 발신 설정을 로컬 `.env.local`에 넣고 서버를 다시 실행한다.
+
+- `TEST_MAIL_TO`에는 테스트 수신함 주소 하나를 적는다.
+- `MAIL_FROM`에는 발신 전용 Gmail 주소, `GMAIL_APP_PASSWORD`에는 해당 계정의 앱 비밀번호를 적는다. 앱 비밀번호는 2단계 인증이 필요하다. [Gmail 앱 비밀번호 안내](https://support.google.com/mail/answer/185833)
+
+메일 5종은 발송 직전에 수신함 제한을 검증한다. 설정이 없거나 SMTP가 실패하면 화면에 표시할 상태를 반환한다. 명시적인 실패는 사용자가 다시 시도할 수 있고, 전송 여부가 불명인 경우에는 테스트 수신함을 먼저 확인한다. 가상 리드의 이메일 앞부분은 가상이며, 가상 기관은 `example.com`이나 `.test` 같은 예약 도메인을 사용한다. 발송 기록과 로그에는 수신 주소나 인증 정보를 넣지 않는다.
+
+화면 연결(#31)은 서버에서 처리한 업무 이벤트의 안정적인 ID와 리드 ID, 메일 종류를 `dispatchForwardingMail`에 전달하고 결과의 `event`를 기존 저장소에 반영한다. 재시도는 직전 실패의 기록 ID를 `retryOf`로 전달한다. 단일 사용자 로컬 서버의 `.forwarding-mail/` 기록은 새로고침과 재시작 뒤에도 유지된다. 브라우저 시연을 초기화하면 새 세션에서 새 업무 이벤트 ID를 사용한다. [Gmail SMTP 설정](https://support.google.com/mail/answer/7104828)과 [Nodemailer의 SMTP 전송 사양](https://nodemailer.com/smtp)을 사용한다.
