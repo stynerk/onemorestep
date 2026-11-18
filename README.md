@@ -62,6 +62,18 @@ const reset = store.reset();       // '시연 초기화' 버튼에서 호출할 
 
 이벤트에는 판정 근거·결정·딜러 결과·회신·메일 상태만 담으며 별도의 수신 주소나 인증 정보 필드는 없다. 메일 상태 `unknown`은 전송 여부 불명이다. SMTP 전송·재시도는 #25가 맡는다. 서버와 브라우저 저장소는 공유되지 않으므로 #31/#25 연결에서 서버가 검증한 전송 결과를 이벤트로 반영해야 한다. 이 계층은 메일·검색을 호출하지 않으며 import 시 window에 접근하지 않는다. 다중 사용자·다중 탭 동시 편집과 저장 형식 마이그레이션은 범위 밖이다.
 
+## 세일즈 포워딩 기관 판정 (#29)
+
+`POST /api/forwarding/assess`에 JSON으로 `{"leadId":"L01"}`을 보내면 해당 리드의 `assessment`와 `workflow`를 받는다. 국가 회신 확인에는 지원 국가를 `country`로 함께 보낼 수 있다. 여러 리드는 요청별 응답이 도착하는 순서대로 화면과 저장소에 반영한다. 한 서버 프로세스에서 Liner 외부 요청은 최대 2개가 동시에 실행된다.
+
+판정은 현행 `LINER_MODE=live`와 키가 모두 있을 때 Liner를 쓴다. `details.sourceKind`는 실제 검색(`liner`), 서버 캐시(`cache`), 실제 검색과 캐시 혼합(`mixed`), 수동으로 확인한 공개 페이지(`curated`), 소속 없음처럼 외부 조사가 불필요한 내부 규칙(`local`)을 구분한다. 두 질의 모두 이번 요청에서 성공한 건만 `liner`와 `externalStatus=complete`가 함께 붙는다. `curated`의 시각은 기준일이며 Liner 검색 완료 시각과 의미가 다르다. 저장 자료가 없는 기관은 `saved-unavailable`이고 실시간 두 질의가 정상 응답했지만 기관 일치 결과가 없는 경우만 미발견으로 판정한다. 검색 일부 또는 전체 실패는 `failed`로 표시한다.
+
+정답 30건과의 혼동행렬은 출시 키 설정과 관계없이 로컬에서 저장 근거와 내부 규칙으로 검증할 수 있다.
+
+```powershell
+npm exec -- tsx scripts/evaluate-forwarding.ts
+```
+
 - [기획 초안](docs/product/PLAN.md)
 - [기술 구조·공수·위험](docs/tech/ARCHITECTURE.md)
 - [Liner 공식 사양과 검증 상태](docs/tech/LINER_API.md)

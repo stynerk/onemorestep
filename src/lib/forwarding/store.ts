@@ -1,5 +1,5 @@
 import { createInitialForwardingState } from "./seed";
-import { VERDICTS, WORKFLOW_STATES } from "./types";
+import { DOMAIN_CHECKS, EXTERNAL_STATUSES, MEMO_INTENTS, SOURCE_KINDS, VERDICTS, WORKFLOW_STATES } from "./types";
 import type { Assessment, ForwardingEvent, ForwardingState } from "./types";
 
 export const FORWARDING_STORAGE_KEY = "mirinae.forwarding.v1";
@@ -35,7 +35,19 @@ const isSource = (value: unknown): value is string => {
   try { const url = new URL(value); return ["http:", "https:"].includes(url.protocol) && !url.username && !url.password; } catch { return false; }
 };
 function isAssessment(value: unknown): value is Assessment {
-  return isObject(value) && exactly(value, ["verdict", "reason", "sources", "searchedAt", "mode"])
+  if (!isObject(value)) return false;
+  const fields = ["verdict", "reason", "sources", "searchedAt", "mode"];
+  if (Object.hasOwn(value, "details")) {
+    fields.push("details");
+    const details = value.details;
+    if (!isObject(details) || !exactly(details, ["domain", "countries", "industry", "memoIntent", "memoQuote", "externalStatus", "sourceKind"])
+      || !member(details.domain, DOMAIN_CHECKS) || !member(details.memoIntent, MEMO_INTENTS)
+      || !member(details.externalStatus, EXTERNAL_STATUSES) || !member(details.sourceKind, SOURCE_KINDS)
+      || !Array.isArray(details.countries) || details.countries.length > 20 || !details.countries.every((country) => isText(country, 80))
+      || !(details.industry === null || isText(details.industry, 80))
+      || !(details.memoQuote === null || isText(details.memoQuote, 200))) return false;
+  }
+  return exactly(value, fields)
     && member(value.verdict, VERDICTS) && isText(value.reason) && Array.isArray(value.sources)
     && value.sources.length <= 20 && value.sources.every(isSource) && isTimestamp(value.searchedAt)
     && member(value.mode, ["live", "saved"]);
