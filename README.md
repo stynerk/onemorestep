@@ -62,6 +62,10 @@ const reset = store.reset();       // '시연 초기화' 버튼에서 호출할 
 
 이벤트에는 판정 근거·결정·딜러 결과·회신·메일 상태만 담으며 별도의 수신 주소나 인증 정보 필드는 없다. 메일 상태 `unknown`은 전송 여부 불명이다. SMTP 전송·재시도는 #25가 맡는다. 서버와 브라우저 저장소는 공유되지 않으므로 #31/#25 연결에서 서버가 검증한 전송 결과를 이벤트로 반영해야 한다. 이 계층은 메일·검색을 호출하지 않으며 import 시 window에 접근하지 않는다. 다중 사용자·다중 탭 동시 편집과 저장 형식 마이그레이션은 범위 밖이다.
 
+- [기획 초안](docs/product/PLAN.md)
+- [기술 구조·공수·위험](docs/tech/ARCHITECTURE.md)
+- [Liner 공식 사양과 검증 상태](docs/tech/LINER_API.md)
+
 ## 테스트 수신함 메일 (#25)
 
 HJ가 지정한 테스트 수신함과 발신 설정을 로컬 `.env.local`에 넣고 서버를 다시 실행한다.
@@ -72,7 +76,3 @@ HJ가 지정한 테스트 수신함과 발신 설정을 로컬 `.env.local`에 �
 메일 5종은 발송 직전에 수신함 제한을 검증한다. 설정이 없거나 SMTP가 실패하면 화면에 표시할 상태를 반환한다. 명시적인 실패는 사용자가 다시 시도할 수 있고, 전송 여부가 불명인 경우에는 테스트 수신함을 먼저 확인한다. 가상 리드의 이메일 앞부분은 가상이며, 가상 기관은 `example.com`이나 `.test` 같은 예약 도메인을 사용한다. 발송 기록과 로그에는 수신 주소나 인증 정보를 넣지 않는다.
 
 화면 연결(#31)은 서버에서 처리한 업무 이벤트의 안정적인 ID와 리드 ID, 메일 종류를 `dispatchForwardingMail`에 전달하고 결과의 `event`를 기존 저장소에 반영한다. 재시도는 직전 실패의 기록 ID를 `retryOf`로 전달한다. 단일 사용자 로컬 서버의 `.forwarding-mail/` 기록은 새로고침과 재시작 뒤에도 유지된다. 브라우저 시연을 초기화하면 새 세션에서 새 업무 이벤트 ID를 사용한다. [Gmail SMTP 설정](https://support.google.com/mail/answer/7104828)과 [Nodemailer의 SMTP 전송 사양](https://nodemailer.com/smtp)을 사용한다.
-
-- [기획 초안](docs/product/PLAN.md)
-- [기술 구조·공수·위험](docs/tech/ARCHITECTURE.md)
-- [Liner 공식 사양과 검증 상태](docs/tech/LINER_API.md)
