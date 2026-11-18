@@ -77,7 +77,8 @@ export type ForwardingEvent =
   | (EventBase & { type: "assessed"; assessment: Assessment; workflow: WorkflowState })
   | (EventBase & { type: "decision"; action: DecisionAction; dealerId: string | null; reason: string })
   | (EventBase & { type: "dealer-result"; deliveryId: string; dealerId: string; outcome: DealerOutcome })
-  | (EventBase & { type: "reply"; kind: ReplyKind; text: string })
+  | (EventBase & { type: "reply"; kind: ReplyKind; text: string; selection?: string })
+  | (EventBase & { type: "review-reopened" })
   | (EventBase & { type: "mail-delivery"; mailId: string; kind: MailKind; recipientKind: RecipientKind; status: MailStatus });
 
 export interface ForwardingState {

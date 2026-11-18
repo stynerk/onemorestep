@@ -1,3 +1,4 @@
+import { locales } from "./institution-policy";
 import { createInitialForwardingState } from "./seed";
 import { DOMAIN_CHECKS, EXTERNAL_STATUSES, MEMO_INTENTS, SOURCE_KINDS, VERDICTS, WORKFLOW_STATES } from "./types";
 import type { Assessment, ForwardingEvent, ForwardingState } from "./types";
@@ -72,9 +73,20 @@ export function isForwardingEvent(value: unknown, state: ForwardingState): value
         && delivery.leadId === value.leadId && delivery.dealerId === value.dealerId
         && member(value.outcome, ["deal", "no-deal", "in-progress", "no-response"]);
     }
-    case "reply":
-      return leadExists && exactly(value, [...common, "kind", "text"])
+    case "reply": {
+      const fields = [...common, "kind", "text"];
+      if (Object.hasOwn(value, "selection")) {
+        fields.push("selection");
+        if (typeof value.selection !== "string") return false;
+        if (value.kind === "country" && !Object.hasOwn(locales, value.selection)) return false;
+        if (value.kind === "partnership" && !["purchase", "partnership"].includes(value.selection)) return false;
+        if (value.kind === "manager-confirmation" && !dealerExists(value.selection)) return false;
+      }
+      return leadExists && exactly(value, fields)
         && member(value.kind, ["country", "partnership", "manager-confirmation"]) && isText(value.text);
+    }
+    case "review-reopened":
+      return leadExists && exactly(value, common);
     case "mail-delivery":
       return leadExists && exactly(value, [...common, "mailId", "kind", "recipientKind", "status"])
         && isId(value.mailId) && member(value.kind, ["dealer-summary", "country-check", "partnership-check", "manager-confirmation", "operations"])
@@ -93,6 +105,12 @@ export function applyForwardingEvent(state: ForwardingState, input: unknown): St
     // Reusing an ID for different content is a conflict rather than a silently lost action.
     const same = canonical(existing) === canonical(input);
     return { ok: same, duplicate: same || undefined, error: same ? undefined : "invalid-event", state: structuredClone(state) };
+  }
+  if (input.type === "review-reopened") {
+    const status = state.leadStates[input.leadId];
+    if (status.dealerId || (status.assessment?.verdict !== "invalid" && status.workflow !== "disqualified")) {
+      return { ok: false, error: "invalid-event", state: structuredClone(state) };
+    }
   }
   const event = structuredClone(input);
   const next = structuredClone(state);
@@ -116,6 +134,11 @@ export function applyForwardingEvent(state: ForwardingState, input: unknown): St
     if (lead && lead.dealerId === event.dealerId && (event.outcome === "deal" || event.outcome === "no-deal")) lead.workflow = "connected";
   } else if (event.type === "reply") {
     if (!["dealer-assigned", "connected", "disqualified"].includes(lead.workflow)) lead.workflow = "decision-pending";
+  } else if (event.type === "review-reopened") {
+    lead.assessment = lead.assessment
+      ? { ...lead.assessment, verdict: "ambiguous", reason: "무효 묶음에서 꺼냈어요. 다시 확인해 주세요." }
+      : null;
+    lead.workflow = "decision-pending";
   }
   next.events.push(event);
   return { ok: true, state: next };
