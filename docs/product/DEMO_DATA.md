@@ -20,15 +20,17 @@ v0.2 변경: 국가를 여러 나라로 섞었다(HJ 요청). 업종을 의료�
 
 ## 업종 기준 (HJ 결정 2026-11-18: 의료로 제한하지 않는다)
 
-업종은 **무효의 근거가 아니라 참고 신호**다. 판정은 실재, 도메인, 메모 의도로 한다.
+업종은 **판정에 쓰지 않는 참고 사항**이다(HJ 2026-11-18). 카드에 "업종: 자동차(주요 고객 업종 아님)"처럼 보여 줄 뿐, 판정은 실재·도메인·메모 의도로만 한다.
 
-| 소속 업종 | 메모가 구매·검토 의도 | 메모가 영업·제휴·입점 제안 | 메모가 과제·논문·채용 |
-|---|---|---|---|
-| 주요 고객 업종(병원·의원, 치과, 연구소, 대학 연구실, 제약·바이오, 의료기기 유통) | 유효 후보 | 무효 | 무효 |
-| 그 밖의 업종(자동차, 금융, 유통 등) | 애매(전화 확인. 예: 사내 부속의원) | 무효 | 무효 |
+| 메모 의도 | 처리 |
+|---|---|
+| 구매·검토 | 실재·도메인이 맞으면 유효 |
+| 제휴·협업 제안 | **제휴 확인**: "제휴 세부 사항을 이메일로 알려 주세요" 자동 메일 발송 후 회신 대기 |
+| 판매·영업(상대가 우리에게 팔려는 것) | 무효 |
+| 과제·논문·채용 | 무효 |
+| 비어 있음·알 수 없음 | 애매 |
 
-- "주요 고객 업종" 목록은 서비스 정책이라 **설정에서 상품별로 바꿀 수 있다.**
-- 메모가 비어 있거나 의도를 알 수 없으면 업종과 관계없이 애매.
+- "주요 고객 업종" 목록은 설정에서 상품별로 바꿀 수 있다(참고 표시용).
 
 ## 딜러 7곳과 최근 90일 전달 내역 요약 (가상)
 
@@ -46,6 +48,20 @@ v0.2 변경: 국가를 여러 나라로 섞었다(HJ 요청). 업종을 의료�
 
 딜러 없음: 호주, 영국, 스웨덴, 베트남, 인도, 프랑스.
 
+## 세일즈 담당자 5명과 인접 국가 (가상)
+
+| 담당자 | 맡는 나라 |
+|---|---|
+| 담당 KR | 대한민국 |
+| 담당 JP | 일본 |
+| 담당 US | 미국 |
+| 담당 EU | 독일, 프랑스, 영국, 스웨덴 |
+| 담당 SEA | 베트남, 말레이시아, 인도네시아 |
+
+담당자가 없는 나라: 싱가포르, 호주, 인도. 인접 국가(설정에서 바꿈): 싱가포르 → 말레이시아·인도네시아, 호주 → 인도네시아, 인도 → 없음.
+
+**인접 국가 담당자 문의 (HJ 결정 2026-11-18):** 리드 국가에 쓸 만한 딜러가 이력 적은 신규 딜러뿐이면, 미리내는 바로 넘기지 않고 **인접 국가 세일즈 담당자에게 확인 요청**을 보낸다("싱가포르 리드, 신규 딜러 S Medical Pte에 넘겨도 될까요?"). 담당자가 답하면 그대로 진행한다.
+
 전달 내역 개별 행(날짜, 기관, 결과)은 위 요약과 맞게 Cap이 생성한다. 날짜는 2026-08-20 ~ 2026-11-17 안, 기관은 아래 리드와 겹치지 않게.
 
 ## 리드 30건
@@ -59,13 +75,13 @@ v0.2 변경: 국가를 여러 나라로 섞었다(HJ 요청). 업종을 의료�
 | L01 | 서울대학교병원 | 실제 | mrn-demo-01@snuh.org | 대한민국 | PM-50 | 중환자실 모니터 12대 교체 예정, 견적 요청 | 유효 | 유효 → A Medical | |
 | L02 | The University of Tokyo Hospital | 실제 | mrn-demo-02@h.u-tokyo.ac.jp | 일본 | US-200 | Budget approved this year, requesting a demo | 유효 | 유효 → J Medica | |
 | L03 | Cleveland Clinic | 실제, 도메인 주의 | mrn-demo-03@ccf.org | 미국 | PM-50 | Replacing monitors in the new wing, decision next month | 유효 | 유효 → V MedSource (U는 미응답 1) | |
-| L04 | Fraunhofer-Gesellschaft | 실제 | mrn-demo-04@fraunhofer.de | 독일 | US-200 | Our lab is evaluating ultrasound for a research project, please send a quote | 유효(병원 아님) | 유효 → E Medtech GmbH | |
+| L04 | Fraunhofer-Gesellschaft | 실제 | mrn-demo-04@fraunhofer.de | 독일 | US-200 | Our lab is evaluating ultrasound for a research project, please send a quote | 유효(병원 아님) | 유효 → E Medtech GmbH | 같음 |
 | L05 | 강남세브란스병원 | 실제, 도메인 주의 | mrn-demo-05@yuhs.ac | 대한민국 | US-200 | 기존 장비 노후, 교체 견적 | 유효 | 유효 → A Medical (이전 거래 D Medi는 미응답 3) | |
 | L07 | The Royal Melbourne Hospital | 실제, 도메인 주의 | mrn-demo-07@mh.org.au | 호주 | PM-50 | Planning to purchase 6 units next quarter | 유효(딜러 없음) | 유효 → 딜러 없음, 담당자 직접 처리 | |
 | L08 | Mayo Clinic | 실제 | mrn-demo-08@gmail.com | 미국 | US-200 | price? | 애매: 무료 메일 | 애매 → 전화 필요 | |
 | L09 | Guy's and St Thomas' NHS Foundation Trust | 실제, 도메인 주의 | mrn-demo-09@gstt.nhs.uk | 영국 | PM-50 | For reference only | 애매: 의향 없음 | 애매 → 전화 필요 | |
 | L10 | 삼성서울병원 | 실제 | mrn-demo-10@naver.com | 대한민국 | PM-50 | 카탈로그 요청 | 애매: 무료 메일 | 애매 → 전화 필요 | |
-| L11 | Toyota Motor Corporation | 실제, 도메인 주의 | mrn-demo-11@mail.toyota.co.jp | 일본 | PM-50 | 社内診療所用に2台検討しています | 애매: 그 밖의 업종 + 구매 의도 | 애매 → 전화 필요 | |
+| L11 | Toyota Motor Corporation | 실제, 도메인 주의 | mrn-demo-11@mail.toyota.co.jp | 일본 | PM-50 | 社内診療所用に2台検討しています | 유효(업종은 참고) | 유효 → J Medica | 같음 (업종은 참고 사항) |
 | L12 | Charité – Universitätsmedizin Berlin | 실제 | mrn-demo-12@charite.de | 대한민국 | PM-50 | Interested in a demo | 국가 확인 | 국가 확인 메일 → 회신 대기 | |
 | L13 | Vinmec International Hospital | 실제 | mrn-demo-13@vinmec.com | 미국 | US-200 | Quotation please | 국가 확인 | 국가 확인 메일 → 회신 대기 | |
 | L14 | Apollo Hospitals | 실제 | mrn-demo-14@apollohospitals.com | 일본 | PM-50 | Need pricing for 10 units | 국가 확인 | 국가 확인 메일 → 회신 대기 | |
@@ -75,9 +91,9 @@ v0.2 변경: 국가를 여러 나라로 섞었다(HJ 요청). 업종을 의료�
 | L18 | Zxq Medical Group | 가상 | mrn-demo-18@zxq-medical.test | 미국 | US-200 | Bulk purchase possible, contact me | 무효: 실재하지 않음 | 무효 | |
 | L19 | Mirinae Demo Clinic | 가상 | mrn-demo-19@mirinae-demo.test | 베트남 | IS-3 | Considering adoption this year | 무효: 실재하지 않음(메모는 그럴듯함) | 무효 | |
 | L20 | Sakura Test Hospital | 가상 | mrn-demo-20@sakura-test.test | 일본 | PM-50 | 見積もりをお願いします | 무효: 실재하지 않음 | 무효 | |
-| L21 | HSBC | 실제 | mrn-demo-21@hsbc.com | 영국 | PM-50 | We'd like to offer corporate banking services | 무효: 영업 제안 | 무효 | |
-| L22 | 현대자동차 | 실제 | mrn-demo-22@hyundai.com | 대한민국 | PM-50 | 협업 제안드립니다 | 무효: 제휴 제안 | 무효 | |
-| L23 | Pfizer | 실제 | mrn-demo-23@pfizer.com | 미국 | US-200 | Proposal for a co-marketing partnership | 무효: 제휴 제안(주요 고객 업종이지만) | 무효 | |
+| L21 | HSBC | 실제 | mrn-demo-21@hsbc.com | 영국 | PM-50 | We'd like to offer corporate banking services | 무효: 판매·영업 | 무효 | |
+| L22 | 현대자동차 | 실제 | mrn-demo-22@hyundai.com | 대한민국 | PM-50 | 협업 제안드립니다 | 제휴 확인 | 제휴 상세 요청 메일 → 회신 대기 | 같음 (L23과 같은 규칙) |
+| L23 | Pfizer | 실제 | mrn-demo-23@pfizer.com | 미국 | US-200 | Proposal for a co-marketing partnership | 제휴 확인 | 제휴 상세 요청 메일 → 회신 대기 | 같음 (HJ 결정) |
 | L24 | Massachusetts Institute of Technology | 실제 | mrn-demo-24@mit.edu | 미국 | US-200 | Need specs for a class project | 무효: 학생 | 무효 | |
 | L25 | 연세대학교 | 실제 | mrn-demo-25@yonsei.ac.kr | 대한민국 | US-200 | 졸업 논문 자료 요청 | 무효: 학생 | 무효 | |
 | L26 | The University of Tokyo | 실제 | mrn-demo-26@u-tokyo.ac.jp | 일본 | PM-50 | Applying for a sales position | 무효: 구직 | 무효 | |
@@ -85,9 +101,11 @@ v0.2 변경: 국가를 여러 나라로 섞었다(HJ 요청). 업종을 의료�
 | L28 | 서울아산병원 | 실제 이름, 가짜 도메인 | mrn-demo-28@asan-medical.test | 대한민국 | US-200 | 급히 견적 필요, 선입금 가능 | 무효: 사칭 의심 | 무효(도메인 불일치) | |
 | L29 | Cleveland Clinic | 실제 이름, 가짜 도메인 | mrn-demo-29@clevelandclinic-mail.test | 미국 | PM-50 | Urgent order, reply to this address only | 무효: 사칭 의심 | 무효(도메인 불일치) | |
 | L30 | Karolinska University Hospital | 실제 이름, 가짜 도메인 | mrn-demo-30@karolinska-hospital.test | 스웨덴 | US-200 | Large order, payment in advance | 무효: 사칭 의심 | 무효(도메인 불일치) | |
-| L06 | Singapore General Hospital | 실제 | mrn-demo-06@sgh.com.sg | 싱가포르 | PM-50 | Tender closes next week, need specs by Friday | 유효(놓칠 뻔한 리드) | 유효 → S Medical Pte (이력 적음 표시) | |
+| L06 | Singapore General Hospital | 실제 | mrn-demo-06@sgh.com.sg | 싱가포르 | PM-50 | Tender closes next week, need specs by Friday | 유효(놓칠 뻔한 리드) | 유효 → 인접 국가 담당자(담당 SEA)에게 신규 딜러 S Medical Pte 확인 요청 | 같음 (HJ 결정) |
 
-구성: 유효 7, 애매 4, 국가 확인 3, 무효 16. 국가 11곳, 실제 기관 23건, 가상 기관·소속 없음 7건.
+구성: 유효 8, 애매 3, 국가 확인 3, 제휴 확인 2, 무효 14. 국가 11곳, 실제 기관 23건, 가상 기관·소속 없음 7건.
+
+자동으로 나가는 메일(테스트 환경에서는 모두 테스트 수신함으로): 딜러용 리드 요약, 국가 확인(리드에게), 제휴 상세 요청(리드에게), 인접 국가 담당자 확인 요청(사내), 운영 알림.
 
 ## 판정 규칙에 주는 영향 (Cap 참고)
 
@@ -96,16 +114,16 @@ v0.2 변경: 국가를 여러 나라로 섞었다(HJ 요청). 업종을 의료�
   - 설정에 **기관 도메인 별칭**(기관명 → 알려진 도메인)을 두어 담당자가 한 번 고치면 다음부터 맞게 한다.
 - 이메일 도메인이 기관 도메인의 하위 도메인이면 일치로 본다(예: mail.toyota.co.jp, h.u-tokyo.ac.jp).
 - 리드 국가에 딜러가 없으면 "딜러 없음 → 담당자 직접 처리"(L07).
-- 이력 적은 딜러만 있는 나라는 그 딜러를 추천하되 "이력 적음"을 표시한다(L06).
+- 이력 적은 딜러만 있는 나라는 인접 국가 세일즈 담당자에게 확인 요청을 보낸다(L06).
+- 업종은 판정에 쓰지 않고 카드에 참고로만 보인다(L11).
 
 ## HJ에게 부탁
 
 "HJ 정답" 칸에 유효 / 애매 / 국가 확인 / 무효와 넘길 딜러를 적어 주세요. Tony 제안과 같으면 "같음"만 적어도 된다. 특히 볼 것:
 
-- L04(연구소, 병원 아님): 유효로 봐도 되나
-- L11(자동차 회사 + 사내 진료소 구매 의도): 애매가 맞나
-- L23(제약사지만 제휴 제안): 무효가 맞나
-- L06(신규 딜러만 있는 나라): 이력 적은 딜러에게 넘기는 게 맞나, 담당자 직접 처리가 맞나
+- ~~L04, L06, L11, L23~~ → HJ 답 반영(2026-11-18)
+- L07(호주, 딜러도 담당자도 없음): L06처럼 인접 국가 담당자(담당 SEA)에게 문의하나, 본사 담당자가 직접 처리하나
+- L21(HSBC, 우리에게 금융 상품을 팔려는 영업): 무효가 맞나(제휴 제안과 구분)
 
 ## 출처 (도메인 확인, 2026-11-18)
 
