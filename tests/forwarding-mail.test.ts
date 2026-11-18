@@ -37,7 +37,9 @@ test("five test templates identify the intended role and omit lead contact detai
   for (const [kind, label] of Object.entries(labels)) {
     const mail = renderForwardingMail(kind as MailKind, lead);
     assert.match(mail.subject, /^\[TEST\] L01 /);
-    assert.equal(mail.text.split("\n")[0], `가상 리드 테스트 메일, 원래 수신자: ${label}`);
+    const [notice, recipient] = mail.text.split("\n");
+    assert.equal(notice, "가상 리드, 실제 딜러에게 보내지 않음");
+    assert.equal(recipient, `원래 수신자: ${label}`);
     assert.ok(!mail.text.includes(lead.email));
     assert.ok(!mail.text.includes(lead.phone));
   }
