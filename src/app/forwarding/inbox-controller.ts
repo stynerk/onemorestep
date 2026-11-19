@@ -14,7 +14,7 @@ const eventBase = (leadId: string, at = Date.now()) => ({ id: crypto.randomUUID(
 
 type MailState = { message: string; pending: boolean };
 
-export function useInbox() {
+export function useInbox(publicDemo: boolean) {
   const [state, setState] = useState(createInitialForwardingState);
   const [ready, setReady] = useState(false);
   const [now, setNow] = useState(0);
@@ -62,6 +62,7 @@ export function useInbox() {
   }
 
   async function sendMail(event: ForwardingEvent, retryOf?: string) {
+    if (publicDemo) return;
     const key = event.id;
     if (mailing.current.has(key)) return;
     mailing.current.add(key);
@@ -242,7 +243,7 @@ export function useInbox() {
     setReady(true);
   }
 
-  return { state, ready, now, responseNow, simulatedNow, clearSimulation: () => setSimulatedNow(null),
+  return { state, ready, publicDemo, now, responseNow, simulatedNow, clearSimulation: () => setSimulatedNow(null),
     error, running, pending, mail, selected, setSelected, assess, assessAll, decide,
     bulkInvalid, reopen, saveReply, saveOutcome, simulateDeadline, approveReassignment, reset, mailFor };
 }
