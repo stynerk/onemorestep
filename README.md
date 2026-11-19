@@ -89,11 +89,19 @@ npm exec --offline -- tsx scripts/evaluate-forwarding.ts
 
 혼동행렬은 행이 정답, 열이 실제 판정이다. 판정 일치율은 전체, 딜러 추천 일치율은 정답에 딜러가 지정된 건, 배정 경로 일치율은 지역 담당자 확인·직접 처리까지 정답에 경로가 지정된 건을 분모로 삼는다. 유효→무효(놓침), 유효→애매(이관), 전체 애매, 불일치 목록과 저장 근거 상태를 함께 출력한다. 분모가 0이면 해당 일치율은 집계할 수 없다.
 
-평가 전용 70건은 HJ가 블라인드 라벨링을 끝낸 뒤 실행한다. 입력 파일은 운영 리드 필드 `id, name, email, phone, institution, country, product, memo, receivedAt`가 있는 JSON 배열이며 시연 리드 및 과거 전달 기록과 겹치지 않는 ID를 쓴다. 정답 파일은 `leadId, verdict, route, dealerId`가 있는 별도 배열이다. 딜러가 지정되면 `route`는 `dealer`이고 `dealerId`에는 시드의 딜러 ID가 들어간다. 지역 담당자 또는 운영의 경로 값은 각각 `manager-confirmation`, `manager-direct`, `operations` 중 하나이며 이때 `dealerId`는 `null`이다. 경로 정답이 없으면 `route`와 `dealerId`를 모두 `null`로 둔다. 명령은 두 파일의 70개 ID가 일대일로 맞아야 시연 30건, 평가 70건, 합계 100건을 저장 모드로 집계한다.
+평가 전용 70건은 HJ가 블라인드 라벨링을 끝낸 뒤 실행한다. 입력 파일은 운영 리드 필드 `id, name, email, phone, institution, country, product, memo, receivedAt`가 있는 JSON 배열이며 시연 리드 및 과거 전달 기록과 겹치지 않는 ID를 쓴다. 정답 파일은 `leadId, verdict, route, dealerId`가 있는 별도 배열이다. 딜러가 지정되면 `route`는 `dealer`이고 `dealerId`에는 시드의 딜러 ID가 들어간다. 지역 담당자 또는 운영의 경로 값은 각각 `manager-confirmation`, `manager-direct`, `operations` 중 하나이며 이때 `dealerId`는 `null`이다. 경로 정답이 없으면 `route`와 `dealerId`를 모두 `null`로 둔다. 명령은 두 파일의 70개 ID가 일대일로 맞아야 시연 30건, 평가 70건, 합계 100건을 집계한다. 아래 명령의 기본 모드는 저장 근거다.
 
 ```powershell
 npm exec --offline -- tsx scripts/evaluate-forwarding.ts --held-out .\eval-inputs.json .\eval-labels.json
 ```
+
+실시간 평가는 `--live`를 명시하고 프로세스 환경에 `LINER_API_KEY`를 설정했을 때 실행한다. 아래 예시는 로컬 설정 파일을 Node에 명시적으로 로드한다. 70건의 라벨과 입력을 모두 검증한 뒤 시연 30건과 평가 70건에 같은 모드를 적용한다. 이미 저장한 근거가 없는 새 기관에도 Liner 요청이 나간다.
+
+```powershell
+node --env-file=.env.local --import tsx scripts/evaluate-forwarding.ts --live --held-out .\eval-inputs.json .\eval-labels.json
+```
+
+출력의 `upstream`은 실제 시도한 요청 수, HTTP 상태별 건수, 응답을 받기 전 실패한 건수를 보여 준다. 재시도가 있으면 별도 요청으로 센다. `externalStatuses`는 리드별 검색 완료·실패 등을 따로 센다. HTTP 성공 응답의 본문 검증에 실패한 경우도 리드별 검색 실패에 잡힌다.
 
 ## 장면 6 딜러 결과 입력 (#30)
 
