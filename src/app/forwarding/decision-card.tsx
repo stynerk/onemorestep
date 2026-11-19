@@ -242,7 +242,8 @@ export function DecisionCard({ lead, inbox }: { lead: LeadInput; inbox: InboxCon
           onClick={() => inbox.simulateDeadline(lead)}>기한 경과 시뮬레이션</button>}
         {delivery && <><p>현재 결과 · {outcomeLabels[delivery.outcome]}</p><OutcomeForm key={delivery.id} delivery={delivery} saveOutcome={inbox.saveOutcome} disabled={disabled} /></>}
       </section>}
-      {runMail.length > 0 && <section aria-live="polite"><h3>테스트 메일</h3>
+      {runMail.length > 0 && inbox.publicDemo && <section><h3>테스트 메일</h3><p>공개 시연에서는 메일을 보내지 않습니다.</p></section>}
+      {runMail.length > 0 && !inbox.publicDemo && <section aria-live="polite"><h3>테스트 메일</h3>
         {runMail.map(({ id, kind, dealerName, delivery, status: mailStatus, retry }) => <div className="mail-row" key={id}>
           <p><strong>{mailLabels[kind]}{dealerName && " · " + dealerName}</strong> · {mailStatus?.message ?? (delivery ? statusLabels[delivery.status] : "상태 확인 필요")}</p>
           {!mailStatus?.pending && (!delivery || delivery.status === "failed") &&

@@ -1,4 +1,4 @@
-import { dispatchForwardingMail } from "../../../../lib/forwarding/forwarding-mail.server";
+import { isPublicDemo } from "../../../../lib/demo-mode";
 import { mailKindFor } from "../../../../lib/forwarding/inbox";
 import { forwardingPolicy } from "../../../../lib/forwarding/policy";
 import { createInitialForwardingState } from "../../../../lib/forwarding/seed";
@@ -11,6 +11,9 @@ const headers = { "Cache-Control": "no-store" };
 const invalid = () => Response.json({ message: "시연 업무 기록을 확인할 수 없습니다." }, { status: 400, headers });
 
 export async function POST(request: Request) {
+  if (isPublicDemo()) {
+    return Response.json({ code: "public-demo", message: "공개 시연에서는 메일을 보내지 않습니다." }, { status: 403, headers });
+  }
   const origin = request.headers.get("origin");
   const url = new URL(request.url);
   const incomingHost = request.headers.get("host") ?? url.host;
@@ -42,6 +45,7 @@ export async function POST(request: Request) {
     ? "operations" : mailKindFor(event);
   if (!kind) return invalid();
   const retryOf = "retryOf" in input && typeof input.retryOf === "string" ? input.retryOf : undefined;
+  const { dispatchForwardingMail } = await import("../../../../lib/forwarding/forwarding-mail.server");
   const result = await dispatchForwardingMail({ eventId: event.id, leadId: event.leadId, kind, retryOf });
   return Response.json(result.event ? { ...result, event: { ...result.event, causeEventId: event.id } } : result,
     { status: result.event ? 200 : 409, headers });

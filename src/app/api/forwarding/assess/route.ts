@@ -1,3 +1,4 @@
+import { linerRuntimeSettings } from "../../../../lib/demo-mode";
 import { createAssessmentService } from "../../../../lib/forwarding/assessment-service";
 import { locales } from "../../../../lib/forwarding/institution-policy";
 import { createInitialForwardingState } from "../../../../lib/forwarding/seed";
@@ -36,9 +37,6 @@ export async function POST(request: Request): Promise<Response> {
   }
   // The submitted reply note stays in browser storage. Only the confirmed intent changes.
   const memo = "partnershipPurchase" in body ? "회신에서 구매 견적 요청을 확인함" : lead.memo;
-  const result = await service.assess({ ...lead, country, memo }, {
-    mode: process.env.LINER_MODE,
-    apiKey: process.env.LINER_API_KEY,
-  });
+  const result = await service.assess({ ...lead, country, memo }, linerRuntimeSettings());
   return Response.json({ leadId: lead.id, ...result }, { headers });
 }
