@@ -101,7 +101,7 @@ test("the single policy holds configurable defaults, five regions and source-bac
   assert.deepEqual(forwardingPolicy.institutionDomainAliases.map((row) => row.emailDomain).sort(), ["ccf.org", "mh.org.au", "gstt.nhs.uk", "mail.toyota.co.jp", "yuhs.ac"].sort());
   for (const alias of forwardingPolicy.institutionDomainAliases) assert.equal(new URL(alias.source).protocol, "https:");
   assert.equal(VERDICTS.length, 5);
-  assert.equal(WORKFLOW_STATES.length, 7);
+  assert.equal(WORKFLOW_STATES.length, 8);
 });
 
 test("decision, result, reply and mail events survive refresh and identical IDs apply only once", () => {

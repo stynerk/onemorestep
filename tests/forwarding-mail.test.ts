@@ -134,6 +134,30 @@ test("separate mail kinds for one business event each deliver only to the config
   assert.equal(new Set(first.map((row) => row.event?.id)).size, 5);
 });
 
+test("original and replacement dealer summaries for one lead each send once to the sole test inbox", async (t) => {
+  const directory = await tempDirectory(t);
+  const mailboxes: string[] = [];
+  const options = {
+    directory, env: () => env, log: () => {},
+    send: async (_settings: unknown, mailbox: string) => {
+      mailboxes.push(mailbox);
+      return "sent" as const;
+    },
+  };
+  const first = createForwardingMailService(options);
+  const original = await first.dispatch(request);
+  const replacementRequest = { ...request, eventId: "reassign-demo-1" };
+  const replacement = await first.dispatch(replacementRequest);
+  assert.equal(original.code, "sent");
+  assert.equal(replacement.code, "sent");
+  assert.notEqual(original.event?.mailId, replacement.event?.mailId);
+
+  const restored = createForwardingMailService(options);
+  assert.deepEqual(await restored.dispatch(request), original);
+  assert.deepEqual(await restored.dispatch(replacementRequest), replacement);
+  assert.deepEqual(mailboxes, [inbox, inbox]);
+});
+
 test("missing settings and authentication failure return UI-safe statuses and permit one explicit retry per failed attempt", async (t) => {
   const directory = await tempDirectory(t);
   let ready = false;

@@ -93,6 +93,12 @@ npm exec -- tsx scripts/evaluate-forwarding.ts
 
 L03(Cleveland Clinic)을 승인 대기로 두면 V MedSource 0.333이 U Health Supply 0.300보다 앞선다. V MedSource의 진행 중 이력 `delivery-034`을 미응답으로 한 번 저장하면 U Health Supply 0.300이 V MedSource 0.233보다 앞선다. 딜러 7곳과 전달 41건을 유지한다.
 
+## 기한 경과와 재배정 시연 (#41)
+
+`LINER_MODE=sample`에서 L03(Cleveland Clinic)을 판정하고 V MedSource 배정을 승인한다. 결정 기록에서 **기한 경과 시뮬레이션**을 누르면 기기 시각은 그대로이고, 문의함과 카드에 **재배정 제안**이 표시된다. U Health Supply가 다음 후보인지 확인하고 **재배정 승인**을 누른다. V MedSource의 미응답과 U Health Supply의 새 전달을 함께 저장한다. 테스트 메일에는 딜러별 요약 상태가 표시된다.
+
+기한은 전달한 한국 시각을 기준으로 `forwardingPolicy.responseBusinessDays`만큼 센다. 기본값은 업무일 1일이며 토·일요일은 건너뛴다. 아직 전달하지 않은 추천 후보가 없으면 지역 담당자가 직접 처리하고, 이력이나 전환 근거가 부족한 후보만 남으면 담당자 확인 후 배정한다. 시연 시각을 해제해도 승인한 시연 기록은 유지된다.
+
 - [기획 초안](docs/product/PLAN.md)
 - [기술 구조·공수·위험](docs/tech/ARCHITECTURE.md)
 - [Liner 공식 사양과 검증 상태](docs/tech/LINER_API.md)

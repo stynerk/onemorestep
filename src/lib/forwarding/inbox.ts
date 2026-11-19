@@ -34,6 +34,12 @@ export function confirmedCountry(state: ForwardingState, leadId: string) {
   return lastReply(state.events, leadId, "country")?.selection;
 }
 
+export function confirmedManagerDealer(state: ForwardingState, leadId: string) {
+  const latest = state.events.findLast((event) => event.leadId === leadId &&
+    (event.type === "reassigned" || (event.type === "reply" && event.kind === "manager-confirmation")));
+  return latest?.type === "reply" ? latest.selection : undefined;
+}
+
 export function maskEmail(email: string) {
   const [name, domain] = email.split("@");
   return domain ? name.slice(0, 2) + "•••@" + domain : "가림";
@@ -43,13 +49,19 @@ export function maskPhone(phone: string) {
   return phone.length > 4 ? "•••• " + phone.slice(-4) : "가림";
 }
 
-export function nextBusinessDate(date: string) {
-  const end = new Date(date);
-  for (let days = 0; days < forwardingPolicy.responseBusinessDays;) {
-    end.setUTCDate(end.getUTCDate() + 1);
-    if (end.getUTCDay() !== 0 && end.getUTCDay() !== 6) days += 1;
+const seoulWeekday = new Intl.DateTimeFormat("en-US", { weekday: "short", timeZone: forwardingPolicy.responseTimeZone });
+
+export function nextBusinessDate(date: string, businessDays: number = forwardingPolicy.responseBusinessDays) {
+  let end = Date.parse(date);
+  // Seoul uses a fixed UTC+09 offset during the demo dates, so a whole day preserves its wall clock.
+  for (let days = 0; days < businessDays; days += 1) {
+    let weekday: string;
+    do {
+      end += 86_400_000;
+      weekday = seoulWeekday.format(end);
+    } while (weekday === "Sat" || weekday === "Sun");
   }
-  return end.toISOString();
+  return new Date(end).toISOString();
 }
 
 export function hasStaleEvidence(assessment: Assessment, now: number) {
@@ -58,9 +70,35 @@ export function hasStaleEvidence(assessment: Assessment, now: number) {
 
 export function mailKindFor(event: ForwardingEvent): MailKind | null {
   if (event.type === "decision" && event.dealerId && (event.action === "approve" || event.action === "change-dealer")) return "dealer-summary";
+  if (event.type === "reassigned") {
+    if (event.target === "dealer") return "dealer-summary";
+    return event.target === "manager-confirmation" ? "manager-confirmation" : null;
+  }
   if (event.type !== "assessed") return null;
   if (event.assessment.verdict === "country-check") return "country-check";
   if (event.assessment.verdict === "partnership-check") return "partnership-check";
   if (event.workflow === "manager-confirmation-pending") return "manager-confirmation";
   return null;
+}
+
+export const mailKindForLead = (event: ForwardingEvent, lead: LeadInput): MailKind | null =>
+  event.type === "assessed" && !Object.hasOwn(forwardingPolicy.countryRegions, lead.country) ? "operations" : mailKindFor(event);
+
+type MailDelivery = Extract<ForwardingEvent, { type: "mail-delivery" }>;
+
+export function mailRequestsFor(events: ForwardingEvent[], lead: LeadInput) {
+  const seen = new Set<MailKind>();
+  const requests = [];
+  for (const event of events) {
+    if (event.leadId !== lead.id) continue;
+    const kind = mailKindForLead(event, lead);
+    if (!kind) continue;
+    const first = !seen.has(kind);
+    if (event.type === "assessed" && !first) continue;
+    seen.add(kind);
+    const delivery = events.findLast((item): item is MailDelivery => item.type === "mail-delivery" && item.leadId === lead.id
+      && item.kind === kind && (item.causeEventId === event.id || (first && !item.causeEventId)));
+    requests.push({ event, kind, delivery });
+  }
+  return requests;
 }

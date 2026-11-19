@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { inboxBucket, inboxOrder, verdictLabels } from "../../lib/forwarding/inbox";
+import { forwardingPolicy } from "../../lib/forwarding/policy";
+import { reassignmentProposal } from "../../lib/forwarding/reassignment";
 import { VERDICTS, type LeadInput } from "../../lib/forwarding/types";
 import { DecisionCard } from "./decision-card";
 import { useInbox } from "./inbox-controller";
@@ -11,7 +13,7 @@ type Group = (typeof sections)[number];
 const title = (group: Group) => group === "new" ? "미판정" : verdictLabels[group];
 const rowState = {
   new: "미판정", "decision-pending": "결정 대기", "reply-pending": "회신 대기",
-  "manager-confirmation-pending": "담당자 확인", "dealer-assigned": "딜러 배정",
+  "manager-confirmation-pending": "담당자 확인", "manager-direct-pending": "담당자 직접 처리", "dealer-assigned": "딜러 배정",
   connected: "결과 기록", disqualified: "처리 완료",
 };
 
@@ -20,9 +22,13 @@ export default function Inbox() {
   const [filter, setFilter] = useState<Group | "all">("all");
   const [confirmReset, setConfirmReset] = useState(false);
   const { state } = inbox;
+  const overdue = new Set(inbox.ready
+    ? state.leads.filter((lead) => reassignmentProposal(state, lead, inbox.responseNow)).map((lead) => lead.id)
+    : []);
   const groups = Object.fromEntries(sections.map((group) => {
     const bucket = group === "new" ? null : group;
-    return [group, inboxOrder(state.leads.filter((lead) => inboxBucket(state, lead) === bucket), bucket)];
+    const ordered = inboxOrder(state.leads.filter((lead) => inboxBucket(state, lead) === bucket), bucket);
+    return [group, ordered.sort((a, b) => Number(overdue.has(b.id)) - Number(overdue.has(a.id)))];
   })) as Record<Group, LeadInput[]>;
   const shown = filter === "all" ? sections : [filter];
   const selected = state.leads.find((lead) => lead.id === inbox.selected);
@@ -60,6 +66,12 @@ export default function Inbox() {
           inbox.reset(); setFilter("all"); setConfirmReset(false);
         }}>초기화 확인</button>
       </div>}
+      {inbox.responseNow > inbox.now && <div className="feedback">
+        <p>{inbox.simulatedNow === null ? "저장된 시연 기록 기준" : "시연 시각"} · {new Intl.DateTimeFormat("ko-KR", {
+          timeZone: forwardingPolicy.responseTimeZone, dateStyle: "medium", timeStyle: "short",
+        }).format(inbox.responseNow)}</p>
+        {inbox.simulatedNow !== null && <button type="button" className="button button-light" onClick={inbox.clearSimulation}>시연 시각 해제</button>}
+      </div>}
       {inbox.error && <p className="feedback" role="alert">{inbox.error}</p>}
       <div className="board">
         <aside className="sidebar" aria-label="판정 그룹">
@@ -89,7 +101,9 @@ export default function Inbox() {
                 return <li key={lead.id} className={"lead" + (lead.id === selected?.id ? " selected" : "")}>
                   <button type="button" className="lead-button" aria-pressed={lead.id === selected?.id}
                     onClick={() => inbox.setSelected(lead.id)}>
-                    <span className="lead-meta"><span>{lead.id}</span><span>{inbox.pending.includes(lead.id) ? "조사 중…" : rowState[status.workflow]}</span></span>
+                    <span className="lead-meta"><span>{lead.id}</span>
+                      {overdue.has(lead.id) ? <span className="reassignment-label">재배정 제안</span>
+                        : <span>{inbox.pending.includes(lead.id) ? "조사 중…" : rowState[status.workflow]}</span>}</span>
                     <strong>{lead.institution || "소속 미기재"}</strong>
                     <span>{group === "invalid" ? status.assessment?.reason ?? "담당자 무효 처리" : lead.country + " · " + lead.product}</span>
                   </button>

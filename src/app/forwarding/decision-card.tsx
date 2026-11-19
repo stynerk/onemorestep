@@ -1,14 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { recommendDealer, type DealerScore } from "../../lib/forwarding/dealers";
-import { confirmedCountry, hasStaleEvidence, lastReply, maskEmail, maskPhone, nextBusinessDate, verdictLabels } from "../../lib/forwarding/inbox";
+import { dealerScore, recommendDealer, type DealerScore } from "../../lib/forwarding/dealers";
+import { confirmedCountry, confirmedManagerDealer, hasStaleEvidence, maskEmail, maskPhone, nextBusinessDate, verdictLabels } from "../../lib/forwarding/inbox";
 import { locales } from "../../lib/forwarding/institution-policy";
 import { renderForwardingMail } from "../../lib/forwarding/mail-template";
+import { forwardingPolicy } from "../../lib/forwarding/policy";
+import { currentDelivery, openAssignment, reassignmentProposal, type ReassignmentProposal } from "../../lib/forwarding/reassignment";
 import type { Assessment, DealerDelivery, DealerOutcome, LeadInput, MailKind, ReplyKind } from "../../lib/forwarding/types";
 import type { InboxController } from "./inbox-controller";
 
-const date = new Intl.DateTimeFormat("ko-KR", { timeZone: "Asia/Seoul", dateStyle: "medium", timeStyle: "short" });
+const date = new Intl.DateTimeFormat("ko-KR", { timeZone: forwardingPolicy.responseTimeZone, dateStyle: "medium", timeStyle: "short" });
 const time = (value: string) => date.format(new Date(value));
 const percent = new Intl.NumberFormat("ko-KR", { style: "percent", maximumFractionDigits: 1 });
 const score = (value: number | null) => value === null ? "집계 중" : value.toFixed(2);
@@ -47,7 +49,7 @@ function History({ record, saveOutcome, disabled }: {
       {record.deliveries.length ? <ul className="history-list">
         {record.deliveries.map((row) => <li key={row.id}>
           <span>{time(row.forwardedAt)} · {row.institution} · {outcomeLabels[row.outcome]}</span>
-          {(row.outcome === "in-progress" || row.id.startsWith("delivery:")) &&
+          {row.outcome === "in-progress" &&
             <OutcomeForm delivery={row} saveOutcome={saveOutcome} disabled={disabled} />}
         </li>)}
       </ul> : <p>전달 이력이 없습니다.</p>}
@@ -98,6 +100,29 @@ function ReplyForm({ formKey, kind, options, submit, disabled }: {
   </form>;
 }
 
+function ReassignmentCard({ proposal, approve, disabled }: {
+  proposal: ReassignmentProposal;
+  approve: () => void;
+  disabled: boolean;
+}) {
+  const { recommendation } = proposal;
+  const next = recommendation.route === "dealer" ? recommendation.ranked[0] : null;
+  return <section className="reassignment" aria-label="재배정 제안">
+    <h3>재배정 제안</h3>
+    <p>원래 딜러 <strong>{proposal.previous.name}</strong> · 응답 기한 {time(proposal.deadline)} 경과</p>
+    {next ? <>
+      <p>다음 순위 <strong>{next.dealer.name}</strong> · 점수 {score(next.score)}</p>
+      <p>최근 90일 전달 {next.forwarded}건 · 전환율 {next.conversionRate === null ? "—" : percent.format(next.conversionRate)}
+        {" · "}미응답 {next.noResponse}건 · {next.priorRelationship ? "이 기관과 거래 이력 있음" : "이 기관과 거래 이력 없음"}</p>
+    </> : recommendation.route === "manager-confirmation"
+      ? <p>다음 후보의 이력 또는 전환 근거가 부족합니다. {recommendation.manager.name}의 확인이 필요해요.</p>
+      : <p>배정 가능한 다음 딜러가 없습니다. {recommendation.manager.name}에게 직접 처리를 넘겨요.</p>}
+    <button type="button" className="button button-primary" disabled={disabled} onClick={approve}>
+      {next ? "재배정 승인" : "지역 담당자에게 넘기기"}
+    </button>
+  </section>;
+}
+
 export function DecisionCard({ lead, inbox }: { lead: LeadInput; inbox: InboxController }) {
   const [changeDealer, setChangeDealer] = useState(false);
   const [dealerId, setDealerId] = useState("");
@@ -107,7 +132,7 @@ export function DecisionCard({ lead, inbox }: { lead: LeadInput; inbox: InboxCon
   const assessment = status.assessment;
   const country = confirmedCountry(state, lead.id) ?? lead.country;
   const recommendation = recommendDealer(state, lead.id, { country });
-  const waitingDealer = lastReply(state.events, lead.id, "manager-confirmation")?.selection;
+  const waitingDealer = confirmedManagerDealer(state, lead.id);
   const ranked = recommendation?.route === "dealer" ? recommendation.ranked : [];
   const dealer = ranked[0]?.dealer ?? (recommendation?.route === "manager-confirmation"
     ? recommendation.candidates.find((row) => row.dealer.id === waitingDealer)?.dealer : undefined);
@@ -117,7 +142,14 @@ export function DecisionCard({ lead, inbox }: { lead: LeadInput; inbox: InboxCon
     ? recommendation.ranked.map((row) => row.dealer).filter((row) => row.id !== dealer?.id) : [];
   const latestDecision = state.events.findLast((event) => event.type === "decision" && event.leadId === lead.id);
   const assigned = state.dealers.find((entry) => entry.id === status.dealerId);
-  const delivery = state.deliveries.findLast((row) => row.leadId === lead.id && row.id.startsWith("delivery:"));
+  const delivery = currentDelivery(state, lead.id);
+  const active = openAssignment(state, lead.id);
+  const proposal = inbox.ready ? reassignmentProposal(state, lead, inbox.responseNow) : null;
+  const latestReassignment = state.events.findLast((event) => event.type === "reassigned" && event.leadId === lead.id);
+  const previousDelivery = latestReassignment?.type === "reassigned"
+    ? state.deliveries.find((row) => row.id === latestReassignment.previousDeliveryId) : undefined;
+  const previousDealer = state.dealers.find((entry) => entry.id === previousDelivery?.dealerId);
+  const previousScore = previousDealer && dealerScore(state, lead, previousDealer);
   const reference = state.priorRelationships.filter((row) => row.institution === lead.institution).length;
   const historicalCount = state.deliveries.filter((row) => row.institution === lead.institution).length;
   const replyKind = assessment?.verdict === "country-check" ? "country" : assessment?.verdict === "partnership-check" ? "partnership" :
@@ -153,6 +185,7 @@ export function DecisionCard({ lead, inbox }: { lead: LeadInput; inbox: InboxCon
     {!assessment ? <div className="card-body"><h3>문의 메모</h3><blockquote>{lead.memo}</blockquote>
       <button className="button button-primary" disabled={disabled} onClick={() => void inbox.assess(lead)}>{disabled ? "확인 중…" : "이 문의 판정"}</button>
     </div> : <div className="card-body">
+      {proposal && <ReassignmentCard proposal={proposal} disabled={disabled} approve={() => inbox.approveReassignment(lead, proposal)} />}
       <section className="recommendation"><p className="section-kicker">미리내 추천</p><h3>{recommendationText}</h3><p>{assessment.reason}</p></section>
       <section>
         <div className="section-heading"><h3>판정 근거</h3><span className={"verdict " + assessment.verdict}>{verdictLabels[assessment.verdict]}</span></div>
@@ -198,15 +231,20 @@ export function DecisionCard({ lead, inbox }: { lead: LeadInput; inbox: InboxCon
         <label htmlFor="change-reason">변경 이유</label><textarea id="change-reason" required maxLength={500} rows={2} value={reason} onChange={(event) => setReason(event.target.value)} />
         <button type="submit" className="button button-primary" disabled={disabled || !dealerId || !reason.trim()}>딜러 변경 기록</button>
       </form>}
-      {latestDecision?.type === "decision" && <section>
+      {(latestDecision || latestReassignment) && <section>
         <h3>결정 기록</h3>
-        <p>{latestDecision.reason} · {time(latestDecision.at)}</p>
-        {assigned && <p>딜러 응답 기한 {time(nextBusinessDate(latestDecision.at))}</p>}
-        {delivery && <><p>현재 결과 · {outcomeLabels[delivery.outcome]}</p><OutcomeForm delivery={delivery} saveOutcome={inbox.saveOutcome} disabled={disabled} /></>}
+        {latestDecision?.type === "decision" && <p>{latestDecision.reason} · {time(latestDecision.at)}</p>}
+        {latestReassignment?.type === "reassigned" && previousScore && <p>
+          {time(latestReassignment.at)} · {previousScore.dealer.name} 미응답 기록 · 최근 90일 미응답 {previousScore.noResponse}건 · 갱신 점수 {score(previousScore.score)}
+        </p>}
+        {active && <p>딜러 응답 기한 {time(nextBusinessDate(active.forwardedAt))} (한국 시간)</p>}
+        {active && !proposal && <button type="button" className="button button-light" disabled={disabled}
+          onClick={() => inbox.simulateDeadline(lead)}>기한 경과 시뮬레이션</button>}
+        {delivery && <><p>현재 결과 · {outcomeLabels[delivery.outcome]}</p><OutcomeForm key={delivery.id} delivery={delivery} saveOutcome={inbox.saveOutcome} disabled={disabled} /></>}
       </section>}
       {runMail.length > 0 && <section aria-live="polite"><h3>테스트 메일</h3>
-        {runMail.map(({ kind, delivery, status: mailStatus, retry }) => <div className="mail-row" key={kind}>
-          <p><strong>{mailLabels[kind]}</strong> · {mailStatus?.message ?? (delivery ? statusLabels[delivery.status] : "상태 확인 필요")}</p>
+        {runMail.map(({ id, kind, dealerName, delivery, status: mailStatus, retry }) => <div className="mail-row" key={id}>
+          <p><strong>{mailLabels[kind]}{dealerName && " · " + dealerName}</strong> · {mailStatus?.message ?? (delivery ? statusLabels[delivery.status] : "상태 확인 필요")}</p>
           {!mailStatus?.pending && (!delivery || delivery.status === "failed") &&
             <button type="button" className="button button-light" onClick={() => void retry()}>{delivery ? "다시 보내기" : "메일 상태 확인"}</button>}
         </div>)}
