@@ -5,6 +5,7 @@ export const forwardingPolicy = {
   aggregationDays: 90,
   minimumForwardedCount: 3,
   responseBusinessDays: 1,
+  responseTimeZone: "Asia/Seoul",
   weights: { noResponse: -0.1, priorRelationship: 0.1 },
   referenceDate: "2026-11-18T00:00:00.000Z",
   customerIndustries: {

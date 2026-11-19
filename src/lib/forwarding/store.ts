@@ -1,5 +1,8 @@
+import { locales } from "./institution-policy";
+import { mailKindForLead } from "./inbox";
+import { openAssignment, reassignmentProposal, reassignmentTarget } from "./reassignment";
 import { createInitialForwardingState } from "./seed";
-import { VERDICTS, WORKFLOW_STATES } from "./types";
+import { DOMAIN_CHECKS, EXTERNAL_STATUSES, MEMO_INTENTS, SOURCE_KINDS, VERDICTS, WORKFLOW_STATES } from "./types";
 import type { Assessment, ForwardingEvent, ForwardingState } from "./types";
 
 export const FORWARDING_STORAGE_KEY = "mirinae.forwarding.v1";
@@ -35,7 +38,19 @@ const isSource = (value: unknown): value is string => {
   try { const url = new URL(value); return ["http:", "https:"].includes(url.protocol) && !url.username && !url.password; } catch { return false; }
 };
 function isAssessment(value: unknown): value is Assessment {
-  return isObject(value) && exactly(value, ["verdict", "reason", "sources", "searchedAt", "mode"])
+  if (!isObject(value)) return false;
+  const fields = ["verdict", "reason", "sources", "searchedAt", "mode"];
+  if (Object.hasOwn(value, "details")) {
+    fields.push("details");
+    const details = value.details;
+    if (!isObject(details) || !exactly(details, ["domain", "countries", "industry", "memoIntent", "memoQuote", "externalStatus", "sourceKind"])
+      || !member(details.domain, DOMAIN_CHECKS) || !member(details.memoIntent, MEMO_INTENTS)
+      || !member(details.externalStatus, EXTERNAL_STATUSES) || !member(details.sourceKind, SOURCE_KINDS)
+      || !Array.isArray(details.countries) || details.countries.length > 20 || !details.countries.every((country) => isText(country, 80))
+      || !(details.industry === null || isText(details.industry, 80))
+      || !(details.memoQuote === null || isText(details.memoQuote, 200))) return false;
+  }
+  return exactly(value, fields)
     && member(value.verdict, VERDICTS) && isText(value.reason) && Array.isArray(value.sources)
     && value.sources.length <= 20 && value.sources.every(isSource) && isTimestamp(value.searchedAt)
     && member(value.mode, ["live", "saved"]);
@@ -45,7 +60,8 @@ function isAssessment(value: unknown): value is Assessment {
 export function isForwardingEvent(value: unknown, state: ForwardingState): value is ForwardingEvent {
   if (!isObject(value) || !isId(value.id) || !isId(value.leadId) || !isTimestamp(value.at)) return false;
   const common = ["id", "leadId", "at", "type"];
-  const leadExists = state.leads.some((lead) => lead.id === value.leadId);
+  const lead = state.leads.find((lead) => lead.id === value.leadId);
+  const leadExists = lead !== undefined;
   const dealerExists = (id: unknown) => id === null || state.dealers.some((dealer) => dealer.id === id);
   switch (value.type) {
     case "assessed":
@@ -54,27 +70,55 @@ export function isForwardingEvent(value: unknown, state: ForwardingState): value
       return leadExists && exactly(value, [...common, "action", "dealerId", "reason"])
         && member(value.action, ["approve", "change-dealer", "phone", "disqualify"]) && dealerExists(value.dealerId)
         && isText(value.reason) && (value.action !== "change-dealer" || value.dealerId !== null);
+    case "reassigned":
+      // The mail route checks shape against the seed. The browser store checks assignment lineage.
+      return leadExists && exactly(value, [...common, "previousDeliveryId", "target", "dealerId"])
+        && typeof value.previousDeliveryId === "string" && /^delivery:[a-zA-Z0-9][a-zA-Z0-9:_.-]{0,119}$/.test(value.previousDeliveryId)
+        && (value.target === "dealer" ? isId(value.dealerId) && dealerExists(value.dealerId)
+          : (value.target === "manager-confirmation" || value.target === "manager-direct") && value.dealerId === null);
     case "dealer-result": {
       const delivery = state.deliveries.find((row) => row.id === value.deliveryId);
       return exactly(value, [...common, "deliveryId", "dealerId", "outcome"]) && !!delivery
         && delivery.leadId === value.leadId && delivery.dealerId === value.dealerId
         && member(value.outcome, ["deal", "no-deal", "in-progress", "no-response"]);
     }
-    case "reply":
-      return leadExists && exactly(value, [...common, "kind", "text"])
+    case "reply": {
+      const fields = [...common, "kind", "text"];
+      if (Object.hasOwn(value, "selection")) {
+        fields.push("selection");
+        if (typeof value.selection !== "string") return false;
+        if (value.kind === "country" && !Object.hasOwn(locales, value.selection)) return false;
+        if (value.kind === "partnership" && !["purchase", "partnership"].includes(value.selection)) return false;
+        if (value.kind === "manager-confirmation" && !dealerExists(value.selection)) return false;
+      }
+      return leadExists && exactly(value, fields)
         && member(value.kind, ["country", "partnership", "manager-confirmation"]) && isText(value.text);
-    case "mail-delivery":
-      return leadExists && exactly(value, [...common, "mailId", "kind", "recipientKind", "status"])
+    }
+    case "review-reopened":
+      return leadExists && exactly(value, common);
+    case "mail-delivery": {
+      const fields = [...common, "mailId", "kind", "recipientKind", "status"];
+      if (Object.hasOwn(value, "causeEventId")) {
+        fields.push("causeEventId");
+        if (!lead || !isId(value.causeEventId) || !state.events.some((event) =>
+          event.id === value.causeEventId && event.leadId === lead.id && mailKindForLead(event, lead) === value.kind)) return false;
+      }
+      return leadExists && exactly(value, fields)
         && isId(value.mailId) && member(value.kind, ["dealer-summary", "country-check", "partnership-check", "manager-confirmation", "operations"])
         && member(value.recipientKind, ["dealer", "lead", "manager", "operations"])
         && member(value.status, ["sent", "failed", "unknown", "blocked"]);
+    }
     default:
       return false;
   }
 }
 
-/** Projection only: no assessment, scoring, SMTP, or network calls. */
+/** Validate a new action against the current assignment and policy before projection. */
 export function applyForwardingEvent(state: ForwardingState, input: unknown): StoreResult {
+  return projectEvent(state, input, true);
+}
+
+function projectEvent(state: ForwardingState, input: unknown, validateProposal: boolean): StoreResult {
   if (!isForwardingEvent(input, state)) return { ok: false, error: "invalid-event", state: structuredClone(state) };
   const existing = state.events.find((event) => event.id === input.id);
   if (existing) {
@@ -82,13 +126,38 @@ export function applyForwardingEvent(state: ForwardingState, input: unknown): St
     const same = canonical(existing) === canonical(input);
     return { ok: same, duplicate: same || undefined, error: same ? undefined : "invalid-event", state: structuredClone(state) };
   }
+  if (input.type === "review-reopened") {
+    const status = state.leadStates[input.leadId];
+    if (status.dealerId || (status.assessment?.verdict !== "invalid" && status.workflow !== "disqualified")) {
+      return { ok: false, error: "invalid-event", state: structuredClone(state) };
+    }
+  }
+  if (input.type === "reassigned") {
+    const previous = openAssignment(state, input.leadId);
+    if (previous?.id !== input.previousDeliveryId || input.at < previous.forwardedAt
+      || state.deliveries.some((row) => row.leadId === input.leadId && row.dealerId === input.dealerId)) {
+      return { ok: false, error: "invalid-event", state: structuredClone(state) };
+    }
+    // Replay the accepted choice even if the deadline or ranking policy has changed.
+    if (validateProposal) {
+      const lead = state.leads.find((row) => row.id === input.leadId)!;
+      const proposal = reassignmentProposal(state, lead, Date.parse(input.at));
+      const target = proposal && reassignmentTarget(proposal);
+      if (!target || target.target !== input.target || target.dealerId !== input.dealerId) {
+        return { ok: false, error: "invalid-event", state: structuredClone(state) };
+      }
+    }
+  } else if (input.type === "dealer-result" && state.events.some((event) =>
+    event.type === "reassigned" && event.previousDeliveryId === input.deliveryId)) {
+    return { ok: false, error: "invalid-event", state: structuredClone(state) };
+  }
   const event = structuredClone(input);
   const next = structuredClone(state);
   const lead = next.leadStates[event.leadId];
   if (event.type === "assessed") {
     lead.assessment = event.assessment;
     // Reassessment cannot revoke a human-approved assignment or completed decision.
-    if (!["dealer-assigned", "connected", "disqualified"].includes(lead.workflow)) lead.workflow = event.workflow;
+    if (!["dealer-assigned", "connected", "disqualified", "manager-direct-pending"].includes(lead.workflow)) lead.workflow = event.workflow;
   } else if (event.type === "decision") {
     lead.workflow = event.action === "disqualify" ? "disqualified" : event.action === "phone" ? "decision-pending" : event.dealerId ? "dealer-assigned" : "decision-pending";
     if (event.action === "approve" || event.action === "change-dealer") {
@@ -98,12 +167,27 @@ export function applyForwardingEvent(state: ForwardingState, input: unknown): St
         next.deliveries.push({ id: `delivery:${event.id}`, dealerId: event.dealerId, leadId: event.leadId, institution: inputLead.institution, forwardedAt: event.at, outcome: "in-progress" });
       }
     }
+  } else if (event.type === "reassigned") {
+    const previous = next.deliveries.find((row) => row.id === event.previousDeliveryId)!;
+    previous.outcome = "no-response";
+    lead.dealerId = event.dealerId;
+    if (event.target === "dealer") {
+      lead.workflow = "dealer-assigned";
+      next.deliveries.push({ ...previous, id: `delivery:${event.id}`, dealerId: event.dealerId, forwardedAt: event.at, outcome: "in-progress" });
+    } else {
+      lead.workflow = event.target === "manager-confirmation" ? "manager-confirmation-pending" : "manager-direct-pending";
+    }
   } else if (event.type === "dealer-result") {
     const delivery = next.deliveries.find((row) => row.id === event.deliveryId)!;
     delivery.outcome = event.outcome;
     if (lead && lead.dealerId === event.dealerId && (event.outcome === "deal" || event.outcome === "no-deal")) lead.workflow = "connected";
   } else if (event.type === "reply") {
     if (!["dealer-assigned", "connected", "disqualified"].includes(lead.workflow)) lead.workflow = "decision-pending";
+  } else if (event.type === "review-reopened") {
+    lead.assessment = lead.assessment
+      ? { ...lead.assessment, verdict: "ambiguous", reason: "무효 묶음에서 꺼냈어요. 다시 확인해 주세요." }
+      : null;
+    lead.workflow = "decision-pending";
   }
   next.events.push(event);
   return { ok: true, state: next };
@@ -116,7 +200,7 @@ function decode(raw: string): ForwardingState | null {
     if (!isObject(value) || !exactly(value, ["version", "events"]) || value.version !== FORWARDING_STORAGE_VERSION || !Array.isArray(value.events) || value.events.length > 10_000) return null;
     let state = createInitialForwardingState();
     for (const event of value.events) {
-      const result = applyForwardingEvent(state, event);
+      const result = projectEvent(state, event, false);
       if (!result.ok) return null;
       state = result.state;
     }

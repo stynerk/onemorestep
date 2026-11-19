@@ -1,4 +1,7 @@
-export type Source = { title: string; url: string; description: string };
+import { searchLiner } from "./liner-search";
+import type { Source } from "./liner-search";
+
+export type { Source } from "./liner-search";
 export type ResearchResult = {
   mode: "live" | "sample";
   query: string;
@@ -39,50 +42,26 @@ function sample(query: string, notice: string): ResearchResult {
   };
 }
 
-function parseSources(body: unknown): Source[] {
-  if (!body || typeof body !== "object" || !("results" in body) || !Array.isArray(body.results)) {
-    throw new Error("Invalid response");
-  }
-  return body.results.slice(0, 3).map((item: unknown) => {
-    if (!item || typeof item !== "object" || !("title" in item) || !("url" in item) ||
-      !("description" in item) || typeof item.title !== "string" ||
-      typeof item.url !== "string" || typeof item.description !== "string") {
-      throw new Error("Invalid source");
-    }
-    const url = new URL(item.url);
-    if (!["https:", "http:"].includes(url.protocol) || url.username || url.password) {
-      throw new Error("Unsafe source URL");
-    }
-    return { title: item.title, url: url.href, description: item.description };
-  });
-}
-
 export async function research(query: string, options: Options = {}): Promise<ResearchResult> {
   if (!validQuery(query)) throw new Error("Query must be 2–300 characters");
   query = query.trim();
-  if (options.mode !== "live") return sample(query, "예시 모드입니다.");
+  const mode = options.mode?.trim() || "auto";
+  if (mode === "sample") return sample(query, "예시 모드입니다.");
+  if (mode !== "auto" && mode !== "live") return sample(query, "알 수 없는 Liner 모드로 외부 호출을 하지 않았습니다.");
   if (!options.apiKey?.trim()) return sample(query, "API 키가 설정되지 않았습니다.");
 
-  try {
-    const response = await (options.fetcher ?? fetch)(
-      "https://platform.liner.com/api/v1/tools/search/web",
-      {
-        method: "POST",
-        headers: { "x-api-key": options.apiKey, "Content-Type": "application/json" },
-        body: JSON.stringify({ query, lang: "ko", country_code: "kr", max_results: 3, include_knowledge: false }),
-        signal: AbortSignal.timeout(options.timeoutMs ?? 8000),
-        cache: "no-store",
-      },
-    );
-    if (!response.ok) return sample(query, "실시간 조사를 완료하지 못했습니다.");
-    return {
-      mode: "live",
-      query,
-      notice: "Liner 실시간 검색 결과입니다.",
-      sources: parseSources(await response.json()),
-    };
-  } catch {
-    // Do not expose provider bodies, errors, headers, or credentials to the browser.
-    return sample(query, "실시간 조사 연결이 지연되거나 응답을 확인하지 못했습니다.");
+  const result = await searchLiner(query, {
+    apiKey: options.apiKey,
+    language: "ko",
+    countryCode: "kr",
+    fetcher: options.fetcher,
+    timeoutMs: options.timeoutMs,
+  });
+  if (!result.ok) {
+    const notice = result.reason === "timeout"
+      ? "실시간 조사 연결이 지연되거나 응답을 확인하지 못했습니다."
+      : "실시간 조사를 완료하지 못했습니다.";
+    return sample(query, notice);
   }
+  return { mode: "live", query, notice: "Liner 실시간 검색 결과입니다.", sources: result.sources };
 }
