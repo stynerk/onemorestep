@@ -79,46 +79,6 @@ function findCountries(sources: Source[], names: string[]): string[] {
     }) ? [country] : []);
 }
 
-const physicalLocationCue = /\baddress(?:es)?\s*(?:[:–—-]|(?:is\s+)?(?:in|at|on)\b)|주소|소재지|所在地|住所/iu;
-const nonPhysicalContext = /\b(?:insurance|insurer|coverage|medical tourism|travel(?:l?ing)? (?:from|to)|visitors? from|studied in|trained in|students? from|alumni|affiliated with|news|P\.?O\.? Box)\b|보험|의료\s*관광|유학|해외\s*연수|保険|医療ツーリズム|留学|bảo hiểm/iu;
-const streetPatterns = [
-  /\b\d{1,6}(?:[-/]\d{1,6})?,?\s+(?:[\p{L}\p{N}.'-]+\s+){1,7}(?:street|st|road|rd|avenue|ave|boulevard|blvd|drive|dr|way|lane|ln|place|pl|court|ct|square|sq|parkway|pkwy|highway|hwy)\b/iu,
-  /\b[\p{L}.-]*(?:straße|strasse|platz|allee|weg)\s+\d{1,6}\b/iu,
-  /^\s*(?:no\s+)?\d{1,6}(?:[-/]\d{1,6})*\s+\p{L}[^,;.]{2,65}(?=,\s*[^,;.]+,\s*[^,;.]+)/iu,
-];
-const eastAsianStreet = /[가-힣][가-힣\d]*(?:대로|로|길)\s*\d+|〒\s*\d{3}-\d{4}|[都道府県市区町村][^\s,;。]{1,40}\d{1,5}(?:丁目|番地|番|[-‐−])/u;
-const addressRegions: Record<string, RegExp> = {
-  미국: /\b(?:AL|AK|AZ|AR|CA|CO|CT|DE|DC|FL|GA|HI|ID|IL|IN|IA|KS|KY|LA|ME|MD|MA|MI|MN|MS|MO|MT|NE|NV|NH|NJ|NM|NY|NC|ND|OH|OK|OR|PA|RI|SC|SD|TN|TX|UT|VT|VA|WA|WV|WI|WY)\s+\d{5}(?:-\d{4})?\b/u,
-  대한민국: /경기도|부산광역시|대구광역시|인천광역시|광주광역시|대전광역시|울산광역시|세종특별자치시|\brep of korea\b/iu,
-  일본: /愛知県|豊田市|文京区|大阪府|京都府|北海道|神奈川県|福岡県/u,
-  베트남: /Việt Nam|Hà Nội/iu,
-};
-
-function findLiveCountries(sources: Source[], names: string[]): string[] {
-  const namePatterns = [...names].sort((left, right) => right.length - left.length).filter(Boolean)
-    .map((name) => new RegExp(name.normalize("NFKC").replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "giu"));
-  const found = new Set<string>();
-  for (const { title, description } of sources) {
-    // Keep street/country abbreviations inside the same address sentence.
-    const sentences = [title, description].flatMap((text) => text.normalize("NFKC")
-      .replace(/\bU\.S(?:\.A)?\./giu, "USA")
-      .replace(/\b(st|rd|ave|blvd|dr|ln|pl|ct|sq|pkwy|rep|no)\.(?=\s|,)/giu, "$1")
-      .split(/(?<=[.!?])\s+|[。！？\r\n;|·•]/u));
-    for (const sentence of sentences) {
-      if (unrelatedLocationCue.test(sentence) || nonPhysicalContext.test(sentence)) continue;
-      const street = streetPatterns.find((pattern) => pattern.test(sentence));
-      if (!physicalLocationCue.test(sentence) && !street && !eastAsianStreet.test(sentence)) continue;
-      // Place names within the institution or street name do not identify the address locality.
-      const locality = street ? sentence.replace(street, " ") : sentence;
-      const content = namePatterns.reduce((text, pattern) => text.replace(pattern, " "), locality);
-      for (const [country, [, , , pattern]] of Object.entries(locales)) {
-        if (pattern.test(content) || addressRegions[country]?.test(content)) found.add(country);
-      }
-    }
-  }
-  return Object.keys(locales).filter((country) => found.has(country));
-}
-
 function domainEvidence(institution: string, email: string, official: Source[], names: string[], domains: string[], sources: Source[]): [AssessmentDetails["domain"], string[]] {
   const match = /^[^\s@]+@([a-z0-9]+(?:[.-][a-z0-9]+)+)$/i.exec(email.trim());
   const emailDomain = match?.[1].toLowerCase();
@@ -150,8 +110,7 @@ export function classifyLead(lead: LeadInput, evidence: SearchEvidence): { asses
   const intent = intentRules.map(([name, pattern]) => [name, lead.memo.match(pattern)?.[0]] as const)
     .find(([, match]) => match);
   const memoIntent = intent?.[0] ?? "unknown";
-  const external = evidence.kind === "liner" || evidence.kind === "cache" || evidence.kind === "mixed";
-  const countries = external ? findLiveCountries(official, names) : findCountries(official, names);
+  const countries = findCountries(official, names);
   const industryText = official.map(({ title, description }) => title + " " + description).join(" ");
   const industry = industryRules.find(([, pattern]) => pattern.test(industryText))?.[0] ?? null;
   const result = (verdict: Verdict, reason: string) => ({

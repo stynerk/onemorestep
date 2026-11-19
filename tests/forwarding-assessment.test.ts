@@ -12,7 +12,7 @@ const getLead = (id: string) => leads.find((lead) => lead.id === id)!;
 const at = "2026-11-18T12:00:00.000Z";
 const live = { mode: "live", apiKey: "test-key" };
 const cleveland = { title: "Cleveland Clinic Locations", url: "https://my.clevelandclinic.org/locations", description: "Main campus address in Cleveland, Ohio." };
-const charite = { title: "Charité – Universitätsmedizin Berlin", url: "https://www.charite.de/en/", description: "University hospital address: Charitéplatz 1, 10117 Berlin, Germany." };
+const charite = { title: "Charité – Universitätsmedizin Berlin", url: "https://www.charite.de/en/", description: "The university hospital is located in Berlin, Germany." };
 const tokyo = { title: "The University of Tokyo Hospital", url: "https://www.h.u-tokyo.ac.jp/english/", description: "Hospital address in Tokyo, Japan." };
 const evidence = (sources: Source[]) => ({ sources, searchedAt: at, kind: "liner" as const, status: "complete" as const });
 const res = (sources: Source[]) => Response.json({ results: sources });
@@ -49,60 +49,9 @@ test("third-party and unrelated official content cannot confirm an institution d
   const noAddress = classifyLead(lead, evidence([{ ...tokyo, description: "Our hospital works with international partners from Japan and Australia." }]));
   assert.equal(noAddress.assessment.verdict, "ambiguous");
   assert.deepEqual(noAddress.assessment.details?.countries, []);
-  const multiple = classifyLead(lead, evidence([tokyo, { ...tokyo, description: "Second campus address in Australia." }]));
+  const multiple = classifyLead(lead, evidence([tokyo, { ...tokyo, description: "Second campus located in Australia." }]));
   assert.equal(multiple.assessment.verdict, "ambiguous");
   assert.deepEqual(multiple.assessment.details?.countries, ["일본", "호주"]);
-});
-
-test("Vinmec live location needs a physical address in the same sentence as the country", () => {
-  const lead = getLead("L13");
-  const vinmec = { title: "Vinmec Contact", url: "https://www.vinmec.com/eng/hospital/" };
-  const insurance = "Our hospital accepts United States travel insurance.";
-  const address = "458 Minh Khai, Vinh Tuy, Hai Ba Trung, Hà Nội, Việt Nam.";
-  for (const kind of ["liner", "cache", "mixed"] as const) {
-    for (const description of [
-      insurance,
-      "Our insurer's address is in New York, United States.",
-      "We welcome students from the United States.",
-      "The hospital is located in the United States.",
-      "Main campus in the United States.",
-      "Address: 88 London Road, Pune.",
-      "Main hospital address. Patients from the United States can book appointments.",
-      "Address: 458 Minh Khai. We serve patients from Vietnam.",
-    ]) {
-      const { assessment } = classifyLead(lead, { ...evidence([{ ...vinmec, description }]), kind });
-      assert.equal(assessment.verdict, "ambiguous", description);
-      assert.deepEqual(assessment.details?.countries, [], description);
-    }
-    const result = classifyLead(lead, { ...evidence([{ ...vinmec, description: insurance + " " + address }]), kind });
-    assert.equal(result.assessment.verdict, "country-check");
-    assert.deepEqual(result.assessment.details?.countries, ["베트남"]);
-    const conflict = classifyLead(lead, { ...evidence([
-      { ...vinmec, description: address },
-      { ...vinmec, description: "Second clinic address: 9500 Euclid Ave., Cleveland, OH 44195." },
-    ]), kind });
-    assert.equal(conflict.assessment.verdict, "ambiguous");
-    assert.deepEqual(conflict.assessment.details?.countries, ["미국", "베트남"]);
-  }
-  const locality = classifyLead(lead, evidence([{ ...vinmec, description: "Address: 88 London Road, Pune, India." }]));
-  assert.equal(locality.assessment.verdict, "country-check");
-  assert.deepEqual(locality.assessment.details?.countries, ["인도"]);
-});
-
-test("live official address formats work without a separate contact cue or country name", () => {
-  const examples = [
-    ["L03", cleveland.url, "9500 Euclid Ave., Cleveland, OH 44195.", "미국"],
-    ["L05", "https://sev.severance.healthcare/sev-en/about/network.do", "서울특별시 강남구 언주로 211", "대한민국"],
-    ["L02", tokyo.url, "〒113-8655 東京都文京区本郷7丁目3−1", "일본"],
-    ["L11", "https://global.toyota/en/company/profile/overview/", "愛知県豊田市トヨタ町1番地", "일본"],
-    ["L07", "https://www.thermh.org.au/contact", "300 Grattan St, Parkville VIC 3050", "호주"],
-  ] as const;
-  for (const [id, url, description, country] of examples) {
-    const lead = getLead(id);
-    const { assessment } = classifyLead(lead, evidence([{ title: lead.institution, url, description }]));
-    assert.equal(assessment.verdict, "valid", id);
-    assert.deepEqual(assessment.details?.countries, [country], id);
-  }
 });
 
 test("country check precedes partnership, and industry is informational on L11", () => {
