@@ -18,8 +18,8 @@ const rowState = {
   connected: "결과 기록", disqualified: "처리 완료",
 };
 
-export default function Inbox({ publicDemo }: { publicDemo: boolean }) {
-  const inbox = useInbox(publicDemo);
+export default function Inbox({ publicDemo, liveAssessment }: { publicDemo: boolean; liveAssessment: boolean }) {
+  const inbox = useInbox(publicDemo, liveAssessment);
   const [filter, setFilter] = useState<Group | "all">("all");
   const [confirmReset, setConfirmReset] = useState(false);
   const { state } = inbox;
@@ -107,7 +107,7 @@ export default function Inbox({ publicDemo }: { publicDemo: boolean }) {
                     <span className="lead-meta"><span>{lead.id}</span>
                       {overdue.has(lead.id) ? <span className="reassignment-label">재배정 제안</span>
                         : <span>{inbox.pending.includes(lead.id) ? "조사 중…" : rowState[status.workflow]}</span>}</span>
-                    <strong>{lead.institution || "소속 미기재"}</strong>
+                    <strong title={lead.institution}>{lead.institution || "소속 미기재"}</strong>
                     <span>{group === "invalid" ? status.assessment?.reason ?? "담당자 무효 처리" : lead.country + " · " + lead.product}</span>
                   </button>
                   {group === "invalid" && !status.dealerId && <button type="button" className="reopen"

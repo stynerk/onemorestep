@@ -12,7 +12,9 @@
     "start": "next start --hostname 127.0.0.1",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
-    "test": "tsx --test tests/*.test.ts"
+    "test": "tsx --test tests/*.test.ts tests/e2e/support/*.test.ts",
+    "test:e2e": "playwright test",
+    "test:e2e:live": "node tests/e2e/support/run-live.mjs"
   },
   "dependencies": {
     "next": "16.4.6",
@@ -21,6 +23,7 @@
     "react-dom": "19.3.1"
   },
   "devDependencies": {
+    "@playwright/test": "1.65.1",
     "@types/node": "24.19.2",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
