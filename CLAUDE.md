@@ -4,7 +4,7 @@
 
 ## 먼저 읽을 것
 
-역할과 공통 규칙의 정본은 hq 저장소(github.com/stynerk/hq)에 있다. PC에서는 `C:/Users/styne/orca/hq`. 구글 드라이브 `해커톤 출전팀` 폴더와 팀 로그 시트는 2026-11-16부터 보관용이므로 읽지 않는다.
+역할과 공통 규칙의 정본은 hq 저장소(github.com/stynerk/hq)에 있다. 로컬 hq는 프로젝트 본 폴더와 같은 상위 폴더에 둔다. 구글 드라이브 `해커톤 출전팀` 폴더와 팀 로그 시트는 2026-11-16부터 보관용이므로 읽지 않는다.
 
 1. hq `playbooks/session.md`의 시작 순서를 따른다.
 2. 역할: hq `agents/service-pm.md`
@@ -12,7 +12,7 @@
 4. 이 저장소: `docs/team/DECISIONS.md`, `docs/team/LEARNINGS.md`, `docs/team/HANDOFF_SERVICE.md`, `docs/team/HANDOFF_DEV.md`
 5. 열린 Issue와 PR
 
-PC에 hq가 아직 없으면 HJ에게 `git clone https://github.com/stynerk/hq C:/Users/styne/orca/hq`를 요청하고, 그동안은 이 문서와 `docs/team/`만으로 일한다.
+hq가 아직 없으면 HJ에게 프로젝트 본 폴더의 상위 폴더에서 `git clone https://github.com/stynerk/hq hq` 실행을 요청하고, 그동안은 이 문서와 `docs/team/`만으로 일한다.
 
 ## 서브에이전트
 

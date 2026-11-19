@@ -4,7 +4,7 @@
 
 ## 먼저 읽을 것
 
-역할과 공통 규칙의 정본은 hq 저장소(github.com/stynerk/hq)에 있다. PC에서는 `C:/Users/styne/orca/hq`. 구글 드라이브 팀 로그 시트는 2026-11-16부터 보관용이다.
+역할과 공통 규칙의 정본은 hq 저장소(github.com/stynerk/hq)에 있다. 로컬 hq는 프로젝트 본 폴더와 같은 상위 폴더에 둔다. 구글 드라이브 팀 로그 시트는 2026-11-16부터 보관용이다.
 
 1. hq `playbooks/session.md`의 시작 순서를 따른다.
 2. 역할: Cap은 hq `agents/dev-pm.md`. 서브에이전트는 hq `agents/subagents/`의 자기 정의(이 저장소의 `.codex/agents/`에 내보낸 사본이 생기면 그것).
@@ -12,7 +12,7 @@
 4. 이 저장소: `docs/team/HANDOFF_DEV.md`, `docs/team/LEARNINGS.md`, `docs/team/DECISIONS.md`
 5. `ready`, `changes-requested`, `qa` 라벨이 붙은 Issue
 
-PC에 hq가 아직 없으면 `git clone https://github.com/stynerk/hq C:/Users/styne/orca/hq`로 받는다.
+hq가 아직 없으면 프로젝트 본 폴더의 상위 폴더에서 `git clone https://github.com/stynerk/hq hq`를 실행한다.
 
 ## 이 저장소에서 지킬 것
 
