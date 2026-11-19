@@ -2,17 +2,15 @@
 
 import { useEffect, useRef, useState } from "react";
 import { recommendDealer, recordDealerOutcome } from "../../lib/forwarding/dealers";
-import { confirmedCountry, inboxBucket, lastReply, mailKindFor } from "../../lib/forwarding/inbox";
-import { forwardingPolicy } from "../../lib/forwarding/policy";
+import { confirmedCountry, confirmedManagerDealer, inboxBucket, lastReply, mailKindForLead, mailRequestsFor, nextBusinessDate } from "../../lib/forwarding/inbox";
+import { openAssignment, reassignmentTarget, responseClock, type ReassignmentProposal } from "../../lib/forwarding/reassignment";
 import { createInitialForwardingState } from "../../lib/forwarding/seed";
 import { createBrowserForwardingStore, type StoreResult } from "../../lib/forwarding/store";
-import type { Assessment, DecisionAction, DealerDelivery, DealerOutcome, ForwardingEvent, LeadInput, MailKind, ReplyKind, WorkflowState } from "../../lib/forwarding/types";
+import type { Assessment, DecisionAction, DealerDelivery, DealerOutcome, ForwardingEvent, LeadInput, ReplyKind, WorkflowState } from "../../lib/forwarding/types";
 import type { ForwardingMailResult } from "../../lib/forwarding/forwarding-mail.server";
 
 type Assessed = { assessment: Assessment; workflow: WorkflowState };
-const eventBase = (leadId: string) => ({ id: crypto.randomUUID(), at: new Date().toISOString(), leadId });
-const operationKind = (event: ForwardingEvent, lead: LeadInput): MailKind | null =>
-  event.type === "assessed" && !Object.hasOwn(forwardingPolicy.countryRegions, lead.country) ? "operations" : mailKindFor(event);
+const eventBase = (leadId: string, at = Date.now()) => ({ id: crypto.randomUUID(), at: new Date(at).toISOString(), leadId });
 
 type MailState = { message: string; pending: boolean };
 
@@ -20,6 +18,7 @@ export function useInbox() {
   const [state, setState] = useState(createInitialForwardingState);
   const [ready, setReady] = useState(false);
   const [now, setNow] = useState(0);
+  const [simulatedNow, setSimulatedNow] = useState<number | null>(null);
   const [error, setError] = useState("");
   const [running, setRunning] = useState(false);
   const [pending, setPending] = useState<string[]>([]);
@@ -41,7 +40,11 @@ export function useInbox() {
       setNow(Date.now());
       if (!loaded.ok) setError("저장된 시연 기록을 열 수 없습니다. 시연 초기화로 다시 시작해 주세요.");
     });
+    const timer = window.setInterval(() => setNow(Date.now()), 1000);
+    return () => window.clearInterval(timer);
   }, []);
+
+  const responseNow = responseClock(state, now, simulatedNow);
 
   function apply(result: StoreResult) {
     if (!result.ok) {
@@ -58,8 +61,8 @@ export function useInbox() {
     return result ? apply(result) : false;
   }
 
-  async function sendMail(event: ForwardingEvent, kind: MailKind, retryOf?: string) {
-    const key = event.leadId + ":" + kind;
+  async function sendMail(event: ForwardingEvent, retryOf?: string) {
+    const key = event.id;
     if (mailing.current.has(key)) return;
     mailing.current.add(key);
     setMail((previous) => ({ ...previous, [key]: { pending: true, message: "테스트 메일 처리 중…" } }));
@@ -72,7 +75,8 @@ export function useInbox() {
         signal: AbortSignal.timeout(20000),
       });
       const result = await response.json() as ForwardingMailResult;
-      if (result.event) append(result.event);
+      const delivery = result.event;
+      if (delivery && !store.current?.snapshot().events.some((item) => item.id === delivery.id)) append(delivery);
       if (typeof result.message === "string") message = result.message;
     } catch {
       // Mail delivery can be uncertain after a client-side timeout. The same event is queried on manual retry.
@@ -83,26 +87,17 @@ export function useInbox() {
   }
 
   function offerMail(event: ForwardingEvent, lead: LeadInput, previous: ForwardingEvent[]) {
-    const kind = operationKind(event, lead);
-    if (!kind || previous.some((item) => item.leadId === lead.id && operationKind(item, lead) === kind)) return;
-    void sendMail(event, kind);
+    const kind = mailKindForLead(event, lead);
+    if (!kind || (event.type === "assessed" && previous.some((item) => item.leadId === lead.id && mailKindForLead(item, lead) === kind))) return;
+    void sendMail(event);
   }
 
   function mailFor(lead: LeadInput) {
-    const requests = new Map<MailKind, ForwardingEvent>();
-    for (const event of state.events) {
-      if (event.leadId !== lead.id) continue;
-      const kind = operationKind(event, lead);
-      if (kind && !requests.has(kind)) requests.set(kind, event);
-    }
-    return [...requests].map(([kind, event]) => {
-      const latest = state.events.findLast((item) => item.type === "mail-delivery" && item.leadId === lead.id && item.kind === kind);
-      const delivery = latest?.type === "mail-delivery" ? latest : undefined;
-      return {
-        kind, delivery, status: mail[lead.id + ":" + kind],
-        retry: () => sendMail(event, kind, delivery?.status === "failed" ? delivery.id : undefined),
-      };
-    });
+    return mailRequestsFor(state.events, lead).map(({ kind, event, delivery }) => ({
+      id: event.id, kind, delivery, status: mail[event.id],
+      dealerName: event.type === "decision" || event.type === "reassigned" ? state.dealers.find((dealer) => dealer.id === event.dealerId)?.name : undefined,
+      retry: () => sendMail(event, delivery?.status === "failed" ? delivery.id : undefined),
+    }));
   }
 
   async function assess(lead: LeadInput) {
@@ -179,8 +174,31 @@ export function useInbox() {
     if (!snapshot || !ready) return;
     const status = snapshot.leadStates[lead.id];
     if (status.dealerId || status.workflow === "disqualified") return;
-    if ((action === "approve" || action === "change-dealer") && (!dealerId || status.assessment?.verdict !== "valid")) return;
-    const event: ForwardingEvent = { ...eventBase(lead.id), type: "decision", action, dealerId, reason };
+    if (action === "approve" || action === "change-dealer") {
+      const recommendation = recommendDealer(snapshot, lead.id, { country: confirmedCountry(snapshot, lead.id) });
+      const eligible = recommendation?.route === "dealer" && recommendation.ranked.some((row) => row.dealer.id === dealerId);
+      const confirmed = recommendation?.route === "manager-confirmation" && confirmedManagerDealer(snapshot, lead.id) === dealerId
+        && recommendation.candidates.some((row) => row.dealer.id === dealerId);
+      if (!eligible && !confirmed) return;
+    }
+    const event: ForwardingEvent = { ...eventBase(lead.id, responseClock(snapshot, Date.now(), simulatedNow)), type: "decision", action, dealerId, reason };
+    if (append(event)) offerMail(event, lead, snapshot.events);
+  }
+
+  function simulateDeadline(lead: LeadInput) {
+    const snapshot = store.current?.snapshot();
+    const delivery = snapshot && openAssignment(snapshot, lead.id);
+    if (!delivery) return;
+    setSimulatedNow((current) => Math.max(current ?? 0, Date.parse(nextBusinessDate(delivery.forwardedAt))));
+  }
+
+  function approveReassignment(lead: LeadInput, proposal: ReassignmentProposal) {
+    const snapshot = store.current?.snapshot();
+    if (!snapshot || !ready || openAssignment(snapshot, lead.id)?.id !== proposal.delivery.id) return;
+    const at = responseClock(snapshot, Date.now(), simulatedNow);
+    const event: ForwardingEvent = {
+      ...eventBase(lead.id, at), type: "reassigned", previousDeliveryId: proposal.delivery.id, ...reassignmentTarget(proposal),
+    };
     if (append(event)) offerMail(event, lead, snapshot.events);
   }
 
@@ -205,7 +223,12 @@ export function useInbox() {
   }
 
   function saveOutcome(delivery: DealerDelivery, outcome: Exclude<DealerOutcome, "in-progress">) {
-    if (store.current) apply(recordDealerOutcome(store.current, { ...eventBase(delivery.leadId), delivery, outcome }));
+    const snapshot = store.current?.snapshot();
+    if (store.current && snapshot) {
+      apply(recordDealerOutcome(store.current, {
+        ...eventBase(delivery.leadId, responseClock(snapshot, Date.now(), simulatedNow)), delivery, outcome,
+      }));
+    }
   }
 
   function reset() {
@@ -215,11 +238,13 @@ export function useInbox() {
     setError("");
     setSelected(null);
     setMail({});
+    setSimulatedNow(null);
     setReady(true);
   }
 
-  return { state, ready, now, error, running, pending, mail, selected, setSelected, assess, assessAll, decide,
-    bulkInvalid, reopen, saveReply, saveOutcome, reset, mailFor };
+  return { state, ready, now, responseNow, simulatedNow, clearSimulation: () => setSimulatedNow(null),
+    error, running, pending, mail, selected, setSelected, assess, assessAll, decide,
+    bulkInvalid, reopen, saveReply, saveOutcome, simulateDeadline, approveReassignment, reset, mailFor };
 }
 
 export type InboxController = ReturnType<typeof useInbox>;

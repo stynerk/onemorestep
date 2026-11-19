@@ -36,12 +36,13 @@ export async function POST(request: Request) {
   const event = input.event;
   const lead = demo.leads.find((row) => row.id === event.leadId);
   if (!lead) return invalid();
-  if (event.type === "decision" && !demo.dealers.some((dealer) =>
+  if ((event.type === "decision" || (event.type === "reassigned" && event.target === "dealer")) && !demo.dealers.some((dealer) =>
     dealer.id === event.dealerId && dealer.active && dealer.products.includes(lead.product))) return invalid();
   const kind = event.type === "assessed" && !Object.hasOwn(forwardingPolicy.countryRegions, lead.country)
     ? "operations" : mailKindFor(event);
   if (!kind) return invalid();
   const retryOf = "retryOf" in input && typeof input.retryOf === "string" ? input.retryOf : undefined;
   const result = await dispatchForwardingMail({ eventId: event.id, leadId: event.leadId, kind, retryOf });
-  return Response.json(result, { status: result.event ? 200 : 409, headers });
+  return Response.json(result.event ? { ...result, event: { ...result.event, causeEventId: event.id } } : result,
+    { status: result.event ? 200 : 409, headers });
 }

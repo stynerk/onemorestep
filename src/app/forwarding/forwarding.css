@@ -80,6 +80,8 @@ body:has(.workspace) { background: #f5f6fb; color: #18213a; margin: 0; }
 .card-body section + section { border-top: 1px solid #ecedf4; padding-top: 12px; }
 .card-body .recommendation { background: #f0edff; border-left: 3px solid #6558d6; border-radius: 8px; padding: 12px; }
 .recommendation h3 { color: #332882; font-size: 18px; }
+.card-body .reassignment { background: #fff6e6; border-left: 3px solid #bc7415; border-radius: 8px; padding: 12px; }
+.reassignment h3, .reassignment-label { color: #855609; font-weight: 800; }
 .section-kicker { color: #554aaa; font-size: 11px; font-weight: 800; }
 .section-heading, .dealer-entry-head, .mail-row, .inline-form { display: flex !important; align-items: center; justify-content: space-between; gap: 7px; }
 .evidence { display: grid; grid-template-columns: 1.35fr 1fr 1fr; gap: 6px; }

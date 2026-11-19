@@ -1,6 +1,6 @@
 export const VERDICTS = ["valid", "ambiguous", "country-check", "partnership-check", "invalid"] as const;
 export type Verdict = (typeof VERDICTS)[number];
-export const WORKFLOW_STATES = ["new", "decision-pending", "reply-pending", "manager-confirmation-pending", "dealer-assigned", "connected", "disqualified"] as const;
+export const WORKFLOW_STATES = ["new", "decision-pending", "reply-pending", "manager-confirmation-pending", "manager-direct-pending", "dealer-assigned", "connected", "disqualified"] as const;
 export type WorkflowState = (typeof WORKFLOW_STATES)[number];
 export type Product = "PM-50" | "US-200" | "IS-3";
 export type Region = "NA" | "LATAM" | "APAC" | "EU" | "MEA";
@@ -72,14 +72,18 @@ export type ReplyKind = "country" | "partnership" | "manager-confirmation";
 export type MailKind = "dealer-summary" | "country-check" | "partnership-check" | "manager-confirmation" | "operations";
 export type RecipientKind = "dealer" | "lead" | "manager" | "operations";
 export type MailStatus = "sent" | "failed" | "unknown" | "blocked";
+export type ReassignmentTarget =
+  | { target: "dealer"; dealerId: string }
+  | { target: "manager-confirmation" | "manager-direct"; dealerId: null };
 interface EventBase { id: string; leadId: string; at: string }
 export type ForwardingEvent =
   | (EventBase & { type: "assessed"; assessment: Assessment; workflow: WorkflowState })
   | (EventBase & { type: "decision"; action: DecisionAction; dealerId: string | null; reason: string })
+  | (EventBase & { type: "reassigned"; previousDeliveryId: string } & ReassignmentTarget)
   | (EventBase & { type: "dealer-result"; deliveryId: string; dealerId: string; outcome: DealerOutcome })
   | (EventBase & { type: "reply"; kind: ReplyKind; text: string; selection?: string })
   | (EventBase & { type: "review-reopened" })
-  | (EventBase & { type: "mail-delivery"; mailId: string; kind: MailKind; recipientKind: RecipientKind; status: MailStatus });
+  | (EventBase & { type: "mail-delivery"; mailId: string; kind: MailKind; recipientKind: RecipientKind; status: MailStatus; causeEventId?: string });
 
 export interface ForwardingState {
   leads: LeadInput[];
