@@ -12,7 +12,7 @@ if (environmentFiles.some((file) => existsSync(file))
   const require = createRequire(import.meta.url);
   const next = require.resolve("next/dist/bin/next");
   const result = spawnSync(process.execPath, [next, "build"], {
-    env: { ...process.env, MIRINAE_PUBLIC_BUILD: "1" },
+    env: { ...process.env, MIRINAE_DEMO_TARGET: "public" },
     stdio: "inherit",
   });
   if (result.error) console.error("Could not start the public demo build.");

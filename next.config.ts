@@ -5,7 +5,7 @@ const config: NextConfig = {
   agentRules: false,
   env: {
     // Only this literal deployment mode is compiled into the app.
-    MIRINAE_DEMO_TARGET: process.env.MIRINAE_PUBLIC_BUILD === "1" || process.env.VERCEL === "1" ? "public" : "local",
+    MIRINAE_DEMO_TARGET: process.env.MIRINAE_DEMO_TARGET === "public" || process.env.VERCEL === "1" ? "public" : "local",
   },
 };
 
