@@ -1,3 +1,4 @@
+import { linerRuntimeSettings } from "../../../lib/demo-mode";
 import { research, validQuery } from "../../../lib/research";
 
 export const runtime = "nodejs";
@@ -12,9 +13,6 @@ export async function POST(request: Request): Promise<Response> {
   if (!body || typeof body !== "object" || !("query" in body) || !validQuery(body.query)) {
     return Response.json({ error: "조사할 내용을 2~300자로 입력해 주세요." }, { status: 400 });
   }
-  const result = await research(body.query, {
-    mode: process.env.LINER_MODE,
-    apiKey: process.env.LINER_API_KEY,
-  });
+  const result = await research(body.query, linerRuntimeSettings());
   return Response.json(result, { headers: { "Cache-Control": "no-store" } });
 }

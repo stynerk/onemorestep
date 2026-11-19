@@ -53,6 +53,20 @@ npm start
 
 `npm start`는 빌드 후 프로덕션 서버를 로컬에 실행한다. 자동 테스트는 외부 API 호출과 비용 없이 실행된다.
 
+## 공개 시연 (#43)
+
+배포 주소는 HJ가 첫 배포를 마치고 확인한 뒤 여기에 기록한다. Vercel의 GitHub 연동을 선택해 현재 Next.js의 POST API를 사용한다. 연결된 프로젝트의 프로덕션 브랜치는 `main`이며, 저장소의 `vercel.json`이 프로덕션과 미리보기 모두 `npm run build:demo`를 실행하도록 설정한다. [Vercel 저장소 빌드 설정](https://vercel.com/docs/project-configuration/vercel-json)
+
+공개 화면은 **저장된 결과로 보는 시연 버전**이다. 시연 리드 30건의 판정 근거는 저장 자료를 사용하며, 결정·회신·재배정은 이 브라우저에 저장된다. 메일 발송은 화면과 API에서 차단한다. Vercel 환경에도 Liner·Gmail·테스트 수신함 설정을 두지 않는다. 심사위원이 실제 검색과 테스트 메일을 확인하려면 위의 로컬 실행과 아래 테스트 메일 설정을 사용한다.
+
+깨끗한 로컬 체크아웃에서 공개 버전을 확인한다. 공개 빌드는 `.env`, `.env.local`, `.env.production`, `.env.production.local` 파일이나 Liner·Gmail·테스트 수신함 값이 있으면 시작 전에 종료한다.
+
+```powershell
+npm ci
+npm run build:demo
+npm start
+```
+
 ## 세일즈 포워딩 데이터·저장 계층 (#28)
 
 `src/lib/forwarding/seed.ts`는 PR #23의 `1da2b58` 표에서 리드 30건, 딜러 7곳, 가상 전달 내역 41건을 새 객체로 만든다. L06은 마지막 접수다. 표의 `(빈칸)`은 빈 기관명으로, `카자흐스탄(지역 미지정)`은 국가명 `카자흐스탄`으로 정규화했다. 이름·전화는 `Demo L01`·`DEMO-NOT-A-PHONE-L01` 같은 명백한 가상 값이다. 딜러 상품 범위는 원문에 제한이 없어 시연 상품 세 종류를 모두 취급하는 가정이다. 기존 거래 관계는 현재 리드 기관과 겹치지 않는 90일 전달 내역과 별도로 보존한다.

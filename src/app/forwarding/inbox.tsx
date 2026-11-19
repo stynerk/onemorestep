@@ -7,6 +7,7 @@ import { reassignmentProposal } from "../../lib/forwarding/reassignment";
 import { VERDICTS, type LeadInput } from "../../lib/forwarding/types";
 import { DecisionCard } from "./decision-card";
 import { useInbox } from "./inbox-controller";
+import { PublicDemoResults } from "./public-demo-results";
 
 const sections = [...VERDICTS, "new"] as const;
 type Group = (typeof sections)[number];
@@ -17,8 +18,8 @@ const rowState = {
   connected: "결과 기록", disqualified: "처리 완료",
 };
 
-export default function Inbox() {
-  const inbox = useInbox();
+export default function Inbox({ publicDemo }: { publicDemo: boolean }) {
+  const inbox = useInbox(publicDemo);
   const [filter, setFilter] = useState<Group | "all">("all");
   const [confirmReset, setConfirmReset] = useState(false);
   const { state } = inbox;
@@ -59,6 +60,7 @@ export default function Inbox() {
         <button type="button" className="button button-primary run-button" disabled={!inbox.ready || inbox.running}
           onClick={() => void inbox.assessAll()}>{inbox.running ? "판정 중…" : assessed === state.leads.length ? "다시 판정" : "판정 시작"}</button>
       </div>
+      {publicDemo && <p className="feedback" role="status">저장된 결과로 보는 시연 버전 · 메일 발송 없음</p>}
       {confirmReset && <div className="feedback confirm" role="status">
         <p>이 브라우저의 판정, 결정, 회신 기록을 지울까요?</p>
         <button type="button" className="button button-light" onClick={() => setConfirmReset(false)}>취소</button>
@@ -73,6 +75,7 @@ export default function Inbox() {
         {inbox.simulatedNow !== null && <button type="button" className="button button-light" onClick={inbox.clearSimulation}>시연 시각 해제</button>}
       </div>}
       {inbox.error && <p className="feedback" role="alert">{inbox.error}</p>}
+      {publicDemo && <PublicDemoResults />}
       <div className="board">
         <aside className="sidebar" aria-label="판정 그룹">
           <div className="progress-block">
