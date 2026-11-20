@@ -2,7 +2,7 @@
 
 type Counts = { live: number; replayed: number; blocked: number };
 
-test("Liner 기록·재생은 문의함의 실제 판정 경로를 거친다", async ({ page }) => {
+test("S2-12 Liner 기록·재생은 문의함의 실제 판정 경로를 거친다", async ({ page }) => {
   await page.goto("/");
   await page.getByRole("button", { name: /^L03 미판정/ }).click();
   const request = page.waitForResponse((response) =>

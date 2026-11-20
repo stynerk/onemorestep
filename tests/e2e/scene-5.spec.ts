@@ -197,7 +197,7 @@ test("S5-11 L06 담당자 확인 전 승인 불가, 확인 메일 한 건", asyn
   expect(await storedEvents(page, "L06", "decision")).toEqual([]);
 });
 
-test("S5-12 공개 빌드는 브라우저에 배정만 저장하고 메일 API 자체도 403 차단", async ({ page }, testInfo) => {
+test("S5-12 · S5-13 공개 빌드는 브라우저에 배정만 저장하고 메일 API 자체도 403 차단", async ({ page }, testInfo) => {
   const browserMailRequests: string[] = [];
   page.on("request", (request) => {
     if (new URL(request.url()).pathname === mailPath) browserMailRequests.push(request.method());
