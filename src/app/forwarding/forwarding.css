@@ -57,6 +57,7 @@ body:has(.workspace) { background: #f5f6fb; color: #18213a; margin: 0; }
 .lead-button:hover { background: #f4f2ff; }
 .lead-button strong { min-width: 0; line-height: 1.23; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .lead-button > span { color: #59647f; font-size: 11px; }
+.lead-button .lead-handoff { color: #453b8d; font-weight: 700; overflow-wrap: anywhere; }
 .lead-meta { display: flex; justify-content: space-between; gap: 7px; }
 .reopen { margin: 0 0 9px 12px; padding: 1px 5px; color: #4539a7; background: #f7f5ff; border: 1px solid #ded9fa; border-radius: 4px; font-size: 11px !important; }
 .detail-column { min-width: 0; }
@@ -80,6 +81,9 @@ body:has(.workspace) { background: #f5f6fb; color: #18213a; margin: 0; }
 .card-body section + section { border-top: 1px solid #ecedf4; padding-top: 12px; }
 .card-body .recommendation { background: #f0edff; border-left: 3px solid #6558d6; border-radius: 8px; padding: 12px; }
 .recommendation h3 { color: #332882; font-size: 18px; }
+.handoff-summary { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 9px; margin: 3px 0 0; color: #3f357e; }
+.handoff-summary dt { font-size: 12px; }
+.handoff-summary dd { margin: 0; font-weight: 700; }
 .card-body .reassignment { background: #fff6e6; border-left: 3px solid #bc7415; border-radius: 8px; padding: 12px; }
 .reassignment h3, .reassignment-label { color: #855609; font-weight: 800; }
 .section-kicker { color: #554aaa; font-size: 11px; font-weight: 800; }

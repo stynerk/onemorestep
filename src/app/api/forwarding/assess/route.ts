@@ -37,6 +37,6 @@ export async function POST(request: Request): Promise<Response> {
   }
   // The submitted reply note stays in browser storage. Only the confirmed intent changes.
   const memo = "partnershipPurchase" in body ? "회신에서 구매 견적 요청을 확인함" : lead.memo;
-  const result = await service.assess({ ...lead, country, memo }, linerRuntimeSettings());
+  const result = await service.assess({ ...lead, country, memo }, { ...linerRuntimeSettings(), regionalCountry: lead.country });
   return Response.json({ leadId: lead.id, ...result }, { headers });
 }

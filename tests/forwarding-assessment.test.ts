@@ -28,7 +28,10 @@ test("official domains are checked at a dot boundary; lookalikes and ambiguous d
   assert.equal(actual.assessment.verdict, "valid");
   assert.equal(actual.assessment.details?.domain, "matched");
   const poisoned = classifyLead({ ...lead, email: "example@evil-u-tokyo.ac.jp" }, evidence([tokyo]));
-  assert.equal(poisoned.assessment.verdict, "invalid");
+  assert.equal(poisoned.assessment.verdict, "ambiguous");
+  assert.equal(poisoned.assessment.details?.domain, "suspicious");
+  assert.match(poisoned.assessment.reason, /사칭 의심/u);
+  assert.deepEqual(poisoned.assessment.handoff, { kind: "regional-sales", region: "APAC" });
   const unknown = classifyLead({ ...lead, email: "example@dominio.example" }, evidence([tokyo]));
   assert.equal(unknown.assessment.verdict, "ambiguous");
   assert.equal(unknown.assessment.details?.domain, "unverified");
@@ -36,7 +39,10 @@ test("official domains are checked at a dot boundary; lookalikes and ambiguous d
   assert.equal(alias.assessment.verdict, "valid");
   assert.ok(alias.assessment.sources.some((source) => source.includes("privacy-security")));
   const foreign = classifyLead({ ...lead, email: "example@charite.de" }, evidence([tokyo, charite]));
-  assert.equal(foreign.assessment.verdict, "invalid");
+  assert.equal(foreign.assessment.verdict, "ambiguous");
+  assert.equal(foreign.assessment.details?.domain, "suspicious");
+  assert.match(foreign.assessment.reason, /사칭 의심/u);
+  assert.deepEqual(foreign.assessment.handoff, { kind: "regional-sales", region: "APAC" });
 });
 
 test("third-party pages and unrelated official text do not supply institution location evidence", () => {
@@ -157,6 +163,31 @@ test("explicit and conflicting countries precede domain fallback, with a live pa
     assert.equal(classifyLead({ ...partner, email: "demo@unverified.example.jp" }, generic).assessment.verdict, "ambiguous");
     assert.equal(classifyLead(partner, { ...generic, kind: "curated" }).assessment.verdict, "ambiguous");
   }
+});
+
+test("institutional research collaboration requires trusted affiliation and differs from student and job inquiries", () => {
+  const lead = getLead("L02");
+  for (const memo of [
+    "우리 병원 연구팀에서 공동 연구를 제안합니다.",
+    "Our hospital research team proposes a joint research collaboration.",
+    "病院の研究チームとして共同研究を提案します。",
+  ]) {
+    const { assessment } = classifyLead({ ...lead, memo }, evidence([tokyo]));
+    assert.equal(assessment.verdict, "partnership-check", memo);
+    assert.deepEqual(assessment.handoff, { kind: "regional-sales", region: "APAC" }, memo);
+  }
+
+  const collaboration = { ...lead, memo: "Our hospital research team proposes a joint research collaboration." };
+  const unverified = classifyLead({ ...collaboration, email: "demo@unverified.example.test" }, evidence([tokyo]));
+  assert.equal(unverified.assessment.verdict, "ambiguous");
+  assert.equal(classifyLead({ ...collaboration, country: "대한민국" }, evidence([tokyo])).assessment.verdict, "country-check");
+
+  const student = classifyLead({ ...lead, memo: "I am a student asking for specs for my class project." }, evidence([tokyo]));
+  assert.equal(student.assessment.verdict, "invalid");
+  assert.deepEqual(student.assessment.handoff, { kind: "none" });
+  const applicant = classifyLead({ ...lead, memo: "Applying for a research position with interest in joint research." }, evidence([tokyo]));
+  assert.equal(applicant.assessment.verdict, "invalid");
+  assert.deepEqual(applicant.assessment.handoff, { kind: "hr" });
 });
 
 test("two successes without a match differ from partial failure, authentication failure, timeout and stored gaps", async () => {
@@ -321,6 +352,7 @@ test("assessment route accepts seed IDs only and its response survives store hyd
     assert.equal(assessment.verdict, "valid");
     assert.equal(assessment.mode, "saved");
     assert.equal(assessment.details.sourceKind, "curated");
+    assert.deepEqual(assessment.handoff, { kind: "dealer", dealerId: "dealer-e" });
     const storage = new Map<string, string>();
     const storeAdapter = {
       getItem: (key: string) => storage.get(key) ?? null,

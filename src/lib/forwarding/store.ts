@@ -1,8 +1,9 @@
 import { locales } from "./institution-policy";
+import { regionalSalesHandoff } from "./handoff";
 import { mailKindForLead } from "./inbox";
 import { openAssignment, reassignmentProposal, reassignmentTarget } from "./reassignment";
 import { createInitialForwardingState } from "./seed";
-import { DOMAIN_CHECKS, EXTERNAL_STATUSES, MEMO_INTENTS, SOURCE_KINDS, VERDICTS, WORKFLOW_STATES } from "./types";
+import { DOMAIN_CHECKS, EXTERNAL_STATUSES, MEMO_INTENTS, REGIONS, SOURCE_KINDS, VERDICTS, WORKFLOW_STATES } from "./types";
 import type { Assessment, ForwardingEvent, ForwardingState } from "./types";
 
 export const FORWARDING_STORAGE_KEY = "mirinae.forwarding.v1";
@@ -37,9 +38,29 @@ const isSource = (value: unknown): value is string => {
   if (!isText(value, 2000)) return false;
   try { const url = new URL(value); return ["http:", "https:"].includes(url.protocol) && !url.username && !url.password; } catch { return false; }
 };
-function isAssessment(value: unknown): value is Assessment {
+function isHandoff(value: unknown, verdict: unknown, state: ForwardingState) {
+  if (!isObject(value)) return false;
+  switch (value.kind) {
+    case "dealer":
+      return verdict === "valid" && exactly(value, ["kind", "dealerId"]) && state.dealers.some((dealer) => dealer.id === value.dealerId);
+    case "regional-sales":
+      return verdict !== "invalid" && exactly(value, ["kind", "region"])
+        && (value.region === null || member(value.region, REGIONS));
+    case "hr":
+    case "none":
+      return verdict === "invalid" && exactly(value, ["kind"]);
+    default:
+      return false;
+  }
+}
+
+function isAssessment(value: unknown, state: ForwardingState): value is Assessment {
   if (!isObject(value)) return false;
   const fields = ["verdict", "reason", "sources", "searchedAt", "mode"];
+  if (Object.hasOwn(value, "handoff")) {
+    fields.push("handoff");
+    if (!isHandoff(value.handoff, value.verdict, state)) return false;
+  }
   if (Object.hasOwn(value, "details")) {
     fields.push("details");
     const details = value.details;
@@ -65,7 +86,7 @@ export function isForwardingEvent(value: unknown, state: ForwardingState): value
   const dealerExists = (id: unknown) => id === null || state.dealers.some((dealer) => dealer.id === id);
   switch (value.type) {
     case "assessed":
-      return leadExists && exactly(value, [...common, "assessment", "workflow"]) && isAssessment(value.assessment) && member(value.workflow, WORKFLOW_STATES);
+      return leadExists && exactly(value, [...common, "assessment", "workflow"]) && isAssessment(value.assessment, state) && member(value.workflow, WORKFLOW_STATES);
     case "decision":
       return leadExists && exactly(value, [...common, "action", "dealerId", "reason"])
         && member(value.action, ["approve", "change-dealer", "phone", "disqualify"]) && dealerExists(value.dealerId)
@@ -184,8 +205,10 @@ function projectEvent(state: ForwardingState, input: unknown, validateProposal: 
   } else if (event.type === "reply") {
     if (!["dealer-assigned", "connected", "disqualified"].includes(lead.workflow)) lead.workflow = "decision-pending";
   } else if (event.type === "review-reopened") {
+    const country = next.leads.find((row) => row.id === event.leadId)?.country ?? "";
     lead.assessment = lead.assessment
-      ? { ...lead.assessment, verdict: "ambiguous", reason: "무효 묶음에서 꺼냈어요. 다시 확인해 주세요." }
+      ? { ...lead.assessment, verdict: "ambiguous", reason: "무효 묶음에서 꺼냈어요. 다시 확인해 주세요.",
+        handoff: regionalSalesHandoff(country) }
       : null;
     lead.workflow = "decision-pending";
   }

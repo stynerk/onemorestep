@@ -1,8 +1,8 @@
 import styles from "./public-demo-results.module.css";
 
 const scores = [
-  { mode: "저장된 결과", matched: "30/30", rate: "100%", validToInvalid: 0, ambiguous: 3 },
-  { mode: "실시간 검색 응답 재생", matched: "25/30", rate: "83.3%", validToInvalid: 0, ambiguous: 8 },
+  { mode: "저장된 결과", matched: "30/30", rate: "100%", validToInvalid: 0, ambiguous: 6 },
+  { mode: "실시간 검색 응답 재생 · 기준 변경 전", matched: "25/30", rate: "83.3%", validToInvalid: 0, ambiguous: 8 },
 ];
 
 const examples = [
@@ -35,7 +35,7 @@ export function PublicDemoResults() {
       <summary>시연 30건 정답 대조</summary>
       <div className={styles.content}>
         <p className={styles.context}>
-          2026년 11월 20일 검증에서 시연 30건에 동일한 Liner 검색 응답 56건을 재생했습니다. 공개 문의함은 저장된 결과를 사용합니다.
+          공개 문의함은 저장된 결과를 사용합니다. 유효 8 · 애매 6 · 국가 확인 3 · 제휴 확인 2 · 무효 11입니다. 실시간 수치는 넘길 곳 기준을 변경하기 전인 2026년 11월 20일의 검색 응답 56건 재생 기록입니다.
         </p>
         <dl className={styles.scores}>
           {scores.map(({ mode, matched, rate, validToInvalid, ambiguous }) => (
