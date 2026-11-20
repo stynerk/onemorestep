@@ -1,0 +1,72 @@
+ID,소속,이메일,리드 국가,상품,메모,HJ 정답 (유효/애매/국가 확인/제휴 확인/무효),넘길 곳 ,이유·메모 (선택)
+E01,BASF SE,mrn-eval-01@basf.com,독일,PM-50,We supply specialty polymers for medical device housings. Could we present our portfolio?,제휴 확인,EU 세일즈팀,재료에 대한 제휴 문의
+E02,분당서울대학교병원,mrn-eval-02@snubh.org,대한민국,PM-50,응급실 환자 모니터 8대 증설 검토 중입니다. 견적 부탁드립니다,유효,대한민국 딜러,증설 견적 문의
+E03,(빈칸),mrn-eval-03@example.com,미국,PM-50,test,무효,,테스트
+E04,NYU Langone Health,mrn-eval-04@nyulangone.org,미국,PM-50,"Evaluating patient monitors for 20 ICU beds, please send pricing",유효,미국 딜러,견적 문의
+E05,Northbridge Medical Center,mrn-eval-05@northbridge-med.test,미국,US-200,We are expanding our imaging department and want a quote for 4 units,유효,미국 딜러,견적 문의
+E06,University of Oxford,mrn-eval-06@ox.ac.uk,영국,US-200,I'm writing my dissertation on the ultrasound market. Could you share your sales figures?,무효,,"학생 학위논문용 매출 자료 요청 — 영업 리드 아님, 매출은 비공개 자료라 넘기지 않음"
+E07,Kyoto University Hospital,mrn-eval-07@kuhp.kyoto-u.ac.jp,일본,US-200,研究用モードの仕様と見積もりをお願いします,유효,일본 딜러,견적 문의
+E08,Johns Hopkins Hospital,mrn-eval-08@hopkins-medicine-procure.test,미국,PM-50,"Urgent bulk order of 30 monitors. Wire transfer ready, reply to this address only",애매,NA 세일즈팀,대량 주문 문의 ※ 사기 의심: 유사 도메인·송금 준비·이 주소로만 회신 요구 — 해당 지역 세일즈팀에 결정 요청
+E09,National Cancer Center Korea (국립암센터),mrn-eval-09@ncc.re.kr,대한민국,PM-50,,무효,APAC 세일즈팀,"예외 처리
+- 소속이 유효하고 이메일이 해당 소속인 경우인데 공란인 경우, 다시금 문의하는 내용의 메일을 자동으로 보내도 될 것"
+E10,Roche,mrn-eval-10@roche.com,스위스,US-200,We'd like to discuss a joint clinical study partnership,제휴 확인,EU 세일즈팀,해당 팀을 통해 제휴 담당 부서로 이관
+E11,Siemens AG,mrn-eval-11@siemens.com,독일,PM-50,Für unseren betriebsärztlichen Dienst benötigen wir 2 Monitore. Bitte um ein Angebot,유효,독일 딜러,사내 산업보건 부서용 모니터 2대 견적 문의
+E12,Han River Women's Clinic,mrn-eval-12@hanriver-clinic.test,대한민국,US-200,"산부인과 초음파 1대 구매 예정, 가격 알려 주세요",유효,대한민국 딜러,"산부인과 초음파 1대 구매 예정, 가격 문의"
+E13,Philips,mrn-eval-13@philips.com,네덜란드,PM-50,Please send your full product brochure and price list for comparison,무효,,경쟁사(환자 모니터 제조사)의 비교용 브로슈어·가격표 요청 — 영업 리드 아님
+E14,St. Luke's International Hospital,mrn-eval-14@luke.ac.jp,대한민국,PM-50,Interested in a quotation for 6 monitors,국가 확인,APAC 세일즈팀,"모니터 6대 견적 문의이나 소속·도메인(luke.ac.jp)은 일본, 리드 국가는 대한민국 — 확인 후 일본 딜러 이관 예상"
+E15,Lion City Dental Group,mrn-eval-15@lcdg.test,싱가포르,IS-3,Looking to equip 3 new clinics with intraoral scanners,유효,싱가포르 딜러,신규 치과 3곳 구강스캐너 도입 문의
+E16,Stanford Health Care,mrn-eval-16@stanfordhealthcare.org,미국,US-200,"Procurement review next month, need a quote and lead time",유효,미국 딜러,"다음 달 구매 검토, 견적·납기 문의"
+E17,RIKEN,mrn-eval-17@riken.jp,일본,PM-50,Applying for a sales position in Japan. Is there an opening?,무효,인사팀,"채용(영업직) 문의 — 영업 리드 아님, 인사팀으로 전달"
+E18,University College London Hospitals,mrn-eval-18@nhs.net,영국,US-200,Can you send a brochure?,애매,EU 세일즈팀,정상 도메인(NHS)이나 브로슈어 요청만 있고 구매 의사 불명확
+E19,Winner Notice,mrn-eval-19@example.com,인도,PM-50,Congratulations! You have been selected. Click the link to claim,무효,,당첨 사칭 스팸
+E20,Heidelberg University Hospital,mrn-eval-20@med.uni-heidelberg.de,독일,PM-50,Angebot für 5 Monitore für die Intensivstation erbeten,유효,독일 딜러,중환자실용 모니터 5대 견적 문의
+E21,NYU Langone Health,mrn-eval-21@nyulangone-health.test,미국,US-200,"Large order, payment in advance, please confirm quickly",애매,NA 세일즈팀,대량 주문 문의 ※ 사기 의심: 유사 도메인·선결제·빠른 확인 요구 — 해당 지역 세일즈팀에 결정 요청
+E22,KAIST (한국과학기술원),mrn-eval-22@kaist.ac.kr,대한민국,US-200,졸업 과제로 초음파 원리 자료가 필요합니다,무효,,학생 졸업 과제용 자료 요청 — 영업 리드 아님
+E23,Osaka Bay Heart Institute,mrn-eval-23@obhi.test,일본,PM-50,心臓血管センターのモニター更新を検討しています,유효,일본 딜러,심혈관센터 모니터 교체 검토
+E24,LG Electronics (LG전자),mrn-eval-24@lge.com,대한민국,PM-50,의료용 디스플레이 공동 개발 협업을 제안드립니다,제휴 확인,APAC 세일즈팀,의료용 디스플레이 공동 개발 협업 제안 — 해당 팀을 통해 제휴 담당 부서로 이관
+E25,"Hitachi, Ltd.",mrn-eval-25@hitachi.com,일본,PM-50,社内診療所向けに1台検討中です,유효,일본 딜러,사내 진료소용 1대 구매 검토
+E26,Nestlé S.A.,mrn-eval-26@nestle.com,스위스,PM-50,We offer corporate wellness catering for your offices,무효,,사무실 케이터링 영업 제안 — 사업과 무관
+E27,Royal Prince Alfred Hospital,mrn-eval-27@gmail.com,호주,PM-50,price list?,애매,APAC 세일즈팀,"개인 메일(gmail)이라 소속 확인 불가, 가격표 요청만 있음"
+E28,Stanford Health Care,mrn-eval-28@nyulangone.org,미국,PM-50,"Need 10 monitors ASAP, send invoice",애매,NA 세일즈팀,모니터 10대 주문 문의 ※ 사기 의심: 소속(Stanford)과 이메일 도메인(nyulangone.org) 불일치·인보이스 즉시 요구 — 해당 지역 세일즈팀에 결정 요청
+E29,University of Toronto,mrn-eval-29@utoronto.ca,독일,US-200,Please send pricing for 3 research units,국가 확인,EU 세일즈팀,"연구용 3대 견적 문의이나 소속·도메인(utoronto.ca)은 캐나다, 리드 국가는 독일 — 국가 확인 필요"
+E30,Kestrel Monitoring,mrn-eval-30@kestrel.example.com,독일,PM-50,Requesting technical specifications of your monitor line,애매,EU 세일즈팀,"기술 사양만 요청, 구매 의사 불명확 — 업체명상 경쟁사·관련 업체 가능성"
+E31,National University Hospital,mrn-eval-31@nuhs.edu.sg,싱가포르,US-200,"Tender for point-of-care ultrasound closes in two weeks, please share specs",유효,싱가포르 딜러,"현장진료용 초음파 입찰 2주 내 마감, 사양 요청"
+E32,N/A,mrn-eval-32@example.com,영국,IS-3,hello,무효,,소속 없음·의미 있는 내용 없음
+E33,Mount Sinai Health System,mrn-eval-33@mountsinai-purchasing.test,미국,US-200,"Urgent purchase, our usual vendor is unavailable, reply here",애매,NA 세일즈팀,긴급 구매 문의 ※ 사기 의심: 유사 도메인·기존 거래처 불가 핑계·이 주소로만 회신 요구 — 해당 지역 세일즈팀에 결정 요청
+E34,Siemens Healthineers,mrn-eval-34@siemens-healthineers.com,독일,US-200,"Market research: comparing ultrasound portfolios, please send datasheets",무효,,경쟁사(초음파 제조사)의 시장조사용 자료 요청 — 영업 리드 아님
+E35,Hospital Israelita Albert Einstein,mrn-eval-35@einstein.br,브라질,PM-50,Sou estudante de enfermagem e preciso de material para meu TCC,무효,,간호학과 학생 졸업논문용 자료 요청 — 영업 리드 아님
+E36,Rheinland Diagnostik Zentrum,mrn-eval-36@rdz.test,독일,US-200,Wir planen die Anschaffung von zwei Geräten,유효,독일 딜러,장비 2대 도입 계획
+E37,RIKEN,mrn-eval-37@riken.jp,일본,US-200,"Research-use ultrasound for small animal imaging, quotation please",유효,일본 딜러,소동물 영상용 연구용 초음파 견적 문의
+E38,Seoul St. Mary's Hospital (서울성모병원),mrn-eval-38@naver.com,대한민국,US-200,가격 문의,애매,APAC 세일즈팀,"개인 메일(naver.com)이라 소속 확인 불가, 내용도 '가격 문의'뿐"
+E39,Novartis,mrn-eval-39@novartis.com,스위스,PM-50,We offer clinical trial site management services. Can we schedule a call?,제휴 확인,EU 세일즈팀,임상시험 실시기관 관리 서비스 제안 — 해당 팀을 통해 제휴 담당 부서로 이관
+E40,Kyoto University Hospital,mrn-eval-40@kyoto-hosp.test,일본,PM-50,至急20台注文したい。前払い可能、このアドレスにのみ返信してください,애매,APAC 세일즈팀,20대 긴급 주문 문의 ※ 사기 의심: 유사 도메인·선결제·이 주소로만 회신 요구 — 해당 지역 세일즈팀에 결정 요청
+E41,Great Ormond Street Hospital,mrn-eval-41@gosh.nhs.uk,영국,PM-50,Information only,애매,EU 세일즈팀,정상 도메인(NHS)이나 '정보만 원함' 외 내용이 없어 문의 의도 불명확
+E42,Medtronic,mrn-eval-42@medtronic.com,미국,PM-50,I'm interested in your quality engineer opening,무효,인사팀,"채용(품질 엔지니어) 문의 — 영업 리드 아님, 인사팀으로 전달"
+E43,Sunrise Health Network,mrn-eval-43@sunrise-health.test,호주,PM-50,Planning to buy monitors for 4 regional clinics,유효,호주 딜러,지역 클리닉 4곳 모니터 구매 계획
+E44,Johns Hopkins Hospital,mrn-eval-44@jhmi.edu,미국,US-200,Our department plans to purchase two units this fiscal year,유효,미국 딜러,이번 회계연도 2대 구매 계획
+E45,Institut Pasteur,mrn-eval-45@pasteur.fr,싱가포르,US-200,"Lab procurement, please send a quote",국가 확인,APAC 세일즈팀,"연구실 구매 견적 문의이나 소속·도메인(pasteur.fr)은 프랑스, 리드 국가는 싱가포르 — 국가 확인 필요"
+E46,qwerty,mrn-eval-46@example.com,브라질,US-200,qwerty,무효,,무의미한 입력(테스트)
+E47,Olympus Corporation,mrn-eval-47@olympus.com,일본,US-200,御社製品の比較資料をいただけますか,애매,APAC 세일즈팀,타 제조사의 비교 자료 요청 — 구매 목적인지 경쟁사 조사인지 불명확
+E48,Maple Valley Hospital,mrn-eval-48@maplevalley.test,캐나다,PM-50,Replacing monitors in our emergency department,유효,캐나다 딜러,응급실 모니터 교체
+E49,Max Planck Society,mrn-eval-49@gv.mpg.de,독일,US-200,"One of our institutes is considering a purchase, please send specifications and price",유효,독일 딜러,"산하 연구소 구매 검토, 사양·가격 요청"
+E50,A*STAR,mrn-eval-50@a-star.edu.sg,싱가포르,US-200,Exploring a co-development collaboration on imaging AI,제휴 확인,APAC 세일즈팀,영상 AI 공동 개발 협업 제안 — 해당 팀을 통해 제휴 담당 부서로 이관
+E51,Stanford Health Care,mrn-eval-51@stanford-health-orders.test,미국,PM-50,"Please process our order today, details attached",애매,NA 세일즈팀,당일 주문 처리 요청 ※ 사기 의심: 유사 도메인·당일 처리 요구·첨부파일 유도 — 해당 지역 세일즈팀에 결정 요청
+E52,University of Toronto,mrn-eval-52@utoronto.ca,캐나다,PM-50,Course project: could you send device specifications?,무효,,학생 수업 과제용 자료 요청 — 영업 리드 아님
+E53,Robert Bosch GmbH,mrn-eval-53@de.bosch.com,독일,PM-50,Wir bieten Sensorkomponenten für Ihre Geräte an,제휴 확인,EU 세일즈팀,센서 부품 공급 제안 — 해당 팀을 통해 제휴 담당 부서로 이관
+E54,Max Planck Society,mrn-eval-54@roche.com,독일,US-200,Quote needed for our institute,애매,EU 세일즈팀,견적 문의이나 소속(Max Planck)과 이메일 도메인(roche.com) 불일치 — 소속 확인 필요
+E55,Great Ormond Street Hospital,mrn-eval-55@gosh.nhs.uk,영국,PM-50,I'm a nursing student writing a report on monitoring devices,무효,,간호학과 학생 보고서용 자료 요청 — 영업 리드 아님
+E56,The Alfred (Alfred Health),mrn-eval-56@alfred.org.au,호주,IS-3,Do you have a dental scanner demo in Melbourne?,유효,호주 딜러,멜버른 지역 구강스캐너 데모 요청
+E57,Clínica Atlântica,mrn-eval-57@atlantica.test,브라질,IS-3,Queremos comprar dois scanners intraorais,유효,브라질 딜러,구강스캐너 2대 구매 문의
+E58,KAIST (한국과학기술원),mrn-eval-58@kaist.ac.kr,대한민국,US-200,연구실 장비 구매 검토 중입니다. 연구용 모드 포함 견적 요청드립니다,유효,대한민국 딜러,"연구실 장비 구매 검토, 연구용 모드 포함 견적 요청"
+E59,Home,mrn-eval-59@example.com,미국,PM-50,for my dad,무효,NA 세일즈팀,개인(가족용) 문의 — 기관 리드 아님
+E60,Weizmann Institute of Science,mrn-eval-60@weizmann.ac.il,미국,US-200,Need a quote for research ultrasound,국가 확인,NA 세일즈팀,"연구용 초음파 견적 문의이나 소속·도메인(weizmann.ac.il)은 이스라엘, 리드 국가는 미국 — 국가 확인 필요"
+E61,National University Hospital,mrn-eval-61@nuh-sg-procurement.test,싱가포르,PM-50,"Bulk order, advance payment, contact this email only",애매,APAC 세일즈팀,대량 주문 문의 ※ 사기 의심: 유사 도메인·선결제·이 주소로만 연락 요구 — 해당 지역 세일즈팀에 결정 요청
+E62,Sonora Medical Imaging,mrn-eval-62@sonora.example.com,미국,US-200,Could you share your distributor pricing structure?,애매,NA 세일즈팀,유통 가격 구조 문의 — 유통사 희망(제휴)인지 경쟁사 조사인지 불명확
+E63,Hospital Israelita Albert Einstein,mrn-eval-63@einstein.br,브라질,US-200,Gostaria de saber mais,애매,LATAM 세일즈팀,"정상 도메인이나 '더 알고 싶다'는 내용뿐, 문의 의도 불명확"
+E64,Kyungpook National University Hospital (경북대학교병원),mrn-eval-64@knuh.kr,대한민국,US-200,초음파 교체 예산이 확보됐습니다. 데모 요청드립니다,유효,대한민국 딜러,"초음파 교체 예산 확보, 데모 요청"
+E65,Gulf Pearl Hospital,mrn-eval-65@gpearl.test,아랍에미리트,PM-50,We need 12 monitors for our new wing,유효,아랍에미리트 딜러,신규 병동용 모니터 12대
+E66,University Health Network,mrn-eval-66@uhn.ca,캐나다,US-200,Looking for a clinical application specialist job,무효,인사팀,"채용(임상 어플리케이션 스페셜리스트) 문의 — 영업 리드 아님, 인사팀으로 전달"
+E67,Self,mrn-eval-67@example.com,대한민국,PM-50,가격만 궁금해요,무효,APAC 세일즈팀,개인 가격 문의 — 기관 리드 아님
+E68,asdfgh,mrn-eval-68@example.com,멕시코,IS-3,asdfgh,무효,,무의미한 입력(테스트)
+E69,Mount Sinai Health System,mrn-eval-69@mssm.edu,미국,PM-50,"Replacing step-down unit monitors, please arrange a call with sales",유효,미국 딜러,"스텝다운 병동 모니터 교체, 영업 담당 통화 요청"
+E70,Verified Lead Supply,mrn-eval-70@leadsupply.example.com,미국,PM-50,We sell verified hospital procurement lead lists. Interested?,무효,,리드 리스트 판매 스팸
