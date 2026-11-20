@@ -10,7 +10,7 @@ const recipientLabels: Record<RecipientKind, string> = {
 const templates: Record<MailKind, { to: RecipientKind; title: string; instruction: string }> = {
   "dealer-summary": { to: "dealer", title: "딜러용 리드 요약", instruction: "승인된 문의의 관심 상품과 요청을 확인해 주세요." },
   "country-check": { to: "lead", title: "국가 확인 요청", instruction: "문의 기관의 소재지와 견적이 필요한 국가를 알려 주세요." },
-  "partnership-check": { to: "lead", title: "제휴 상세 요청", instruction: "제휴 목적, 진행 일정, 기대하는 협업 범위와 문의 기관의 소재지를 알려 주세요." },
+  "partnership-check": { to: "lead", title: "제휴 상세 요청", instruction: "제휴 목적, 진행 일정, 기대하는 협업 범위를 알려 주세요." },
   "manager-confirmation": { to: "manager", title: "지역 담당자 확인 요청", instruction: "문의 국가의 딜러 배정 가능 여부를 확인해 주세요." },
   operations: { to: "operations", title: "운영 알림", instruction: "리드 국가와 담당 지역의 연결을 확인해 주세요." },
 };

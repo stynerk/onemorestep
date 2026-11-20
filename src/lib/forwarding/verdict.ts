@@ -79,15 +79,7 @@ function findCountries(sources: Source[], names: string[]): string[] {
     }) ? [country] : []);
 }
 
-function countriesFromDomains(official: Source[], verifiedAlias: string | undefined): string[] {
-  const hosts = official.map(hostOf);
-  if (verifiedAlias) hosts.push(verifiedAlias);
-  const suffixes = new Set(hosts.map((host) => host.split(".").at(-1)));
-  // Use only supported country codes. The British DNS suffix is .uk, not the search locale code gb.
-  return Object.entries(locales).flatMap(([country, [, , code]]) => suffixes.has(code === "gb" ? "uk" : code) ? [country] : []);
-}
-
-function domainEvidence(institution: string, email: string, official: Source[], names: string[], domains: string[], sources: Source[]): [AssessmentDetails["domain"], string[], string?] {
+function domainEvidence(institution: string, email: string, official: Source[], names: string[], domains: string[], sources: Source[]): [AssessmentDetails["domain"], string[]] {
   const match = /^[^\s@]+@([a-z0-9]+(?:[.-][a-z0-9]+)+)$/i.exec(email.trim());
   const emailDomain = match?.[1].toLowerCase();
   if (!emailDomain) return ["unverified", []];
@@ -95,7 +87,7 @@ function domainEvidence(institution: string, email: string, official: Source[], 
 
   const aliases = forwardingPolicy.institutionDomainAliases.filter((alias) => alias.institution === institution);
   const alias = aliases.find((row) => matchesDomain(emailDomain, row.emailDomain));
-  if (alias) return ["matched", [alias.source], alias.emailDomain];
+  if (alias) return ["matched", [alias.source]];
   const accepted = domains.filter((domain) => official.some((source) => matchesDomain(hostOf(source), domain)));
   if (accepted.some((domain) => matchesDomain(emailDomain, domain))) return ["matched", []];
 
@@ -114,16 +106,11 @@ function domainEvidence(institution: string, email: string, official: Source[], 
 
 export function classifyLead(lead: LeadInput, evidence: SearchEvidence): { assessment: Assessment; workflow: WorkflowState } {
   const { matching, official, names, domains } = affiliatedSources(lead.institution, evidence.sources);
-  const [domain, aliasSources, verifiedAlias] = domainEvidence(lead.institution, lead.email, official, names, domains, evidence.sources);
+  const [domain, aliasSources] = domainEvidence(lead.institution, lead.email, official, names, domains, evidence.sources);
   const intent = intentRules.map(([name, pattern]) => [name, lead.memo.match(pattern)?.[0]] as const)
     .find(([, match]) => match);
   const memoIntent = intent?.[0] ?? "unknown";
-  const liveEvidence = evidence.kind === "liner" || evidence.kind === "cache" || evidence.kind === "mixed";
-  const textCountries = findCountries(official, names);
-  const domainCountries = liveEvidence && evidence.status === "complete" && textCountries.length === 0
-    && official.length > 0 && domain === "matched" ? countriesFromDomains(official, verifiedAlias) : [];
-  const countries = textCountries.length > 0 ? textCountries : domainCountries;
-  const domainReason = domainCountries.length === 1 ? " 기관 소재지는 확인된 기관 도메인의 국가 코드를 근거로 추정했어요." : "";
+  const countries = findCountries(official, names);
   const industryText = official.map(({ title, description }) => title + " " + description).join(" ");
   const industry = industryRules.find(([, pattern]) => pattern.test(industryText))?.[0] ?? null;
   const result = (verdict: Verdict, reason: string) => ({
@@ -151,12 +138,9 @@ export function classifyLead(lead: LeadInput, evidence: SearchEvidence): { asses
   if (official.length === 0) return result("ambiguous", "기관 공식 페이지를 확인하지 못했어요.");
   if (domain === "free-email") return result("ambiguous", "무료 이메일로는 기관 소속을 확인하기 어려워요.");
   if (domain === "unverified") return result("ambiguous", "이메일 도메인과 기관의 관계를 확인하지 못했어요.");
-  if (liveEvidence && countries.length !== 1 && memoIntent === "partnership") {
-    return result("partnership-check", "제휴 제안의 자세한 내용과 기관 소재지를 확인해야 해요.");
-  }
   if (countries.length !== 1) return result("ambiguous", "기관 소재지를 한 나라로 확인하지 못했어요.");
-  if (countries[0] !== lead.country) return result("country-check", "기관 소재지가 리드 국가와 달라 회신으로 확인이 필요해요." + domainReason);
-  if (memoIntent === "partnership") return result("partnership-check", "제휴 제안의 자세한 내용을 확인해야 해요." + domainReason);
-  if (memoIntent === "buying") return result("valid", "소속 기관과 이메일 도메인이 확인됐고 제품 구매·검토 의향이 있어요." + domainReason);
+  if (countries[0] !== lead.country) return result("country-check", "기관 소재지가 리드 국가와 달라 회신으로 확인이 필요해요.");
+  if (memoIntent === "partnership") return result("partnership-check", "제휴 제안의 자세한 내용을 확인해야 해요.");
+  if (memoIntent === "buying") return result("valid", "소속 기관과 이메일 도메인이 확인됐고 제품 구매·검토 의향이 있어요.");
   return result("ambiguous", "문의 의도를 전화로 확인해야 해요.");
 }
