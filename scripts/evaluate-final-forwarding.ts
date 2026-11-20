@@ -180,10 +180,28 @@ function jsonAnswers(serialized: string, leads: LeadInput[]) {
   return data;
 }
 
+function applyAnswerCorrections(serialized: string, original: Map<string, Expected>) {
+  const rows = JSON.parse(serialized) as { id: string; verdict: Verdict; handoff: Handoff }[];
+  if (!Array.isArray(rows) || rows.length === 0) throw new Error("Expected a non-empty replay correction list.");
+  const corrected = new Map(original);
+  const seen = new Set<string>();
+  for (const { id, verdict, handoff } of rows) {
+    const previous = original.get(id);
+    if (!previous || seen.has(id) || !VERDICTS.includes(verdict) || !handoffs.includes(handoff)
+      || (previous.verdict === verdict && previous.handoff === handoff)) {
+      throw new Error("Invalid or duplicate correction for " + id);
+    }
+    corrected.set(id, { verdict, handoff });
+    seen.add(id);
+  }
+  return corrected;
+}
+
 async function main() {
-  const [mode, answersPath] = process.argv.slice(2);
-  if (!["sample", "capture", "replay", "labels"].includes(mode) || !answersPath) {
-    throw new Error("Usage: evaluate-final-forwarding.ts <sample|capture|replay|labels> <HJ JSON or CSV>");
+  const [mode, answersPath, correctionsPath, ...extra] = process.argv.slice(2);
+  if (!["sample", "capture", "replay", "labels"].includes(mode) || !answersPath || extra.length
+    || (correctionsPath && mode !== "replay")) {
+    throw new Error("Usage: evaluate-final-forwarding.ts <sample|capture|replay|labels> <HJ JSON or CSV> [replay-corrections.json]");
   }
   const apiKey = mode === "capture" ? process.env.LINER_API_KEY?.trim() : "offline-replay";
   if (!apiKey) throw new Error("LINER_API_KEY is required to capture a recording.");
@@ -227,8 +245,13 @@ async function main() {
   const heldOutKey = normalized
     ? new Map<string, Expected>(normalized.answers.map(({ id, verdict, handoff }) => [id, { verdict, handoff }]))
     : heldOutAnswers(answerFile, heldOut);
+  // Corrections only affect scoring after the original recordings have been replayed.
+  const correctedHeldOut = correctionsPath
+    ? compare(heldOutResult.predictions, applyAnswerCorrections(await readFile(correctionsPath, "utf8"), heldOutKey))
+    : undefined;
   console.log(JSON.stringify({
     mode,
+    ...(correctedHeldOut ? { correctedHeldOut } : {}),
     demo: { ...compare(demoResult.predictions, demoKey), calls: demoResult.calls },
     heldOut: { ...compare(heldOutResult.predictions, heldOutKey), calls: heldOutResult.calls },
   }, null, 2));
