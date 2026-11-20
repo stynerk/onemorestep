@@ -62,6 +62,16 @@ function getWindowEnd(state: ForwardingState, asOf: Date | undefined) {
   );
 }
 
+export function dealerScore(state: ForwardingState, lead: LeadInput, dealer: Dealer): DealerScore {
+  const through = getWindowEnd(state, undefined);
+  return scoreDealer(dealer, lead, state, firstDay(through), through);
+}
+
+function firstDay(through: number) {
+  // Whole UTC dates keep same-day slips from dropping an earlier delivery.
+  return (Math.floor(through / DAY_MS) - forwardingPolicy.aggregationDays) * DAY_MS;
+}
+
 function scoreDealer(dealer: Dealer, lead: LeadInput, state: ForwardingState, from: number, through: number): DealerScore {
   const deliveries: DealerDelivery[] = [];
   const counts: Record<DealerOutcome, number> = { deal: 0, "no-deal": 0, "in-progress": 0, "no-response": 0 };
@@ -107,17 +117,24 @@ export function recommendDealer(state: ForwardingState, leadId: string, options:
   const status = state.leadStates[leadId];
   if (status.dealerId) return { route: "assigned", dealerId: status.dealerId };
   const country = options.country ?? lead.country;
-  const manager = getManager(country);
   // Missing region is an operations alert independent of the lead verdict.
-  if (!manager) return { route: "operations", country };
+  if (!getManager(country)) return { route: "operations", country };
   if (status.assessment?.verdict !== "valid" || status.workflow === "disqualified") return { route: "not-eligible" };
+  return rankAvailableDealers(state, lead, options);
+}
 
-  const eligible = state.dealers.filter((dealer) => dealer.active && dealer.countries.includes(country) && dealer.products.includes(lead.product));
+/** Rank only eligible dealers that have yet to receive this lead. */
+export function rankAvailableDealers(state: ForwardingState, lead: LeadInput, options: RecommendationOptions = {}): Exclude<DealerRecommendation, { route: "assigned" | "not-eligible" }> {
+  const country = options.country ?? lead.country;
+  const manager = getManager(country);
+  if (!manager) return { route: "operations", country } as const;
+  const attempted = new Set(state.deliveries.filter((delivery) => delivery.leadId === lead.id).map((delivery) => delivery.dealerId));
+  const eligible = state.dealers.filter((dealer) => dealer.active && dealer.countries.includes(country)
+    && dealer.products.includes(lead.product) && !attempted.has(dealer.id));
   if (eligible.length === 0) return { route: "manager-direct", manager };
 
   const through = getWindowEnd(state, options.asOf);
-  // Seed history and forwarding events are grouped by UTC date. Same-day actions do not shift the first date.
-  const from = (Math.floor(through / DAY_MS) - forwardingPolicy.aggregationDays) * DAY_MS;
+  const from = firstDay(through);
   const window = { days: forwardingPolicy.aggregationDays, from: new Date(from).toISOString(), through: new Date(through).toISOString() };
   const candidates = eligible.map((dealer) => scoreDealer(dealer, lead, state, from, through));
   const ranked = candidates.filter((candidate): candidate is DealerScore & { score: number } => candidate.score !== null)

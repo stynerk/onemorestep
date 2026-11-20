@@ -15,3 +15,7 @@ next-env.d.ts
 *-body.tmp
 
 /.forwarding-mail/
+/test-results/
+/playwright-report/
+/tests/fixtures/recorded/*
+!/tests/fixtures/recorded/README.md

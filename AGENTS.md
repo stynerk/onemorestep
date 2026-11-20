@@ -18,7 +18,7 @@ PC에 hq가 아직 없으면 `git clone https://github.com/stynerk/hq C:/Users/s
 
 - `main`에 직접 커밋하지 않는다(문서만 바꾸는 경우는 예외).
 - Issue마다 작업 트리 `.worktrees/issue-번호`와 브랜치 `issue-번호-짧은-설명`. 본 폴더는 `main`에 둔다.
-- PR 본문에 다섯 줄 보고: 된 것, 안 된 것, 위험, Tony가 정해야 할 것, 다음 작업.
+- PR 본문은 `.github/pull_request_template.md` 순서를 따른다: 맨 위에 검증 결과(판정 한 줄, `docs/qa/CHECKLIST.md` ID별 확인 항목, 실제/모의/미확인 범위, 사람이 확인할 것, 스크린샷·녹화), 그다음 다섯 줄 보고(된 것, 안 된 것, 위험, Tony가 정해야 할 것, 다음 작업).
 - 병합은 Tony(서비스PM)의 승인과 QA 통과가 모두 있을 때 Cap이 한다. 되돌릴 수 없는 변경, 서비스 정지 위험(운영 배포를 일으키는 병합 포함), 권한·비밀값·결제·공개, hq `bots/` 코드와 hq `playbooks/decision-rights.md` 변경은 HJ에게 넘긴다(예외의 정본은 hq `playbooks/decision-rights.md`).
 - 세션을 끝낼 때 `docs/team/HANDOFF_DEV.md`를 통째로 새로 쓴다.
 - 승인을 기다리며 멈추지 않는다. 결정이 필요한 것은 Issue에 선택지와 추천안으로 남기고 추천안으로 계속 진행한다.
