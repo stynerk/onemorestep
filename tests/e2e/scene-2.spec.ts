@@ -197,15 +197,14 @@ test("S2-08 응답이 8초 넘게 없으면 그 리드만 외부 확인 실패�
   try {
     await runButton(page).click();
     await requestStarted.promise;
-    await expect.poll(async () => {
-      const completed = (await events(page)).filter((event) => event.type === "assessed");
-      return {
-        total: completed.length,
-        failed: completed.filter((event) => event.assessment.details?.externalStatus === "failed")
-          .map(({ leadId }) => leadId),
-      };
-    }, { timeout: 9000, message: "8초 응답 제한 안팎에 L01만 실패하고 나머지 리드는 완료된다" })
-      .toEqual({ total: 30, failed: ["L01"] });
+    await expect.poll(async () => (await events(page)).some((event) =>
+      event.type === "assessed" && event.leadId === "L01" && event.assessment.details?.externalStatus === "failed"),
+    { timeout: 10000, message: "응답하지 않는 L01은 8초 제한 뒤 실패로 기록된다" }).toBe(true);
+    await expect(page.getByRole("button", { name: "다시 판정", exact: true })).toBeEnabled({ timeout: 30000 });
+    const completed = (await events(page)).filter((event) => event.type === "assessed");
+    expect(completed).toHaveLength(30);
+    expect(completed.filter((event) => event.assessment.details?.externalStatus === "failed").map(({ leadId }) => leadId))
+      .toEqual(["L01"]);
     await row(page, "L01").getByRole("button", { name: /^L01/u }).click();
     await expect(card(page).getByText("외부 확인 실패, 다시 시도", { exact: true })).toBeVisible();
     await expect(card(page).getByRole("button", { name: "외부 확인 다시 시도" })).toBeEnabled();
