@@ -14,7 +14,7 @@ const eventBase = (leadId: string, at = Date.now()) => ({ id: crypto.randomUUID(
 
 type MailState = { message: string; pending: boolean };
 
-export function useInbox(publicDemo: boolean) {
+export function useInbox(publicDemo: boolean, liveAssessment: boolean) {
   const [state, setState] = useState(createInitialForwardingState);
   const [ready, setReady] = useState(false);
   const [now, setNow] = useState(0);
@@ -28,6 +28,7 @@ export function useInbox(publicDemo: boolean) {
   const assessing = useRef(new Set<string>());
   const mailing = useRef(new Set<string>());
   const batchRunning = useRef(false);
+  const pageExit = useRef<AbortController | null>(null);
 
   useEffect(() => {
     const browserStore = createBrowserForwardingStore();
@@ -40,8 +41,18 @@ export function useInbox(publicDemo: boolean) {
       setNow(Date.now());
       if (!loaded.ok) setError("저장된 시연 기록을 열 수 없습니다. 시연 초기화로 다시 시작해 주세요.");
     });
+    pageExit.current = new AbortController();
+    const suspend = () => pageExit.current?.abort();
+    const resume = () => { if (pageExit.current?.signal.aborted) pageExit.current = new AbortController(); };
+    window.addEventListener("pagehide", suspend);
+    window.addEventListener("pageshow", resume);
     const timer = window.setInterval(() => setNow(Date.now()), 1000);
-    return () => window.clearInterval(timer);
+    return () => {
+      suspend();
+      window.removeEventListener("pagehide", suspend);
+      window.removeEventListener("pageshow", resume);
+      window.clearInterval(timer);
+    };
   }, []);
 
   const responseNow = responseClock(state, now, simulatedNow);
@@ -102,7 +113,12 @@ export function useInbox(publicDemo: boolean) {
   }
 
   async function assess(lead: LeadInput) {
-    if (assessing.current.has(lead.id)) return;
+    const navigation = pageExit.current;
+    if (!navigation || navigation.signal.aborted || assessing.current.has(lead.id)) return;
+    const exit = navigation.signal;
+    // Reload can reject fetch before pagehide runs. Cancel without persisting a failure.
+    const cancelOnReload = () => navigation.abort();
+    window.addEventListener("beforeunload", cancelOnReload);
     assessing.current.add(lead.id);
     setPending((current) => [...current, lead.id]);
     try {
@@ -116,7 +132,8 @@ export function useInbox(publicDemo: boolean) {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ leadId: lead.id, country, partnershipPurchase: partnershipPurchase || undefined }),
-          signal: AbortSignal.timeout(60000),
+          // Live requests may queue behind the shared Liner concurrency limit.
+          signal: AbortSignal.any([exit, AbortSignal.timeout(liveAssessment ? 60_000 : 8_000)]),
         });
         if (!response.ok) throw new Error("Assessment request failed");
         result = await response.json() as Assessed;
@@ -130,6 +147,7 @@ export function useInbox(publicDemo: boolean) {
           workflow: "decision-pending",
         };
       }
+      if (exit.aborted) return;
       const previous = store.current?.snapshot();
       if (!previous) return;
       const assessment = result.assessment;
@@ -147,13 +165,15 @@ export function useInbox(publicDemo: boolean) {
         if (lead.id === "L06" && assessment.verdict === "valid") setSelected((current) => current ?? lead.id);
       }
     } finally {
+      window.removeEventListener("beforeunload", cancelOnReload);
       assessing.current.delete(lead.id);
       setPending((current) => current.filter((id) => id !== lead.id));
     }
   }
 
   async function assessAll() {
-    if (!ready || batchRunning.current) return;
+    const exit = pageExit.current?.signal;
+    if (!ready || !exit || exit.aborted || batchRunning.current) return;
     batchRunning.current = true;
     setRunning(true);
     setError("");
@@ -161,7 +181,7 @@ export function useInbox(publicDemo: boolean) {
       // A failed lead becomes ambiguous while the other workers keep moving.
       const queue = [...(store.current?.snapshot().leads ?? [])];
       const worker = async () => {
-        for (let lead = queue.shift(); lead; lead = queue.shift()) await assess(lead);
+        for (let lead = queue.shift(); lead && !exit.aborted; lead = queue.shift()) await assess(lead);
       };
       await Promise.all([worker(), worker(), worker()]);
     } finally {

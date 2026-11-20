@@ -172,7 +172,7 @@ export function DecisionCard({ lead, inbox }: { lead: LeadInput; inbox: InboxCon
   return <article className="decision-card" aria-labelledby="card-heading">
     <div className="card-head">
       <div className="card-meta"><span>{lead.id}</span><span>{country}</span><span>{lead.product}</span></div>
-      <h2 id="card-heading">{lead.institution || "소속 미기재"}</h2>
+      <h2 id="card-heading" title={lead.institution}>{lead.institution || "소속 미기재"}</h2>
       <p className="contact">{lead.name} · {maskEmail(lead.email)} · {maskPhone(lead.phone)}</p>
       <p className="muted">접수 {time(lead.receivedAt)}{inbox.ready && " · " + Math.max(0, Math.floor((inbox.now - Date.parse(lead.receivedAt)) / 3600000)) + "시간 경과"}</p>
       {assessment && <div className="badges">
@@ -228,7 +228,8 @@ export function DecisionCard({ lead, inbox }: { lead: LeadInput; inbox: InboxCon
         <label htmlFor="dealer-choice">배정 딜러</label><select id="dealer-choice" required value={dealerId} onChange={(event) => setDealerId(event.target.value)}>
           <option value="">다른 딜러 선택</option>{dealChoices.map((row) => <option key={row.id} value={row.id}>{row.name}</option>)}
         </select>
-        <label htmlFor="change-reason">변경 이유</label><textarea id="change-reason" required maxLength={500} rows={2} value={reason} onChange={(event) => setReason(event.target.value)} />
+        <label htmlFor="change-reason">변경 이유</label><textarea id="change-reason" aria-describedby="change-reason-hint" required maxLength={500} rows={2} value={reason} onChange={(event) => setReason(event.target.value)} />
+        <p className="muted" id="change-reason-hint">딜러를 변경하려면 이유를 입력해 주세요.</p>
         <button type="submit" className="button button-primary" disabled={disabled || !dealerId || !reason.trim()}>딜러 변경 기록</button>
       </form>}
       {(latestDecision || latestReassignment) && <section>

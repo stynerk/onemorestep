@@ -55,7 +55,7 @@ body:has(.workspace) { background: #f5f6fb; color: #18213a; margin: 0; }
 .lead.selected { background: #f0eeff; box-shadow: inset 3px 0 #6257d4; }
 .lead-button { display: grid; gap: 3px; width: 100%; padding: 9px 12px; background: transparent; border: none; text-align: left; color: #202846; }
 .lead-button:hover { background: #f4f2ff; }
-.lead-button strong { line-height: 1.23; overflow-wrap: anywhere; }
+.lead-button strong { min-width: 0; line-height: 1.23; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .lead-button > span { color: #59647f; font-size: 11px; }
 .lead-meta { display: flex; justify-content: space-between; gap: 7px; }
 .reopen { margin: 0 0 9px 12px; padding: 1px 5px; color: #4539a7; background: #f7f5ff; border: 1px solid #ded9fa; border-radius: 4px; font-size: 11px !important; }
@@ -66,7 +66,7 @@ body:has(.workspace) { background: #f5f6fb; color: #18213a; margin: 0; }
 .card-head { padding: 18px 20px 15px; border-bottom: 1px solid #e9eaf4; }
 .card-meta, .badges { display: flex; flex-wrap: wrap; gap: 7px; }
 .card-meta span, .badge, .verdict { display: inline-block; border-radius: 5px; padding: 3px 6px; background: #efedf9; color: #49448a; font-size: 11px; font-weight: 700; }
-.card-head h2 { font-size: 24px; margin-top: 8px; overflow-wrap: anywhere; }
+.card-head h2 { font-size: 24px; margin-top: 8px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .contact { margin-top: 6px !important; overflow-wrap: anywhere; }
 .muted { color: #606a81; font-size: 12px; }
 .badges { margin-top: 9px; }
