@@ -43,7 +43,8 @@ test("S5-03 1순위 A Medical 점수와 이력, 2순위 D Medi", async ({ page }
   const card = await assessLead(page, "L01");
 
   await expect(card.getByRole("heading", { name: "추천 딜러" })).toBeVisible();
-  await expect(card.getByText("A Medical", { exact: true })).toBeVisible();
+  await expect(card.locator(".dealer-entry-head").getByText("A Medical", { exact: true })).toBeVisible();
+  await expect(card.locator(".handoff-summary dd")).toHaveText("A Medical");
   await expect(card.getByText("0.53", { exact: true })).toBeVisible();
   await expect(card.getByText(/전달 8건.*전환율 42\.9%.*진행 1건.*미응답 0건/)).toBeVisible();
   await expect(card.getByText("이 기관 거래 기록 있음", { exact: true })).toBeVisible();

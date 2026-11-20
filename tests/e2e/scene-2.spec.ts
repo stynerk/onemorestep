@@ -86,32 +86,47 @@ test("S2-02 한 번 클릭하면 리드당 POST 한 건을 보내고 판정 중�
     "L" + String(index + 1).padStart(2, "0")));
 });
 
-test("S2-03 저장 결과 그룹은 8·3·3·2·14건이고 유효 그룹 처음은 L06이다", async ({ page }, testInfo) => {
+test("S2-03 저장 결과 그룹은 8·6·3·2·11건이고 유효 그룹 처음은 L06이다", async ({ page }, testInfo) => {
   await page.goto("/");
   await runAssessment(page);
   for (const [label, count] of [
-    ["유효", 8], ["애매", 3], ["국가 확인", 3], ["제휴 확인", 2], ["무효", 14],
+    ["유효", 8], ["애매", 6], ["국가 확인", 3], ["제휴 확인", 2], ["무효", 11],
   ] as const) {
     await expect(group(page, label).getByRole("heading")).toHaveText(label + " " + count);
     await expect(group(page, label).getByRole("listitem")).toHaveCount(count);
   }
   await expect(group(page, "유효").locator(".lead-meta > span:first-child").first()).toHaveText("L06");
+  for (const [leadId, team] of [["L28", "APAC"], ["L29", "NA"], ["L30", "EU"]] as const) {
+    await expect(group(page, "애매").getByRole("button", { name: new RegExp("^" + leadId) })).toBeVisible();
+    await expect(row(page, leadId).locator(".lead-handoff")).toContainText(team + " 권역 세일즈팀");
+  }
+  await expect(row(page, "L26").locator(".lead-handoff")).toContainText("인사팀");
+  for (const leadId of ["L24", "L25"]) {
+    await expect(row(page, leadId).locator(".lead-handoff")).toContainText("없음");
+  }
   await screenshot(page, testInfo, "scene-2-assessed-inbox");
+  await row(page, "L29").getByRole("button", { name: /^L29/u }).click();
+  await expect(card(page).locator(".handoff-summary")).toContainText("NA 권역 세일즈팀");
+  await expect(card(page).getByText(/사칭 의심/u).first()).toBeVisible();
+  await row(page, "L26").getByRole("button", { name: /^L26/u }).click();
+  await expect(card(page).locator(".handoff-summary")).toContainText("인사팀");
+  await row(page, "L24").getByRole("button", { name: /^L24/u }).click();
+  await expect(card(page).locator(".handoff-summary")).toContainText("없음");
 });
 
-test("S2-04 무효 14건은 각각 근거가 있고 업종만으로 무효 처리하지 않는다", async ({ page }) => {
+test("S2-04 무효 11건은 각각 근거가 있고 업종만으로 무효 처리하지 않는다", async ({ page }) => {
   await page.goto("/");
   await runAssessment(page);
-  await page.getByRole("navigation", { name: "문의함 필터" }).getByRole("button", { name: /^무효\s+14$/u }).click();
+  await page.getByRole("navigation", { name: "문의함 필터" }).getByRole("button", { name: /^무효\s+11$/u }).click();
   const reasons = await group(page, "무효").locator(".lead-button > span:last-child").allTextContents();
-  expect(reasons).toHaveLength(14);
+  expect(reasons).toHaveLength(11);
   for (const reason of reasons) {
-    expect(reason).toMatch(/소속.*없|기관을 찾지 못함|공식 도메인과 다른|사칭|영업 제안|과제|논문|학생|채용|구직|경쟁사/u);
-    expect(reason).not.toMatch(/업종/u);
+    expect(reason).toMatch(/소속.*없|기관을 찾지 못함|영업 제안|과제|논문|학생|채용|구직|경쟁사/u);
+    expect(reason).not.toMatch(/업종|사칭 의심/u);
   }
 });
 
-test("S2-05 일괄 무효 처리는 무효 14건만 대상으로 한다", async ({ page }) => {
+test("S2-05 일괄 무효 처리는 무효 11건만 대상으로 한다", async ({ page }) => {
   await page.goto("/");
   await runAssessment(page);
   const untouched = ["유효", "애매", "국가 확인", "제휴 확인"].map((label) =>
@@ -120,7 +135,7 @@ test("S2-05 일괄 무효 처리는 무효 14건만 대상으로 한다", async 
   const invalid = group(page, "무효");
   const expectedIds = await invalid.locator(".lead-meta > span:first-child").allTextContents();
   await invalid.getByRole("button", { name: "일괄 무효 처리" }).click();
-  await expect(invalid.locator(".lead-meta > span:last-child").filter({ hasText: invalidState })).toHaveCount(14);
+  await expect(invalid.locator(".lead-meta > span:last-child").filter({ hasText: invalidState })).toHaveCount(11);
   for (const [index, statuses] of untouched.entries()) await expect(statuses).toHaveText(snapshots[index]);
   const recorded = await events(page);
   const disqualified = recorded.filter((event) => event.type === "decision" && event.action === "disqualify");
@@ -143,7 +158,7 @@ test("S2-06 일괄 처리 뒤 L18만 다시 검토로 꺼낸다", async ({ page 
   await row(page, "L18").getByRole("button", { name: "다시 검토" }).click();
   await expect(status(page, "L18")).toHaveText("결정 대기");
   await expect(group(page, "애매").getByRole("listitem").filter({ hasText: /\bL18\b/u })).toHaveCount(1);
-  await expect(invalid.locator(".lead-meta > span:last-child").filter({ hasText: invalidState })).toHaveCount(13);
+  await expect(invalid.locator(".lead-meta > span:last-child").filter({ hasText: invalidState })).toHaveCount(10);
   const reopened = (await events(page)).filter((event) => event.type === "review-reopened");
   expect(reopened.map(({ leadId }) => leadId)).toEqual(["L18"]);
 });
@@ -182,15 +197,14 @@ test("S2-08 응답이 8초 넘게 없으면 그 리드만 외부 확인 실패�
   try {
     await runButton(page).click();
     await requestStarted.promise;
-    await expect.poll(async () => {
-      const completed = (await events(page)).filter((event) => event.type === "assessed");
-      return {
-        total: completed.length,
-        failed: completed.filter((event) => event.assessment.details?.externalStatus === "failed")
-          .map(({ leadId }) => leadId),
-      };
-    }, { timeout: 9000, message: "8초 응답 제한 안팎에 L01만 실패하고 나머지 리드는 완료된다" })
-      .toEqual({ total: 30, failed: ["L01"] });
+    await expect.poll(async () => (await events(page)).some((event) =>
+      event.type === "assessed" && event.leadId === "L01" && event.assessment.details?.externalStatus === "failed"),
+    { timeout: 10000, message: "응답하지 않는 L01은 8초 제한 뒤 실패로 기록된다" }).toBe(true);
+    await expect(page.getByRole("button", { name: "다시 판정", exact: true })).toBeEnabled({ timeout: 30000 });
+    const completed = (await events(page)).filter((event) => event.type === "assessed");
+    expect(completed).toHaveLength(30);
+    expect(completed.filter((event) => event.assessment.details?.externalStatus === "failed").map(({ leadId }) => leadId))
+      .toEqual(["L01"]);
     await row(page, "L01").getByRole("button", { name: /^L01/u }).click();
     await expect(card(page).getByText("외부 확인 실패, 다시 시도", { exact: true })).toBeVisible();
     await expect(card(page).getByRole("button", { name: "외부 확인 다시 시도" })).toBeEnabled();

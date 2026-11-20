@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { recommendDealer, recordDealerOutcome } from "../../lib/forwarding/dealers";
+import { regionalSalesHandoff } from "../../lib/forwarding/handoff";
 import { confirmedCountry, confirmedManagerDealer, inboxBucket, lastReply, mailKindForLead, mailRequestsFor, nextBusinessDate } from "../../lib/forwarding/inbox";
 import { openAssignment, reassignmentTarget, responseClock, type ReassignmentProposal } from "../../lib/forwarding/reassignment";
 import { createInitialForwardingState } from "../../lib/forwarding/seed";
@@ -142,6 +143,7 @@ export function useInbox(publicDemo: boolean, liveAssessment: boolean) {
         result = {
           assessment: {
             verdict: "ambiguous", reason: "외부 확인 실패, 다시 시도", sources: [], searchedAt: new Date().toISOString(),
+            handoff: regionalSalesHandoff(lead.country),
             mode: "saved", details: { domain: "unverified", countries: [], industry: null, memoIntent: "unknown", memoQuote: null, externalStatus: "failed", sourceKind: "local" },
           },
           workflow: "decision-pending",

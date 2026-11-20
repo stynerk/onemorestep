@@ -99,10 +99,10 @@ export function createAssessmentService(options: Options = {}) {
   }
 
   return {
-    async assess(lead: LeadInput, config: { mode?: string; apiKey?: string }) {
+    async assess(lead: LeadInput, config: { mode?: string; apiKey?: string; regionalCountry?: string }) {
       const nowIso = () => new Date(now()).toISOString();
       if (!lead.institution.trim()) {
-        return classifyLead(lead, { sources: [], searchedAt: nowIso(), kind: "local", status: "not-needed" });
+        return classifyLead(lead, { sources: [], searchedAt: nowIso(), kind: "local", status: "not-needed" }, config.regionalCountry);
       }
       const apiKey = config.apiKey?.trim();
       if (config.mode?.trim() !== "live" || !apiKey) {
@@ -111,7 +111,7 @@ export function createAssessmentService(options: Options = {}) {
         return classifyLead(lead, {
           sources, searchedAt: savedAt ?? nowIso(), kind: "curated",
           status: savedAt ? "complete" : "saved-unavailable",
-        });
+        }, config.regionalCountry);
       }
 
       const { queries, language, countryCode } = queriesFor(lead);
@@ -125,7 +125,7 @@ export function createAssessmentService(options: Options = {}) {
         searchedAt: successes.map((result) => result.searchedAt).sort().at(-1) ?? nowIso(),
         kind,
         status: complete ? "complete" : "failed",
-      });
+      }, config.regionalCountry);
     },
   };
 }

@@ -3,7 +3,8 @@ export type Verdict = (typeof VERDICTS)[number];
 export const WORKFLOW_STATES = ["new", "decision-pending", "reply-pending", "manager-confirmation-pending", "manager-direct-pending", "dealer-assigned", "connected", "disqualified"] as const;
 export type WorkflowState = (typeof WORKFLOW_STATES)[number];
 export type Product = "PM-50" | "US-200" | "IS-3";
-export type Region = "NA" | "LATAM" | "APAC" | "EU" | "MEA";
+export const REGIONS = ["NA", "LATAM", "APAC", "EU", "MEA"] as const;
+export type Region = (typeof REGIONS)[number];
 export type DealerOutcome = "deal" | "no-deal" | "in-progress" | "no-response";
 
 /** Operational input only. Evaluation labels and real/fictional markers are deliberately absent. */
@@ -53,6 +54,12 @@ export interface AssessmentDetails {
   sourceKind: (typeof SOURCE_KINDS)[number];
 }
 
+export type AssessmentHandoff =
+  | { kind: "dealer"; dealerId: string }
+  | { kind: "regional-sales"; region: Region | null }
+  | { kind: "hr" }
+  | { kind: "none" };
+
 export interface Assessment {
   verdict: Verdict;
   reason: string;
@@ -60,6 +67,8 @@ export interface Assessment {
   searchedAt: string;
   mode: "live" | "saved";
   details?: AssessmentDetails;
+  // Earlier version-1 browser events were written before the handoff field existed.
+  handoff?: AssessmentHandoff;
 }
 export interface LeadState {
   leadId: string;
