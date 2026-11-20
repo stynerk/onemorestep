@@ -22,15 +22,36 @@ HJ(오너), CPO Tony(Claude, 서비스PM), CTO Cap(Codex, 개발PM). Tony는 리
 
 ## 로컬 개발 실행
 
-Node.js 24와 npm을 사용한다. 최초 설치는 `npm ci`, 이후 실행은 아래 한 명령이다.
+Node.js 24와 npm을 사용한다. 처음 실행할 때는 저장소 루트에서 `npm ci`로 의존성을 설치한다.
 
 ```powershell
+npm ci
 npm run dev
 ```
 
 <http://127.0.0.1:3000>에서 미리내 문의함을 연다. **판정 시작**을 누르면 가상 리드 30건이 근거와 함께 다섯 묶음으로 분류된다. 결정, 회신과 딜러 결과는 이 브라우저에 저장되며 **시연 초기화**로 지울 수 있다. Liner 단일 검색 화면은 <http://127.0.0.1:3000/research>에서 계속 사용할 수 있다.
 
-실제 검색을 확인하려면 `.env.example`을 `.env.local`로 복사하고 서버용 `LINER_API_KEY`를 넣은 뒤 서버를 다시 실행한다. 위 검색 화면(`/api/research`)은 기본 `LINER_MODE=auto`에서 키가 있으면 실제 검색, 없으면 예시로 동작한다. `LINER_MODE` 미설정·빈 값도 `auto`와 같다. 키와 `.env.local`은 커밋하지 않는다. 기존 로컬 파일에 `LINER_MODE=sample`이 있다면 그대로 오프라인이며, 키만 넣어도 실제 검색하려면 이를 `auto`로 바꾸거나 모드 설정을 지운다. 이 변경이 기존 로컬 환경 파일을 자동 수정하지는 않는다.
+### 심사용 로컬 실시간 판정
+
+Node.js 24에서 `npm ci`를 마친 뒤, 로컬 환경 파일이 없을 때만 다음 명령으로 만든다. 기존 파일이 있으면 그 파일을 편집한다.
+
+```powershell
+if (-not (Test-Path -LiteralPath .env.local)) {
+    Copy-Item .env.example .env.local
+}
+```
+
+`.env.local`에 `LINER_MODE=live`와 본인의 `LINER_API_KEY`를 설정한다. 키와 로컬 환경 파일은 커밋하지 않는다. 메일도 확인할 때만 아래 [테스트 수신함 메일](#테스트-수신함-메일-25)을 별도로 설정한다.
+
+```powershell
+npm run dev
+```
+
+서버가 이미 실행 중이면 다시 시작한다. <http://127.0.0.1:3000>의 문의함에서 **판정 시작**을 누르면 Liner로 기관을 조사한다. 키 없이 실행하거나 `LINER_MODE=sample`로 설정하면 문의함은 저장된 근거를 사용한다.
+
+### 단일 검색 화면
+
+별도 단일 검색 화면(`/research`)은 기본 `LINER_MODE=auto`에서 키가 있으면 실제 검색, 없으면 예시로 동작한다. `LINER_MODE` 미설정·빈 값도 `auto`와 같다.
 
 | 모드 | 키 있음 | 키 없음 |
 |---|---|---|
@@ -53,9 +74,13 @@ npm start
 
 ## 공개 시연 (#43)
 
-배포 주소는 HJ가 첫 배포를 마치고 확인한 뒤 여기에 기록한다. Vercel의 GitHub 연동을 선택해 현재 Next.js의 POST API를 사용한다. 연결된 프로젝트의 프로덕션 브랜치는 `main`이며, 저장소의 `vercel.json`이 프로덕션과 미리보기 모두 `npm run build:demo`를 실행하도록 설정한다. [Vercel 저장소 빌드 설정](https://vercel.com/docs/project-configuration/vercel-json)
+공개 주소에서 환경 설정 없이 문의함을 열 수 있다. [미리내 공개 시연](https://onemorestep-wheat.vercel.app/)
 
-공개 화면은 **저장된 결과로 보는 시연 버전**이다. 시연 리드 30건의 판정 근거는 저장 자료를 사용하며, 결정·회신·재배정은 이 브라우저에 저장된다. 메일 발송은 화면과 API에서 차단한다. Vercel 환경에도 Liner·Gmail·테스트 수신함 설정을 두지 않는다. 심사위원이 실제 검색과 테스트 메일을 확인하려면 위의 로컬 실행과 아래 테스트 메일 설정을 사용한다.
+Vercel의 GitHub 연동을 선택해 현재 Next.js의 POST API를 사용한다. 연결된 프로젝트의 프로덕션 브랜치는 `main`이며, 저장소의 `vercel.json`이 프로덕션과 미리보기 모두 `npm run build:demo`를 실행하도록 설정한다. [Vercel 저장소 빌드 설정](https://vercel.com/docs/project-configuration/vercel-json)
+
+공개 화면은 **저장된 결과로 보는 시연 버전**이다. 저장 근거를 사용한 시연 리드 판정은 정답표와 **30/30** 일치했다. 공개 시연은 Liner 크레딧을 사용하지 않으며 화면과 API에서 메일 발송을 차단한다. 결정·회신·재배정은 이 브라우저에 저장된다. Vercel 환경에도 Liner·Gmail·테스트 수신함 설정을 두지 않는다.
+
+실시간 보정의 **25/30**은 시연 리드 30건에 동일한 Liner 응답 56회분을 재생한 초안 PR #44의 `585e3f5` 검증 결과다. 현재 `main`과 공개 배포는 보정 이전 버전을 사용한다. [동일 응답 재생 결과](https://github.com/stynerk/onemorestep/pull/44#issuecomment-7013087467)
 
 깨끗한 로컬 체크아웃에서 공개 버전을 확인한다. 공개 빌드는 `.env`, `.env.local`, `.env.production`, `.env.production.local` 파일이나 Liner·Gmail·테스트 수신함 값이 있으면 시작 전에 종료한다.
 
@@ -119,7 +144,7 @@ L03(Cleveland Clinic)을 승인 대기로 두면 V MedSource 0.333이 U Health S
 
 ## 테스트 수신함 메일 (#25)
 
-HJ가 지정한 테스트 수신함과 발신 설정을 로컬 `.env.local`에 넣고 서버를 다시 실행한다.
+테스트 메일을 확인할 때만 HJ가 지정한 테스트 수신함과 발신 설정을 로컬 `.env.local`에 넣고 서버를 다시 실행한다.
 
 - `TEST_MAIL_TO`에는 테스트 수신함 주소 하나를 적는다.
 - `MAIL_FROM`에는 발신 전용 Gmail 주소, `GMAIL_APP_PASSWORD`에는 해당 계정의 앱 비밀번호를 적는다. 앱 비밀번호는 2단계 인증이 필요하다. [Gmail 앱 비밀번호 안내](https://support.google.com/mail/answer/185833)
