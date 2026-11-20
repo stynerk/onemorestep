@@ -3,6 +3,7 @@ import { readFileSync, readdirSync } from "node:fs";
 import path from "node:path";
 import test from "node:test";
 import answers from "../src/lib/forwarding/evaluation/ground-truth.json";
+import { createAssessmentService } from "../src/lib/forwarding/assessment-service";
 import { forwardingPolicy } from "../src/lib/forwarding/policy";
 import { createInitialForwardingState } from "../src/lib/forwarding/seed";
 import { applyForwardingEvent, createBrowserForwardingStore, createForwardingStore, FORWARDING_STORAGE_KEY } from "../src/lib/forwarding/store";
@@ -46,7 +47,7 @@ test("evaluation answers are complete and cannot be reached from runtime modules
   assert.equal(answers.length, 30);
   assert.equal(new Set(answers.map((row) => row.leadId)).size, 30);
   const counts = VERDICTS.map((verdict) => answers.filter((answer) => answer.verdict === verdict).length);
-  assert.deepEqual(counts, [8, 3, 3, 2, 14]);
+  assert.deepEqual(counts, [8, 6, 3, 2, 11]);
   for (const answer of answers) assert.ok(VERDICTS.includes(answer.verdict as (typeof VERDICTS)[number]));
   const runtime = createInitialForwardingState();
   for (const lead of runtime.leads) assert.deepEqual(Object.keys(lead).sort(), ["id", "name", "email", "phone", "institution", "country", "product", "memo", "receivedAt"].sort());
@@ -57,6 +58,21 @@ test("evaluation answers are complete and cannot be reached from runtime modules
   }
   assert.equal(runtime.events.length, 0);
   assert.equal(Object.values(runtime.leadStates).filter((lead) => lead.assessment !== null).length, 0);
+});
+
+test("all 30 saved assessments match the demo verdict and handoff oracle without external calls", async () => {
+  const expected = new Map(answers.map((answer) => [answer.leadId, answer]));
+  let calls = 0;
+  const service = createAssessmentService({ fetcher: async () => { calls++; return Response.json({ results: [] }); } });
+  for (const lead of createInitialForwardingState().leads) {
+    const answer = expected.get(lead.id);
+    assert.ok(answer, lead.id);
+    const { assessment } = await service.assess(lead, { mode: "sample", apiKey: "test-key" });
+    assert.equal(assessment.mode, "saved", lead.id);
+    assert.equal(assessment.verdict, answer.verdict, lead.id);
+    assert.deepEqual(assessment.handoff, answer.handoff, lead.id);
+  }
+  assert.equal(calls, 0);
 });
 
 test("seven dealers and 41 dated deliveries match the source with the scene 6 adjustment", () => {

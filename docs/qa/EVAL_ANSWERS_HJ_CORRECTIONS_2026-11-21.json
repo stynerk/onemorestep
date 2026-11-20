@@ -1,0 +1,13 @@
+[
+  { "id": "E05", "verdict": "invalid", "handoff": "none" },
+  { "id": "E12", "verdict": "invalid", "handoff": "none" },
+  { "id": "E15", "verdict": "invalid", "handoff": "none" },
+  { "id": "E23", "verdict": "invalid", "handoff": "none" },
+  { "id": "E30", "verdict": "invalid", "handoff": "none" },
+  { "id": "E36", "verdict": "invalid", "handoff": "none" },
+  { "id": "E43", "verdict": "invalid", "handoff": "none" },
+  { "id": "E48", "verdict": "invalid", "handoff": "none" },
+  { "id": "E57", "verdict": "invalid", "handoff": "none" },
+  { "id": "E62", "verdict": "invalid", "handoff": "none" },
+  { "id": "E65", "verdict": "invalid", "handoff": "none" }
+]

@@ -1,11 +1,13 @@
 "use client";
 
 import { useState } from "react";
+import { handoffForLead } from "../../lib/forwarding/handoff";
 import { inboxBucket, inboxOrder, verdictLabels } from "../../lib/forwarding/inbox";
 import { forwardingPolicy } from "../../lib/forwarding/policy";
 import { reassignmentProposal } from "../../lib/forwarding/reassignment";
 import { VERDICTS, type LeadInput } from "../../lib/forwarding/types";
 import { DecisionCard } from "./decision-card";
+import { handoffLabel } from "./handoff-label";
 import { useInbox } from "./inbox-controller";
 import { PublicDemoResults } from "./public-demo-results";
 
@@ -101,6 +103,8 @@ export default function Inbox({ publicDemo, liveAssessment }: { publicDemo: bool
             {groups[group].length > 0 ? <ul className="leads">
               {groups[group].map((lead) => {
                 const status = state.leadStates[lead.id];
+                const handoff = handoffForLead(state, lead);
+                const showReason = group === "invalid" || (group === "ambiguous" && status.assessment?.details?.domain === "suspicious");
                 return <li key={lead.id} className={"lead" + (lead.id === selected?.id ? " selected" : "")}>
                   <button type="button" className="lead-button" aria-pressed={lead.id === selected?.id}
                     onClick={() => inbox.setSelected(lead.id)}>
@@ -108,7 +112,8 @@ export default function Inbox({ publicDemo, liveAssessment }: { publicDemo: bool
                       {overdue.has(lead.id) ? <span className="reassignment-label">재배정 제안</span>
                         : <span>{inbox.pending.includes(lead.id) ? "조사 중…" : rowState[status.workflow]}</span>}</span>
                     <strong title={lead.institution}>{lead.institution || "소속 미기재"}</strong>
-                    <span>{group === "invalid" ? status.assessment?.reason ?? "담당자 무효 처리" : lead.country + " · " + lead.product}</span>
+                    {handoff && <span className="lead-handoff">넘길 곳 · {handoffLabel(handoff, state.dealers)}</span>}
+                    <span>{showReason ? status.assessment?.reason ?? "담당자 무효 처리" : lead.country + " · " + lead.product}</span>
                   </button>
                   {group === "invalid" && !status.dealerId && <button type="button" className="reopen"
                     disabled={!inbox.ready || inbox.pending.includes(lead.id)} onClick={() => inbox.reopen(lead)}>다시 검토</button>}

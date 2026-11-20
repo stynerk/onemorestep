@@ -1,24 +1,24 @@
 import styles from "./public-demo-results.module.css";
 
 const scores = [
-  { mode: "저장된 결과", matched: "30/30", rate: "100%", validToInvalid: 0, ambiguous: 3 },
-  { mode: "실시간 검색 실측", matched: "19/30", rate: "63.3%", validToInvalid: 0, ambiguous: 13 },
+  { mode: "저장된 결과", matched: "30/30", rate: "100%", validToInvalid: 0, ambiguous: 6 },
+  { mode: "실시간 검색 응답 재생 · 기준 변경 전", matched: "25/30", rate: "83.3%", validToInvalid: 0, ambiguous: 8 },
 ];
 
 const examples = [
   {
     id: "L13",
-    label: "위험한 오류 · 실시간",
+    label: "위험한 오류 · 11월 19일 실시간",
     expected: "국가 확인",
     actual: "유효",
-    reason: "국가 확인 없이 유효로 판정해 딜러에게 잘못 넘길 수 있었습니다.",
+    reason: "당시 국가 확인 없이 유효로 판정해 잘못 넘길 위험이 있었습니다. 11월 20일 재생에서는 애매로 분류됐습니다.",
   },
   {
     id: "L05",
-    label: "안전한 오류 · 실시간",
+    label: "안전한 오류 · 11월 19일 실시간",
     expected: "유효",
     actual: "애매",
-    reason: "기관 소재지를 한 나라로 확인하기 어려워 담당자 확인으로 넘겼습니다.",
+    reason: "당시 소재지가 불분명해 담당자 확인으로 넘겼습니다. 11월 20일 재생에서는 유효로 정답과 일치했습니다.",
   },
   {
     id: "L08",
@@ -35,7 +35,7 @@ export function PublicDemoResults() {
       <summary>시연 30건 정답 대조</summary>
       <div className={styles.content}>
         <p className={styles.context}>
-          2026년 11월 19일 통합 QA 기록. 실시간 수치는 로컬에서 별도로 측정했습니다.
+          공개 문의함은 저장된 결과를 사용합니다. 유효 8 · 애매 6 · 국가 확인 3 · 제휴 확인 2 · 무효 11입니다. 실시간 수치는 넘길 곳 기준을 변경하기 전인 2026년 11월 20일의 검색 응답 56건 재생 기록입니다.
         </p>
         <dl className={styles.scores}>
           {scores.map(({ mode, matched, rate, validToInvalid, ambiguous }) => (

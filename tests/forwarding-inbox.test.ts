@@ -2,9 +2,11 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import { POST as sendMail } from "../src/app/api/forwarding/mail/route";
 import { POST as assess } from "../src/app/api/forwarding/assess/route";
+import { createAssessmentService } from "../src/lib/forwarding/assessment-service";
+import { handoffForLead } from "../src/lib/forwarding/handoff";
 import { confirmedCountry, inboxBucket, inboxOrder, mailKindFor, maskEmail, maskPhone, nextBusinessDate } from "../src/lib/forwarding/inbox";
 import { createInitialForwardingState } from "../src/lib/forwarding/seed";
-import { createForwardingStore } from "../src/lib/forwarding/store";
+import { createForwardingStore, FORWARDING_STORAGE_KEY } from "../src/lib/forwarding/store";
 import type { ForwardingEvent } from "../src/lib/forwarding/types";
 
 const at = "2026-11-20T09:00:00.000Z";
@@ -43,6 +45,57 @@ test("invalid rows can be reopened and country replies survive hydration without
   assert.equal(restored.ok, true);
   assert.equal(restored.state.leadStates.L18.assessment?.verdict, "ambiguous");
   assert.equal(confirmedCountry(restored.state, "L12"), "독일");
+});
+
+test("legacy v1 storage hydrates without rewriting old assessments and can project a handoff", () => {
+  const details = {
+    domain: "unverified", countries: [], industry: null, memoIntent: "unknown",
+    memoQuote: null, externalStatus: "complete", sourceKind: "curated",
+  } as const;
+  const legacyEvents = [
+    verdict("L01", "valid"),
+    { ...verdict("L26", "invalid"), assessment: {
+      verdict: "invalid", mode: "saved", reason: "채용 문의", sources: [], searchedAt: at,
+      details: { ...details, memoIntent: "job" },
+    } },
+    { ...verdict("L28", "invalid"), assessment: {
+      verdict: "invalid", mode: "saved", reason: "사칭 의심 이전 판정", sources: [], searchedAt: at,
+      details: { ...details, domain: "suspicious" },
+    } },
+    { type: "decision", id: "legacy-approval", leadId: "L01", at, action: "change-dealer", dealerId: "dealer-d", reason: "기존 배정" },
+  ];
+  const raw = JSON.stringify({ version: 1, events: legacyEvents });
+  const storage = memory();
+  storage.setItem(FORWARDING_STORAGE_KEY, raw);
+  const restored = createForwardingStore(storage).hydrate();
+  assert.equal(restored.ok, true);
+  assert.equal(storage.getItem(), raw);
+  assert.deepEqual(restored.state.events, legacyEvents);
+
+  const lead = (id: string) => restored.state.leads.find((entry) => entry.id === id)!;
+  assert.deepEqual(handoffForLead(restored.state, lead("L01")), { kind: "dealer", dealerId: "dealer-d" });
+  assert.deepEqual(handoffForLead(restored.state, lead("L26")), { kind: "hr" });
+  assert.equal(restored.state.leadStates.L28.assessment?.verdict, "invalid");
+  assert.deepEqual(handoffForLead(restored.state, lead("L28")), { kind: "none" });
+});
+
+test("regional-sales labels preserve only the existing reply mail types", async () => {
+  const service = createAssessmentService();
+  const leads = createInitialForwardingState().leads;
+  for (const [leadId, kind, region] of [
+    ["L12", "country-check", "APAC"],
+    ["L13", "country-check", "NA"],
+    ["L22", "partnership-check", "APAC"],
+    ["L23", "partnership-check", "NA"],
+    ["L24", null, null],
+    ["L26", null, null],
+    ["L28", null, "APAC"],
+  ] as const) {
+    const lead = leads.find((entry) => entry.id === leadId)!;
+    const { assessment, workflow } = await service.assess(lead, { mode: "sample" });
+    if (region) assert.deepEqual(assessment.handoff, { kind: "regional-sales", region }, leadId);
+    assert.equal(mailKindFor({ type: "assessed", id: "mail:" + leadId, leadId, at, assessment, workflow }), kind, leadId);
+  }
 });
 
 test("forwarding mail accepts a matching business event and rejects cross-origin or injected recipients before dispatch", async () => {

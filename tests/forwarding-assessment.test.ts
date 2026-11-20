@@ -28,7 +28,10 @@ test("official domains are checked at a dot boundary; lookalikes and ambiguous d
   assert.equal(actual.assessment.verdict, "valid");
   assert.equal(actual.assessment.details?.domain, "matched");
   const poisoned = classifyLead({ ...lead, email: "example@evil-u-tokyo.ac.jp" }, evidence([tokyo]));
-  assert.equal(poisoned.assessment.verdict, "invalid");
+  assert.equal(poisoned.assessment.verdict, "ambiguous");
+  assert.equal(poisoned.assessment.details?.domain, "suspicious");
+  assert.match(poisoned.assessment.reason, /사칭 의심/u);
+  assert.deepEqual(poisoned.assessment.handoff, { kind: "regional-sales", region: "APAC" });
   const unknown = classifyLead({ ...lead, email: "example@dominio.example" }, evidence([tokyo]));
   assert.equal(unknown.assessment.verdict, "ambiguous");
   assert.equal(unknown.assessment.details?.domain, "unverified");
@@ -36,19 +39,27 @@ test("official domains are checked at a dot boundary; lookalikes and ambiguous d
   assert.equal(alias.assessment.verdict, "valid");
   assert.ok(alias.assessment.sources.some((source) => source.includes("privacy-security")));
   const foreign = classifyLead({ ...lead, email: "example@charite.de" }, evidence([tokyo, charite]));
-  assert.equal(foreign.assessment.verdict, "invalid");
+  assert.equal(foreign.assessment.verdict, "ambiguous");
+  assert.equal(foreign.assessment.details?.domain, "suspicious");
+  assert.match(foreign.assessment.reason, /사칭 의심/u);
+  assert.deepEqual(foreign.assessment.handoff, { kind: "regional-sales", region: "APAC" });
 });
 
-test("third-party and unrelated official content cannot confirm an institution domain or location", () => {
+test("third-party pages and unrelated official text do not supply institution location evidence", () => {
   const lead = getLead("L02");
   for (const url of ["https://en.wikipedia.org/wiki/University_of_Tokyo_Hospital", "https://news.example/tokyo", "https://directory.example/tokyo"]) {
     const thirdParty = classifyLead(lead, evidence([{ ...tokyo, url }]));
     assert.equal(thirdParty.assessment.verdict, "ambiguous");
     assert.equal(thirdParty.assessment.details?.domain, "unverified");
   }
-  const noAddress = classifyLead(lead, evidence([{ ...tokyo, description: "Our hospital works with international partners from Japan and Australia." }]));
-  assert.equal(noAddress.assessment.verdict, "ambiguous");
-  assert.deepEqual(noAddress.assessment.details?.countries, []);
+  const affiliationOnly = evidence([{ ...tokyo, description: "Our hospital works with international partners from Australia." }]);
+  const inferred = classifyLead(lead, affiliationOnly);
+  assert.equal(inferred.assessment.verdict, "valid");
+  assert.deepEqual(inferred.assessment.details?.countries, ["일본"]);
+  assert.match(inferred.assessment.reason, /도메인의 국가 코드/);
+  const saved = classifyLead(lead, { ...affiliationOnly, kind: "curated" });
+  assert.equal(saved.assessment.verdict, "ambiguous");
+  assert.deepEqual(saved.assessment.details?.countries, []);
   const multiple = classifyLead(lead, evidence([tokyo, { ...tokyo, description: "Second campus located in Australia." }]));
   assert.equal(multiple.assessment.verdict, "ambiguous");
   assert.deepEqual(multiple.assessment.details?.countries, ["일본", "호주"]);
@@ -67,6 +78,116 @@ test("country check precedes partnership, and industry is informational on L11",
   assert.equal(classifyLead(getLead("L11"), evidence([{ ...toyota, description: "Hospital address in Aichi, Japan." }])).assessment.verdict, "valid");
   const noIntent = classifyLead({ ...getLead("L11"), memo: "For reference" }, evidence([toyota]));
   assert.equal(noIntent.assessment.verdict, "ambiguous");
+});
+
+test("live fallback uses supported country suffixes from official domains or verified aliases", () => {
+  const rows = [
+    ["L02", tokyo.url, "일본", "valid"],
+    ["L07", "https://www.thermh.org.au/contact", "호주", "valid"],
+    ["L11", "https://global.toyota/en/company/profile/overview/", "일본", "valid"],
+    ["L12", charite.url, "독일", "country-check"],
+  ] as const;
+  for (const [leadId, url, country, verdict] of rows) {
+    const lead = getLead(leadId);
+    const input = evidence([{ title: lead.institution, url, description: "Public institution profile." }]);
+    for (const kind of ["liner", "cache", "mixed"] as const) {
+      const { assessment } = classifyLead(lead, { ...input, kind });
+      assert.equal(assessment.verdict, verdict, leadId);
+      assert.deepEqual(assessment.details?.countries, [country], leadId);
+      assert.match(assessment.reason, /도메인의 국가 코드/);
+    }
+    const saved = classifyLead(lead, { ...input, kind: "curated" });
+    assert.equal(saved.assessment.verdict, "ambiguous");
+    assert.deepEqual(saved.assessment.details?.countries, []);
+  }
+});
+
+test("generic, unsupported, unverified and incomplete results supply no fallback country", () => {
+  const generic = [
+    ["L03", cleveland.url], // Official .org and verified .org.
+    ["L05", "https://sev.severance.healthcare/sev-en/about/network.do"], // Verified .ac.
+    ["L14", "https://www.apollohospitals.com/hospitals/"], // Official .com.
+  ] as const;
+  for (const [leadId, url] of generic) {
+    const lead = getLead(leadId);
+    const { assessment } = classifyLead(lead, evidence([{ title: lead.institution, url, description: "Public institution profile." }]));
+    assert.equal(assessment.details?.domain, "matched", leadId);
+    assert.deepEqual(assessment.details?.countries, [], leadId);
+    assert.equal(assessment.verdict, "ambiguous", leadId);
+  }
+
+  const lead = getLead("L07");
+  const official = { title: lead.institution, url: "https://www.thermh.org.au/contact", description: "Public hospital profile." };
+  const unverified = classifyLead({ ...lead, email: "demo@unverified.example.jp" }, evidence([official]));
+  assert.equal(unverified.assessment.verdict, "ambiguous");
+  assert.equal(unverified.assessment.details?.domain, "unverified");
+  assert.deepEqual(unverified.assessment.details?.countries, []);
+
+  const thirdParty = { ...official, url: "https://directory.example.au/royal-melbourne-hospital" };
+  const missingOfficial = classifyLead(lead, evidence([thirdParty]));
+  assert.equal(missingOfficial.assessment.details?.domain, "matched"); // Verified alias alone cannot establish existence.
+  assert.equal(missingOfficial.assessment.verdict, "ambiguous");
+  assert.deepEqual(missingOfficial.assessment.details?.countries, []);
+
+  const incomplete = classifyLead(lead, { ...evidence([official]), status: "failed" });
+  assert.equal(incomplete.assessment.verdict, "ambiguous");
+  assert.deepEqual(incomplete.assessment.details?.countries, []);
+});
+
+test("explicit and conflicting countries precede domain fallback, with a live partnership exception for unresolved country", () => {
+  const lead = getLead("L02");
+  const explicit = classifyLead(lead, evidence([{ ...tokyo, description: "Hospital address in Seoul, Republic of Korea." }]));
+  assert.equal(explicit.assessment.verdict, "country-check");
+  assert.deepEqual(explicit.assessment.details?.countries, ["대한민국"]);
+  assert.doesNotMatch(explicit.assessment.reason, /도메인의 국가 코드/);
+
+  const conflict = evidence([tokyo, { ...tokyo, description: "Second campus address in Melbourne, Australia." }]);
+  const buy = classifyLead(lead, conflict);
+  assert.equal(buy.assessment.verdict, "ambiguous");
+  assert.deepEqual(buy.assessment.details?.countries, ["일본", "호주"]);
+
+  const partnership = { ...lead, memo: "Co-marketing partnership" };
+  const mixed = classifyLead(partnership, { ...conflict, kind: "mixed" });
+  assert.equal(mixed.assessment.verdict, "partnership-check");
+  assert.deepEqual(mixed.assessment.details?.countries, ["일본", "호주"]);
+  assert.match(mixed.assessment.reason, /기관 소재지/);
+  assert.equal(classifyLead(partnership, { ...conflict, kind: "curated" }).assessment.verdict, "ambiguous");
+  assert.equal(classifyLead({ ...partnership, country: "대한민국" }, evidence([tokyo])).assessment.verdict, "country-check");
+
+  for (const [leadId, url] of [["L22", "https://www.hyundai.com/"], ["L23", "https://www.pfizer.com/contact"]] as const) {
+    const partner = getLead(leadId);
+    const generic = evidence([{ title: partner.institution, url, description: "Public company profile." }]);
+    const undecided = classifyLead(partner, generic);
+    assert.equal(undecided.assessment.verdict, "partnership-check", leadId);
+    assert.deepEqual(undecided.assessment.details?.countries, [], leadId);
+    assert.equal(classifyLead({ ...partner, email: "demo@unverified.example.jp" }, generic).assessment.verdict, "ambiguous");
+    assert.equal(classifyLead(partner, { ...generic, kind: "curated" }).assessment.verdict, "ambiguous");
+  }
+});
+
+test("institutional research collaboration requires trusted affiliation and differs from student and job inquiries", () => {
+  const lead = getLead("L02");
+  for (const memo of [
+    "우리 병원 연구팀에서 공동 연구를 제안합니다.",
+    "Our hospital research team proposes a joint research collaboration.",
+    "病院の研究チームとして共同研究を提案します。",
+  ]) {
+    const { assessment } = classifyLead({ ...lead, memo }, evidence([tokyo]));
+    assert.equal(assessment.verdict, "partnership-check", memo);
+    assert.deepEqual(assessment.handoff, { kind: "regional-sales", region: "APAC" }, memo);
+  }
+
+  const collaboration = { ...lead, memo: "Our hospital research team proposes a joint research collaboration." };
+  const unverified = classifyLead({ ...collaboration, email: "demo@unverified.example.test" }, evidence([tokyo]));
+  assert.equal(unverified.assessment.verdict, "ambiguous");
+  assert.equal(classifyLead({ ...collaboration, country: "대한민국" }, evidence([tokyo])).assessment.verdict, "country-check");
+
+  const student = classifyLead({ ...lead, memo: "I am a student asking for specs for my class project." }, evidence([tokyo]));
+  assert.equal(student.assessment.verdict, "invalid");
+  assert.deepEqual(student.assessment.handoff, { kind: "none" });
+  const applicant = classifyLead({ ...lead, memo: "Applying for a research position with interest in joint research." }, evidence([tokyo]));
+  assert.equal(applicant.assessment.verdict, "invalid");
+  assert.deepEqual(applicant.assessment.handoff, { kind: "hr" });
 });
 
 test("two successes without a match differ from partial failure, authentication failure, timeout and stored gaps", async () => {
@@ -231,6 +352,7 @@ test("assessment route accepts seed IDs only and its response survives store hyd
     assert.equal(assessment.verdict, "valid");
     assert.equal(assessment.mode, "saved");
     assert.equal(assessment.details.sourceKind, "curated");
+    assert.deepEqual(assessment.handoff, { kind: "dealer", dealerId: "dealer-e" });
     const storage = new Map<string, string>();
     const storeAdapter = {
       getItem: (key: string) => storage.get(key) ?? null,

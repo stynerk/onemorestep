@@ -1,7 +1,7 @@
 # DEMO_DATA table snapshot
 
 Source: PR #23, commit 1da2b587b393b4e627338fada671031965c12c41.
-Only the author-provided lead and dealer rows are retained for fixture parity checks.
+Only the author-provided lead and dealer rows are retained for fixture parity checks. Rows L24–L30 reflect the handoff criteria from PR #53, commit f120da7737c59212c8a9d2a4cdade96d39dc0679.
 
 | A Medical | 대한민국 | 8 | 3 | 4 | 1 | 0 | 서울대학교병원과 이전 거래 |
 | D Medi | 대한민국 | 6 | 1 | 2 | 0 | 3 | 강남세브란스병원과 이전 거래. 최근 응답 느림 |
@@ -32,11 +32,11 @@ Only the author-provided lead and dealer rows are retained for fixture parity ch
 | L21 | HSBC | 실제 | mrn-demo-21@hsbc.com | 영국 | PM-50 | We'd like to offer corporate banking services | 무효: 판매·영업 | 무효 | 같음 (HJ) |
 | L22 | 현대자동차 | 실제 | mrn-demo-22@hyundai.com | 대한민국 | PM-50 | 협업 제안드립니다 | 제휴 확인 | 제휴 상세 요청 메일 → 회신 대기 | 같음 (L23과 같은 규칙) |
 | L23 | Pfizer | 실제 | mrn-demo-23@pfizer.com | 미국 | US-200 | Proposal for a co-marketing partnership | 제휴 확인 | 제휴 상세 요청 메일 → 회신 대기 | 같음 (HJ 결정) |
-| L24 | Massachusetts Institute of Technology | 실제 | mrn-demo-24@mit.edu | 미국 | US-200 | Need specs for a class project | 무효: 학생 | 무효 | |
-| L25 | 연세대학교 | 실제 | mrn-demo-25@yonsei.ac.kr | 대한민국 | US-200 | 졸업 논문 자료 요청 | 무효: 학생 | 무효 | |
-| L26 | The University of Tokyo | 실제 | mrn-demo-26@u-tokyo.ac.jp | 일본 | PM-50 | Applying for a sales position | 무효: 구직 | 무효 | |
+| L24 | Massachusetts Institute of Technology | 실제 | mrn-demo-24@mit.edu | 미국 | US-200 | Need specs for a class project | 무효: 학생 개인 과제 | 무효(어디에도 넘기지 않음) | 같음 (HJ 기준 2026-11-20) |
+| L25 | 연세대학교 | 실제 | mrn-demo-25@yonsei.ac.kr | 대한민국 | US-200 | 졸업 논문 자료 요청 | 무효: 학생 개인 논문 | 무효(어디에도 넘기지 않음) | 같음 (HJ 기준 2026-11-20) |
+| L26 | The University of Tokyo | 실제 | mrn-demo-26@u-tokyo.ac.jp | 일본 | PM-50 | Applying for a sales position | 무효: 채용 문의 | 무효 → 인사팀으로 전달 | 같음 (HJ 기준 2026-11-20) |
 | L27 | Dentra Imaging | 가상 경쟁사 | mrn-demo-27@dentra.example.com | 독일 | IS-3 | Requesting product comparison materials | 무효: 경쟁사 | 무효 | |
-| L28 | 서울아산병원 | 실제 이름, 가짜 도메인 | mrn-demo-28@asan-medical.test | 대한민국 | US-200 | 급히 견적 필요, 선입금 가능 | 무효: 사칭 의심 | 무효(도메인 불일치) | |
-| L29 | Cleveland Clinic | 실제 이름, 가짜 도메인 | mrn-demo-29@clevelandclinic-mail.test | 미국 | PM-50 | Urgent order, reply to this address only | 무효: 사칭 의심 | 무효(도메인 불일치) | |
-| L30 | Karolinska University Hospital | 실제 이름, 가짜 도메인 | mrn-demo-30@karolinska-hospital.test | 스웨덴 | US-200 | Large order, payment in advance | 무효: 사칭 의심 | 무효(도메인 불일치) | |
+| L28 | 서울아산병원 | 실제 이름, 가짜 도메인 | mrn-demo-28@asan-medical.test | 대한민국 | US-200 | 급히 견적 필요, 선입금 가능 | 애매: 사칭 의심 | 애매(도메인 불일치) → 대한민국 권역(APAC) 세일즈팀이 결정 | 같음 (HJ 기준 2026-11-20) |
+| L29 | Cleveland Clinic | 실제 이름, 가짜 도메인 | mrn-demo-29@clevelandclinic-mail.test | 미국 | PM-50 | Urgent order, reply to this address only | 애매: 사칭 의심 | 애매(도메인 불일치) → 북미 권역 세일즈팀이 결정 | 같음 (HJ 기준 2026-11-20) |
+| L30 | Karolinska University Hospital | 실제 이름, 가짜 도메인 | mrn-demo-30@karolinska-hospital.test | 스웨덴 | US-200 | Large order, payment in advance | 애매: 사칭 의심 | 애매(도메인 불일치) → EU 권역 세일즈팀이 결정 | 같음 (HJ 기준 2026-11-20) |
 | L06 | Singapore General Hospital | 실제 | mrn-demo-06@sgh.com.sg | 싱가포르 | PM-50 | Tender closes next week, need specs by Friday | 유효(놓칠 뻔한 리드) | 유효 → 지역 담당자(담당 APAC)에게 신규 딜러 S Medical Pte 확인 요청 | 같음 (HJ 결정) |

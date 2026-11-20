@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { handoffForLead } from "../../lib/forwarding/handoff";
 import { dealerScore, recommendDealer, type DealerScore } from "../../lib/forwarding/dealers";
 import { confirmedCountry, confirmedManagerDealer, hasStaleEvidence, maskEmail, maskPhone, nextBusinessDate, verdictLabels } from "../../lib/forwarding/inbox";
 import { locales } from "../../lib/forwarding/institution-policy";
@@ -8,6 +9,7 @@ import { renderForwardingMail } from "../../lib/forwarding/mail-template";
 import { forwardingPolicy } from "../../lib/forwarding/policy";
 import { currentDelivery, openAssignment, reassignmentProposal, type ReassignmentProposal } from "../../lib/forwarding/reassignment";
 import type { Assessment, DealerDelivery, DealerOutcome, LeadInput, MailKind, ReplyKind } from "../../lib/forwarding/types";
+import { handoffLabel } from "./handoff-label";
 import type { InboxController } from "./inbox-controller";
 
 const date = new Intl.DateTimeFormat("ko-KR", { timeZone: forwardingPolicy.responseTimeZone, dateStyle: "medium", timeStyle: "short" });
@@ -130,6 +132,7 @@ export function DecisionCard({ lead, inbox }: { lead: LeadInput; inbox: InboxCon
   const { state } = inbox;
   const status = state.leadStates[lead.id];
   const assessment = status.assessment;
+  const handoff = handoffForLead(state, lead);
   const country = confirmedCountry(state, lead.id) ?? lead.country;
   const recommendation = recommendDealer(state, lead.id, { country });
   const waitingDealer = confirmedManagerDealer(state, lead.id);
@@ -164,6 +167,8 @@ export function DecisionCard({ lead, inbox }: { lead: LeadInput; inbox: InboxCon
   const recommendationText = assigned ? assigned.name + "에 배정했습니다." : dealer ? dealer.name + "에 넘기세요." :
     recommendation?.route === "manager-direct" ? recommendation.manager.name + "에게 넘기세요." :
     recommendation?.route === "manager-confirmation" ? recommendation.manager.name + "의 딜러 확인이 필요해요." :
+    handoff?.kind === "hr" ? "인사팀에서 채용 문의를 확인하세요." :
+    handoff?.kind === "regional-sales" && assessment?.details?.domain === "suspicious" ? "권역 세일즈팀의 확인이 필요해요." :
     recommendation?.route === "operations" ? "운영에 담당 지역 확인을 요청했어요." :
     assessment?.verdict === "country-check" ? "국가 확인 회신이 필요해요." :
     assessment?.verdict === "partnership-check" ? "제휴 내용 확인이 필요해요." :
@@ -186,7 +191,14 @@ export function DecisionCard({ lead, inbox }: { lead: LeadInput; inbox: InboxCon
       <button className="button button-primary" disabled={disabled} onClick={() => void inbox.assess(lead)}>{disabled ? "확인 중…" : "이 문의 판정"}</button>
     </div> : <div className="card-body">
       {proposal && <ReassignmentCard proposal={proposal} disabled={disabled} approve={() => inbox.approveReassignment(lead, proposal)} />}
-      <section className="recommendation"><p className="section-kicker">미리내 추천</p><h3>{recommendationText}</h3><p>{assessment.reason}</p></section>
+      <section className="recommendation">
+        <p className="section-kicker">미리내 추천</p>
+        <h3>{recommendationText}</h3>
+        <p>{assessment.reason}</p>
+        {handoff && <dl className="handoff-summary">
+          <dt>넘길 곳</dt><dd>{handoffLabel(handoff, state.dealers)}</dd>
+        </dl>}
+      </section>
       <section>
         <div className="section-heading"><h3>판정 근거</h3><span className={"verdict " + assessment.verdict}>{verdictLabels[assessment.verdict]}</span></div>
         <Evidence assessment={assessment} historicalCount={historicalCount} />
