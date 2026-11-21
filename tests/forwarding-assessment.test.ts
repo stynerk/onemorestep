@@ -57,6 +57,8 @@ test("generic name variants match either display language and still require a di
     ["리지리프 연구소（Ridgeleaf Research Institute）", "Ridgeleaf Research Institute"],
     ["리지리프 연구소 Ridgeleaf Research Institute", "리지리프 연구소"],
     ["Ridgeleaf Research Institute / 리지리프 연구소", "리지리프 연구소"],
+    ["Ridgeleaf Research Institute【리지리프 연구소】", "리지리프 연구소"],
+    ["리지리프 연구소《Ridgeleaf Research Institute》", "Ridgeleaf Research Institute"],
   ]) {
     const { assessment } = classifyLead({ ...syntheticLead, institution }, evidence([{ ...syntheticSource, title }]));
     assert.equal(assessment.verdict, "valid", institution);
@@ -91,6 +93,79 @@ test("inference rejects non-boundary hosts, sibling hosts, and third-party or fr
     assert.notEqual(assessment.details?.domain, "matched");
     assert.deepEqual(assessment.details?.countries, []);
   }
+});
+
+test("a related institutional host corroborates a company name with a legal suffix", () => {
+  const lead = { ...syntheticLead, institution: "Ridgeleaf Systems, Ltd.", email: "orders@ridgeleafsystems.org" };
+  const source = { title: "Corporate Profile", url: "https://www.ridgeleafsystems.org/profile", description: "Ridgeleaf Systems designs research apparatus. Address in Ohio, United States." };
+  const matched = classifyLead(lead, evidence([source]));
+  assert.equal(matched.assessment.verdict, "valid");
+  assert.equal(matched.assessment.details?.domain, "matched");
+
+  for (const unrelated of [
+    { ...source, url: "https://www.directory.ridgeleafsystems.org/profile" },
+    { ...source, url: "https://www.ridgeleafsystems.org.other.org/profile" },
+    { ...source, description: "An independent research apparatus supplier. Address in Ohio, United States." },
+  ]) {
+    assert.notEqual(classifyLead(lead, evidence([unrelated])).assessment.details?.domain, "matched");
+  }
+  assert.notEqual(classifyLead({ ...lead, email: "orders@alternate.org" }, evidence([
+    { ...source, url: "https://www.alternate.org/profile" },
+  ])).assessment.details?.domain, "matched");
+});
+
+test("a self-identifying first-party source must publish the exact alternate contact domain", () => {
+  const lead = { ...syntheticLead, email: "orders@researchmail.org" };
+  const source = { ...syntheticSource, url: "https://ridgeleaf.org/contact", description: "Address in Ohio, United States. E-mail: purchasing@researchmail.org." };
+  const matched = classifyLead(lead, evidence([source]));
+  assert.equal(matched.assessment.verdict, "valid");
+  assert.equal(matched.assessment.details?.domain, "matched");
+
+  for (const sourceWithoutProof of [
+    { ...source, url: "https://www.linkedin.com/company/ridgeleaf" },
+    { ...source, url: "https://directory.ridgeleaf.org/contact" },
+    { ...source, url: "https://claims-ridgeleaf.org/contact" },
+    { ...source, title: "Other Institute", description: "Ridgeleaf Research Institute. E-mail: purchasing@researchmail.org." },
+    { ...source, url: "https://ridgeleaf.org/partners" },
+    { ...source, description: "Address in Ohio, United States. Our vendor's E-mail: purchasing@researchmail.org." },
+    { ...source, description: "Contact our supplier. E-mail: purchasing@researchmail.org." },
+    { ...source, description: "Address in Ohio, United States. We link to the external site researchmail.org." },
+    { ...source, description: "Address in Ohio, United States. E-mail: purchasing@researchmail.org.other.org." },
+  ]) {
+    const { assessment } = classifyLead(lead, evidence([sourceWithoutProof]));
+    assert.equal(assessment.verdict, "ambiguous");
+    assert.equal(assessment.details?.domain, "unverified");
+  }
+
+  const lookalike = classifyLead({ ...lead, email: "orders@ridgeleaf-inquiries.org" }, evidence([
+    { ...source, description: "Address in Ohio, United States. E-mail: purchasing@ridgeleaf-inquiries.org." },
+  ]));
+  assert.equal(lookalike.assessment.verdict, "ambiguous");
+  assert.equal(lookalike.assessment.details?.domain, "suspicious");
+});
+
+test("verified contacts can establish a country from local facilities or a full street address", () => {
+  const facility = { ...syntheticSource, description: "Explore our locations across the New York region." };
+  const postal = { ...syntheticSource, title: "Our Locations", description: "27 Science Boulevard, Fremont, CA 94536. This campus belongs to Ridgeleaf Research Institute." };
+  for (const source of [facility, postal]) {
+    const { assessment } = classifyLead(syntheticLead, evidence([source]));
+    assert.equal(assessment.verdict, "valid");
+    assert.deepEqual(assessment.details?.countries, ["미국"]);
+  }
+
+  for (const source of [
+    { ...facility, description: "Explore partner facilities in Canada." },
+    { ...postal, description: "Product reference 2760, Fremont, CA 94536. Ridgeleaf Research Institute." },
+    { ...facility, url: "https://directory.ridgeleaf-institute.org/contact" },
+  ]) {
+    const { assessment } = classifyLead(syntheticLead, evidence([source]));
+    assert.equal(assessment.verdict, "ambiguous");
+    assert.deepEqual(assessment.details?.countries, []);
+  }
+
+  const conflict = classifyLead(syntheticLead, evidence([postal, { ...facility, description: "Our headquarters address is in Toronto, Canada." }]));
+  assert.equal(conflict.assessment.verdict, "ambiguous");
+  assert.deepEqual(conflict.assessment.details?.countries, ["미국", "캐나다"]);
 });
 
 test("a completed no-match purchase needs a plausible work address and routes to regional sales", () => {

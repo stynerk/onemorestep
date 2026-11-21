@@ -48,13 +48,14 @@ const genericVariantTerms = new Set([...genericNameTerms, "research", "institute
 const genericHostTerms = new Set([...genericVariantTerms, "system", "systems"]);
 const institutionalName = (value: string) => value.normalize("NFKD").replace(/\p{M}/gu, "").toLowerCase().replace(/[^\p{L}\p{N}]+/gu, " ").trim();
 const genericNameVariants = new Set(["병원", "대학", "대학교", "의원", "연구소", "病院", "大学", "診療所", "研究所"].map(institutionalName));
-const variantSeparator = /[()[\]\/|]|\s+[-–—]\s+/u;
+const variantSeparator = /[()[\]\/|【】〔〕〈〉《》「」『』]|\s+[-–—]\s+/u;
 const scriptSeparator = /(?<=\p{Script=Latin})\s+(?=[\p{Script=Hangul}\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}])|(?<=[\p{Script=Hangul}\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}])\s+(?=\p{Script=Latin})/u;
 const compact = (value: string) => institutionalName(value).replace(/ /g, "");
 const matchesName = (text: string, name: string) => {
   const normalized = institutionalName(name);
   return normalized.length > 0 && (" " + institutionalName(text) + " ").includes(" " + normalized + " ");
 };
+const legalSuffix = /\s+(?:inc(?:orporated)?|ltd|limited|corp(?:oration)?|llc|plc|gmbh|ag|s a|s a s|sarl)$/u;
 const hostOf = (source: Source) => new URL(source.url).hostname.replace(/\.$/u, "");
 const reservedDomains = ["example", "example.com", "example.net", "example.org", "test", "invalid", "localhost"];
 const excludedInstitutionalDomains = [...freeEmailDomains, ...reservedDomains, ...thirdPartyDomains];
@@ -83,9 +84,10 @@ function resemblesInstitutionHost(emailDomain: string, host: string, names: stri
   return brandedLabel >= 0 && !matchesDomain(emailDomain, sourceLabels.slice(brandedLabel).join("."));
 }
 
-function titleAndHostIdentifyInstitution(title: string, host: string, names: string[]): boolean {
+function titleAndHostIdentifyInstitution(title: string, host: string, names: string[], exactHostLabel = false): boolean {
   const normalizedTitle = institutionalName(title);
-  const hostWords = institutionalName(host.split(".").slice(0, -1).join(" ")).split(" ");
+  const hostLabels = host.split(".").slice(0, -1);
+  const hostWords = exactHostLabel ? hostLabels.map(compact) : institutionalName(hostLabels.join(" ")).split(" ");
   return names.some((name) => {
     const normalizedName = institutionalName(name);
     if (!normalizedName || (normalizedTitle !== normalizedName && !normalizedTitle.startsWith(normalizedName + " "))) return false;
@@ -119,6 +121,24 @@ function namesFor(institution: string, includeVariants: boolean) {
   return { names: [...new Set([institution, ...(profile?.names ?? []), ...variants])], domains: profile?.domains ?? [] };
 }
 
+function brandedLegalNameSource(source: Source, names: string[]): boolean {
+  const hostLabels = hostOf(source).split(".").slice(0, -1).map(compact);
+  return names.some((name) => {
+    const fullName = institutionalName(name);
+    const brand = fullName.replace(legalSuffix, "");
+    return brand !== fullName && brand.split(" ").some((word) => word.length >= 4 && !genericHostTerms.has(word))
+      && hostLabels.includes(compact(brand)) && (matchesName(source.title, brand) || matchesName(source.description, brand));
+  });
+}
+
+function listsOwnContactDomain(source: Source, domain: string): boolean {
+  const contactPage = /\b(?:contact|imprint)\b/iu.test(source.title + " " + new URL(source.url).pathname);
+  const thirdPartyContact = /\b(?:partner|vendor|supplier|external|third[- ]party|collaboration)\b/iu;
+  if (!contactPage || thirdPartyContact.test(source.description)) return false;
+  const addresses = source.description.matchAll(/(?:^|[.!?;|·\n]\s*)(?:e[- ]?mail|mailto)\s*:\s*[a-z\d._%+-]+@([a-z\d.-]+\.[a-z]{2,})\b/giu);
+  return Array.from(addresses).some(([, host]) => host.toLowerCase() === domain);
+}
+
 function affiliatedSources(institution: string, sources: Source[], includeVariants: boolean) {
   const { names, domains } = namesFor(institution, includeVariants);
   const matching = sources.filter((source) =>
@@ -136,19 +156,25 @@ const locationCue = /\b(?:address|contact|directions|access|location|located|bas
 const unrelatedLocationCue = /\b(?:partners?|collaboration|patients from|study abroad|delegation|news coverage)\b|협력 기관|해외 환자|共同研究/iu;
 const institutionCategory = /\b(?:hospitals?|clinics?|universit(?:y|ies)|colleges?|institutes?|laborator(?:y|ies)|foundations?|associations?|corporations?|companies|company|organi[sz]ations?|ministr(?:y|ies)|government agenc(?:y|ies))\b|병원|의원|대학교|연구소|재단|협회|기업|病院|診療所|大学|研究所|財団|協会/iu;
 
-function findCountries(sources: Source[], names: string[]): string[] {
+const institutionLocations = /\b(?:locations|facilities|campuses|offices|hospitals|clinics)\s+(?:across|throughout|in)\b/iu;
+const usStreetAddress = /\b\d{1,6}\s+[^,.\n]{1,70}\s+(?:St(?:reet)?|Ave(?:nue)?|Rd|Road|Blvd|Boulevard|Dr(?:ive)?|Ln|Lane|Ct|Court|Way|Pkwy|Parkway|Pl(?:ace)?|Cir(?:cle)?|Ter(?:race)?|Hwy|Highway)\.?,\s*[^,.\n]{2,40},\s*(?:AL|AK|AZ|AR|CA|CO|CT|DE|DC|FL|GA|HI|ID|IL|IN|IA|KS|KY|LA|ME|MD|MA|MI|MN|MS|MO|MT|NE|NV|NH|NJ|NM|NY|NC|ND|OH|OK|OR|PA|RI|SC|SD|TN|TX|UT|VT|VA|WA|WV|WI|WY)\s+\d{5}(?:-\d{4})?\b/u;
+
+function findCountries(sources: Source[], names: string[], structuredLocations = false): string[] {
   const sortedNames = [...names].sort((left, right) => right.length - left.length);
   return Object.entries(locales).flatMap(([country, [, , , pattern]]) =>
     sources.some(({ title, description }) => {
       // An institution name can contain a country or city without proving its address.
       const sentences = [title, ...description.split(/(?<=[.!?])\s+|[。\n]/u)];
       return sentences.some((sentence) => {
-        if (unrelatedLocationCue.test(sentence) || !(locationCue.test(title) || locationCue.test(sentence))) return false;
+        if (unrelatedLocationCue.test(sentence)) return false;
+        const postalAddress = structuredLocations && usStreetAddress.test(sentence);
+        const facilityLocation = structuredLocations && institutionLocations.test(sentence);
+        if (!postalAddress && !facilityLocation && !(locationCue.test(title) || locationCue.test(sentence))) return false;
         const content = sortedNames.reduce((text, name) => {
           const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
           return escaped ? text.replace(new RegExp(escaped, "giu"), " ") : text;
         }, sentence);
-        return pattern.test(content);
+        return (postalAddress && country === "미국") || pattern.test(content);
       });
     }) ? [country] : []);
 }
@@ -196,10 +222,10 @@ export function classifyLead(lead: LeadInput, evidence: SearchEvidence, regional
     ? matching.filter((source) => isInstitutionalHost(hostOf(source)))
     : [];
   // Keep configured ownership and impersonation checks ahead of inference for new institutions.
-  const inferredOfficial = domains.length === 0 && institutionalEmailDomain
+  const directOfficial = domains.length === 0 && institutionalEmailDomain
     ? publicInstitutionSources.filter((source) => relatedHosts(hostOf(source), institutionalEmailDomain))
     : [];
-  const suspectPublicMismatch = emailDomain !== undefined && inferredOfficial.length === 0
+  const suspectPublicMismatch = emailDomain !== undefined && directOfficial.length === 0
     && publicInstitutionSources.some((source) => {
       const host = hostOf(source);
       if (relatedHosts(host, emailDomain)) return false;
@@ -208,11 +234,21 @@ export function classifyLead(lead: LeadInput, evidence: SearchEvidence, regional
       return configuredOfficial.includes(source) || institutionCategory.test(source.title + " " + source.description)
         || findCountries([source], names).length > 0 || titleAndHostIdentifyInstitution(source.title, host, names);
     });
+  const supplementalOfficial = completeLiveEvidence && domains.length === 0 && configuredDomain === "unverified"
+    && institutionalEmailDomain && directOfficial.length === 0 && !suspectPublicMismatch
+    ? evidence.sources.filter((source) => {
+      const host = hostOf(source);
+      if (!isInstitutionalHost(host)) return false;
+      if (relatedHosts(host, institutionalEmailDomain)) return brandedLegalNameSource(source, names);
+      return titleAndHostIdentifyInstitution(source.title, host, names, true)
+        && listsOwnContactDomain(source, institutionalEmailDomain);
+    }) : [];
+  const inferredOfficial = directOfficial.length > 0 ? directOfficial : supplementalOfficial;
   const official = inferredOfficial.length > 0 ? inferredOfficial : configuredOfficial;
   const domain = inferredOfficial.length > 0 ? "matched" : suspectPublicMismatch ? "suspicious" : configuredDomain;
   const intent = memoMatch(lead.memo);
   const memoIntent = intent?.[0] ?? "unknown";
-  const textCountries = findCountries(official, names);
+  const textCountries = findCountries(official, names, completeLiveEvidence && domain === "matched");
   const domainCountries = completeLiveEvidence && textCountries.length === 0
     && official.length > 0 && domain === "matched" ? countriesFromDomains(official, verifiedAlias) : [];
   const countries = textCountries.length > 0 ? textCountries : domainCountries;
@@ -251,7 +287,7 @@ export function classifyLead(lead: LeadInput, evidence: SearchEvidence, regional
   if (completeLiveEvidence && domains.length === 0 && reservedEmail) {
     return result("invalid", "예시용 또는 테스트 이메일 주소로 기관 소속을 확인할 수 없어요.");
   }
-  if (completeLiveEvidence && matching.length === 0) {
+  if (completeLiveEvidence && matching.length === 0 && official.length === 0) {
     // A completed search can miss a real institution, even when a buyer uses a plausible work address.
     return memoIntent === "buying" && institutionalEmailDomain
       ? result("ambiguous", "공개 검색에서 기관을 확인하지 못해 구매 문의와 소속을 다시 확인해야 해요.")
