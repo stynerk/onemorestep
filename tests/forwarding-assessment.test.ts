@@ -4,6 +4,7 @@ import { POST } from "../src/app/api/forwarding/assess/route";
 import { createAssessmentService } from "../src/lib/forwarding/assessment-service";
 import { createInitialForwardingState } from "../src/lib/forwarding/seed";
 import { createForwardingStore } from "../src/lib/forwarding/store";
+import type { LeadInput } from "../src/lib/forwarding/types";
 import { classifyLead, matchesDomain } from "../src/lib/forwarding/verdict";
 import type { Source } from "../src/lib/liner-search";
 
@@ -18,6 +19,123 @@ const evidence = (sources: Source[]) => ({ sources, searchedAt: at, kind: "liner
 const res = (sources: Source[]) => Response.json({ results: sources });
 const request = (payload: unknown, contentType = "application/json") => new Request("http://localhost/api/forwarding/assess", {
   method: "POST", headers: { "Content-Type": contentType }, body: JSON.stringify(payload),
+});
+const syntheticLead: LeadInput = {
+  id: "synthetic-buyer", name: "Test Buyer", email: "orders@ridgeleaf-institute.org", phone: "",
+  institution: "Ridgeleaf Research Institute", country: "미국", product: "PM-50", memo: "Requesting a purchase quote.", receivedAt: at,
+};
+const syntheticSource: Source = {
+  title: "Ridgeleaf Research Institute", url: "https://ridgeleaf-institute.org/contact", description: "Contact address in Ohio, United States.",
+};
+
+test("completed searches recognize an unregistered institution by name and related email and source hosts", () => {
+  const domains = [
+    ["ridgeleaf-institute.org", "ridgeleaf-institute.org"],
+    ["ridgeleaf-institute.org", "www.ridgeleaf-institute.org"],
+    ["purchasing.ridgeleaf-institute.org", "ridgeleaf-institute.org"],
+  ];
+  for (const [emailHost, sourceHost] of domains) {
+    const lead = { ...syntheticLead, email: "orders@" + emailHost };
+    const source = { ...syntheticSource, url: "https://" + sourceHost + "/contact" };
+    for (const kind of ["liner", "cache", "mixed"] as const) {
+      const { assessment } = classifyLead(lead, { ...evidence([source]), kind });
+      assert.equal(assessment.verdict, "valid", kind + " " + emailHost + " " + sourceHost);
+      assert.equal(assessment.details?.domain, "matched");
+      assert.deepEqual(assessment.details?.countries, ["미국"]);
+    }
+    assert.equal(classifyLead(lead, { ...evidence([source]), kind: "curated" }).assessment.details?.domain, "unverified");
+    assert.equal(classifyLead(lead, { ...evidence([source]), status: "failed" }).assessment.details?.domain, "unverified");
+  }
+  const { assessment } = classifyLead(syntheticLead, evidence([{ ...syntheticSource, description: "Public institution profile." }]));
+  assert.equal(assessment.details?.domain, "matched");
+  assert.deepEqual(assessment.details?.countries, []);
+  assert.equal(assessment.verdict, "ambiguous");
+});
+
+test("generic name variants match either display language and still require a distinctive name", () => {
+  for (const [institution, title] of [
+    ["리지리프 연구소（Ridgeleaf Research Institute）", "Ridgeleaf Research Institute"],
+    ["리지리프 연구소 Ridgeleaf Research Institute", "리지리프 연구소"],
+    ["Ridgeleaf Research Institute / 리지리프 연구소", "리지리프 연구소"],
+  ]) {
+    const { assessment } = classifyLead({ ...syntheticLead, institution }, evidence([{ ...syntheticSource, title }]));
+    assert.equal(assessment.verdict, "valid", institution);
+  }
+  const genericVariant = classifyLead(
+    { ...syntheticLead, institution: "Ridgeleaf Research Institute (Medical Center)" },
+    evidence([{ ...syntheticSource, title: "Medical Center" }]),
+  );
+  assert.equal(genericVariant.assessment.details?.domain, "unverified");
+  const wrongTitle = classifyLead(syntheticLead, evidence([{ ...syntheticSource, title: "Ridgeleaf Research Institutes" }]));
+  assert.equal(wrongTitle.assessment.details?.domain, "unverified");
+});
+
+test("inference rejects non-boundary hosts, sibling hosts, and third-party or free-email hosts", () => {
+  const domains = [
+    ["ridgeleaf-institute.org", "fake-ridgeleaf-institute.org"],
+    ["ridgeleaf-institute.org", "ridgeleaf-institute.org.attacker.org"],
+    ["mail.ridgeleaf-institute.org", "www.ridgeleaf-institute.org"],
+    ["ridgeleaf-institute.org", "news.ridgeleaf-institute.org"],
+    ["ridgeleaf-institute.org", "directory.ridgeleaf-institute.org"],
+    ["wikipedia.org", "en.wikipedia.org"],
+    ["linkedin.com", "www.linkedin.com"],
+    ["healthgrades.com", "www.healthgrades.com"],
+    ["gmail.com", "gmail.com"],
+  ];
+  for (const [emailHost, sourceHost] of domains) {
+    const { assessment } = classifyLead(
+      { ...syntheticLead, email: "orders@" + emailHost },
+      evidence([{ ...syntheticSource, url: "https://" + sourceHost + "/contact" }]),
+    );
+    assert.equal(assessment.verdict, "ambiguous", emailHost + " " + sourceHost);
+    assert.notEqual(assessment.details?.domain, "matched");
+    assert.deepEqual(assessment.details?.countries, []);
+  }
+});
+
+test("a completed no-match purchase needs a plausible work address and routes to regional sales", () => {
+  for (const kind of ["liner", "cache", "mixed"] as const) {
+    const { assessment } = classifyLead(syntheticLead, { ...evidence([]), kind }, "독일");
+    assert.equal(assessment.verdict, "ambiguous");
+    assert.deepEqual(assessment.handoff, { kind: "regional-sales", region: "EU" });
+    assert.match(assessment.reason, /공개 검색에서 기관을 확인하지 못해/u);
+  }
+  assert.equal(classifyLead(syntheticLead, { ...evidence([]), kind: "curated" }).assessment.verdict, "invalid");
+  for (const lead of [
+    { ...syntheticLead, institution: "none" },
+    { ...syntheticLead, email: "orders@gmail.com" },
+    { ...syntheticLead, email: "orders@192.0.2.1" },
+    { ...syntheticLead, email: "orders@ridgeleaf.test" },
+    { ...syntheticLead, email: "orders@sub.example.org" },
+    { ...syntheticLead, memo: "Sending a note for reference." },
+    { ...syntheticLead, memo: "Requesting a purchase quote. Guaranteed investment returns." },
+  ]) {
+    const { assessment } = classifyLead(lead, evidence([]));
+    assert.equal(assessment.verdict, "invalid", JSON.stringify(lead));
+    assert.deepEqual(assessment.handoff, { kind: "none" });
+  }
+  const example = classifyLead(
+    { ...syntheticLead, email: "orders@ridgeleaf.example" },
+    evidence([{ ...syntheticSource, url: "https://ridgeleaf.example/contact" }]),
+  );
+  assert.equal(example.assessment.verdict, "invalid");
+});
+
+test("a name match on the claimed host cannot override configured impersonation checks", () => {
+  const configuredLead = { ...syntheticLead, institution: "Cleveland Clinic", email: "orders@clevelandclinic-lookup.test" };
+  const claimedSource = { ...cleveland, url: "https://clevelandclinic-lookup.test/contact" };
+  const lookalike = classifyLead(configuredLead, evidence([cleveland, claimedSource]));
+  assert.equal(lookalike.assessment.verdict, "ambiguous");
+  assert.equal(lookalike.assessment.details?.domain, "suspicious");
+  const withoutOfficial = classifyLead(configuredLead, evidence([claimedSource]));
+  assert.equal(withoutOfficial.assessment.verdict, "ambiguous");
+  assert.equal(withoutOfficial.assessment.details?.domain, "unverified");
+  const otherInstitution = classifyLead(
+    { ...syntheticLead, email: "orders@clevelandclinic.org" },
+    evidence([{ ...cleveland, title: syntheticLead.institution }]),
+  );
+  assert.equal(otherInstitution.assessment.verdict, "ambiguous");
+  assert.equal(otherInstitution.assessment.details?.domain, "suspicious");
 });
 
 test("official domains are checked at a dot boundary; lookalikes and ambiguous domains diverge", () => {
@@ -192,9 +310,10 @@ test("institutional research collaboration requires trusted affiliation and diff
 
 test("two successes without a match differ from partial failure, authentication failure, timeout and stored gaps", async () => {
   const lead = getLead("L03");
-  const noMatch = await createAssessmentService({ fetcher: async () => res([]) }).assess(lead, live);
-  assert.equal(noMatch.assessment.verdict, "invalid");
-  assert.match(noMatch.assessment.reason, /공개 정보에서 기관을 찾지 못함/);
+  const noMatch = await createAssessmentService({ fetcher: async () => res([]) }).assess(syntheticLead, live);
+  assert.equal(noMatch.assessment.verdict, "ambiguous");
+  assert.equal(noMatch.assessment.details?.externalStatus, "complete");
+  assert.match(noMatch.assessment.reason, /공개 검색에서 기관을 확인하지 못해/u);
   let count = 0;
   const partial = await createAssessmentService({ fetcher: async () => ++count === 1 ? res([cleveland]) : new Response(null, { status: 500 }) }).assess(lead, live);
   assert.equal(partial.assessment.verdict, "ambiguous");

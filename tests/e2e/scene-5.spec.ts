@@ -228,10 +228,13 @@ test("공개 정답 대조 패널에 최종 측정과 오판 사례를 표시한
   await page.getByText("판정 정답 대조", { exact: true }).click();
   const panel = page.locator("details").filter({ has: page.getByText("판정 정답 대조", { exact: true }) });
   await expect(panel.getByText(/공개 문의함은 저장된 근거/u)).toBeVisible();
-  for (const score of ["30/30", "27/30", "33/70"]) {
+  for (const score of ["30/30", "28/30", "33/70", "39/70"]) {
     await expect(panel.getByText(score, { exact: true })).toBeVisible();
   }
   await expect(panel.getByText("원본 정답 기준 23/70 (32.9%)")).toBeVisible();
+  await expect(panel.getByText(/개선 전 27\/30/u)).toBeVisible();
+  await expect(panel.getByText(/개선 전·블라인드/u)).toBeVisible();
+  await expect(panel.getByText(/개선 후·평가 결과를 본 뒤/u)).toBeVisible();
   await expect(panel.getByText(/23:43:06~23:47:32 KST/u)).toBeVisible();
   await expect(panel.getByRole("link", { name: "최종 평가 기록" })).toHaveAttribute(
     "href", /\/docs\/qa\/FINAL_EVALUATION_2026-11-20\.md$/u,
@@ -239,7 +242,9 @@ test("공개 정답 대조 패널에 최종 측정과 오판 사례를 표시한
   const cases = panel.getByRole("listitem");
   await expect(cases).toHaveCount(2);
   await expect(cases.filter({ hasText: "E02" })).toContainText("정답 유효 → 판정 애매");
+  await expect(cases.filter({ hasText: "E02" })).toContainText("개선 후 애매");
   await expect(cases.filter({ hasText: "E58" })).toContainText("정답 유효 → 판정 무효");
+  await expect(cases.filter({ hasText: "E58" })).toContainText("개선 후 유효");
   await expect(panel.getByRole("button", { name: /마케팅 협조 요청/u })).toBeDisabled();
   await page.screenshot({ path: testInfo.outputPath("public-final-evaluation.png") });
 });
