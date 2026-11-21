@@ -33,8 +33,8 @@
 
 | 파트너 | 국가 | 전달 | deal | no deal | 진행 중 | 미응답 | 비고 |
 |---|---|---:|---:|---:|---:|---:|---|
-| Seoul Cloud Partners | 대한민국 | 8 | 3 | 4 | 1 | 0 | LG Electronics와 이전 거래 |
-| K-Integrate | 대한민국 | 6 | 1 | 2 | 0 | 3 | 최근 응답 느림 |
+| Seoul Cloud Partners | 대한민국 | 8 | 3 | 4 | 1 | 0 | |
+| K-Integrate | 대한민국 | 6 | 1 | 2 | 0 | 3 | LG Electronics와 이전 거래. 최근 응답 느림 |
 | Tokyo SI Works | 일본 | 7 | 3 | 3 | 1 | 0 | |
 | Pacific Cloud Resellers | 미국 | 6 | 2 | 3 | 0 | 1 | |
 | Bay Systems Group | 미국 | 7 | 3 | 3 | 1 | 0 | |
@@ -58,7 +58,7 @@
 | I09 | Siemens AG | mrn-saas-09@siemens-procurement.test | 독일 | FL-Enterprise | Urgent license order, payment in advance, reply to this address only | 애매(사칭 의심) | 권역 세일즈팀(EU) |
 | I10 | Roche | mrn-saas-10@roche.com | 미국 | FL-Team | I'd like to apply for your solutions engineer opening | 무효(채용) | 인사팀 |
 
-구성: 유효 3, 애매 2, 국가 확인 1, 제휴 확인 1, 무효 3. I02는 의료기기 시연 L05처럼 "이전 거래 파트너가 아니라 최근 성과가 좋은 파트너"를 보이는 장면이다(Seoul Cloud Partners 0.53 > K-Integrate 0.03, 점수식은 의료기기와 같다).
+구성: 유효 3, 애매 2, 국가 확인 1, 제휴 확인 1, 무효 3. I02는 의료기기 시연 L05처럼 "이전 거래 파트너가 아니라 최근 성과가 좋은 파트너"를 보이는 장면이다(이전 거래 파트너 K-Integrate 0.13 < 최근 성과가 좋은 Seoul Cloud Partners 0.43, 점수식은 의료기기와 같다. 11-22 정정: 처음 원고는 이전 거래를 Seoul Cloud에 붙여 장면 설명과 어긋났다).
 
 정답은 HJ 결정 기준(11-18·11-20·11-21)을 그대로 적용했다: 가상 기관은 무효, 사칭 의심은 애매·권역 세일즈팀, 채용은 무효·인사팀, 학생 개인 과제는 무효·넘기지 않음, 제휴는 제휴 확인·권역 세일즈팀.
 
