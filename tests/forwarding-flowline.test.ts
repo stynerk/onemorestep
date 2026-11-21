@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { test } from "node:test";
 import { POST } from "../src/app/api/forwarding/assess/route";
-import { dealerScore, rankAvailableDealers } from "../src/lib/forwarding/dealers";
+import { rankAvailableDealers } from "../src/lib/forwarding/dealers";
 import { verdictLabels } from "../src/lib/forwarding/inbox";
 import { createIndustryState } from "../src/lib/forwarding/industry-demo";
 import { getSavedIndustry } from "../src/lib/forwarding/industry-demo.server";
@@ -58,20 +58,18 @@ test("Flowline operational inputs and dated partner history reproduce the author
   assert.deepEqual(state.policy?.customerIndustries?.["FL-Team"], ["제조", "금융", "IT 서비스", "연구기관", "공공"]);
 });
 
-test("the I02 policy data gives the ranking advantage to the existing relationship partner", () => {
+test("the I02 policy ranks the recent performer above the previous relationship partner", () => {
   const state = createIndustryState(industry.demo);
   const lead = state.leads.find(({ id }) => id === "I02");
-  const dealer = state.dealers.find(({ name }) => name === "Seoul Cloud Partners");
-  assert.ok(lead && dealer);
-  assert.deepEqual(state.priorRelationships, [{ dealerId: dealer.id, institution: lead.institution }]);
-  const scored = dealerScore(state, lead, dealer);
-  assert.equal(scored.priorRelationship, true);
-  assert.equal(scored.forwarded, 8);
+  const previousPartner = state.dealers.find(({ name }) => name === "K-Integrate");
+  assert.ok(lead && previousPartner);
+  assert.deepEqual(state.priorRelationships, [{ dealerId: previousPartner.id, institution: lead.institution }]);
   const recommendation = rankAvailableDealers(state, lead);
   assert.equal(recommendation.route, "dealer");
   if (recommendation.route !== "dealer") throw new Error("Expected ranked partners");
-  assert.deepEqual(recommendation.ranked.map(({ dealer, score }) => [dealer.name, score.toFixed(2)]), [
-    ["Seoul Cloud Partners", "0.53"], ["K-Integrate", "0.03"],
+  assert.deepEqual(recommendation.ranked.map(({ dealer, score, priorRelationship, forwarded }) =>
+    [dealer.name, score.toFixed(2), priorRelationship, forwarded]), [
+    ["Seoul Cloud Partners", "0.43", false, 8], ["K-Integrate", "0.13", true, 6],
   ]);
 });
 

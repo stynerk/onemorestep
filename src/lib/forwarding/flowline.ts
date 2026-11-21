@@ -76,7 +76,7 @@ export const flowline = {
     leads,
     dealers: partnerRows.map(([id, name, country]) => ({ id, name, countries: [country], products: [...products], active: true })),
     deliveries: historicalDeliveries(),
-    priorRelationships: [{ dealerId: "flowline-seoul", institution: "LG Electronics (LG전자)" }],
+    priorRelationships: [{ dealerId: "flowline-k-integrate", institution: "LG Electronics (LG전자)" }],
     policy,
   },
 } satisfies Extract<DemoIndustry, { id: "b2b-saas" }>;
