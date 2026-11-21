@@ -197,6 +197,16 @@ test("a reserved-email institution can be corroborated by its distinctive name i
   ]) {
     assert.equal(classifyLead(lead, evidence([source])).assessment.verdict, "invalid", source.title + " " + source.url);
   }
+
+  const compoundLead = { ...lead, institution: "Elmshore Beacon Health System", email: "orders@elmshorebeacon.test" };
+  const compoundSource = { ...branded, title: compoundLead.institution, url: "https://elmshorebeacon.org/about" };
+  const compound = classifyLead(compoundLead, evidence([compoundSource]));
+  assert.equal(compound.assessment.verdict, "ambiguous");
+  assert.equal(compound.assessment.details?.domain, "suspicious");
+  for (const host of ["healthsystem.org", "system.org", "elmshorebeacons.org", "elmshorehealth.org"]) {
+    const source = { ...compoundSource, url: "https://" + host + "/about" };
+    assert.equal(classifyLead(compoundLead, evidence([source])).assessment.verdict, "invalid", host);
+  }
 });
 
 test("a name match on the claimed host cannot override configured impersonation checks", () => {

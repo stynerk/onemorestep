@@ -45,6 +45,7 @@ const industryRules: [string, RegExp][] = [
 
 const genericNameTerms = new Set(["the", "and", "university", "hospital", "clinic", "medical", "center", "international", "general", "corporation", "company", "group", "foundation"]);
 const genericVariantTerms = new Set([...genericNameTerms, "research", "institute", "laboratory", "school", "college", "regional", "national", "health", "healthcare", "inc", "ltd", "llc"]);
+const genericHostTerms = new Set([...genericVariantTerms, "system", "systems"]);
 const institutionalName = (value: string) => value.normalize("NFKD").replace(/\p{M}/gu, "").toLowerCase().replace(/[^\p{L}\p{N}]+/gu, " ").trim();
 const genericNameVariants = new Set(["병원", "대학", "대학교", "의원", "연구소", "病院", "大学", "診療所", "研究所"].map(institutionalName));
 const variantSeparator = /[()[\]\/|]|\s+[-–—]\s+/u;
@@ -90,9 +91,15 @@ function titleAndHostIdentifyInstitution(title: string, host: string, names: str
     if (!normalizedName || (normalizedTitle !== normalizedName && !normalizedTitle.startsWith(normalizedName + " "))) return false;
 
     const nameWords = normalizedName.split(" ");
-    const distinctiveWords = nameWords.filter((word) => word.length >= 4 && !genericVariantTerms.has(word));
-    return distinctiveWords.length > 0
-      && (distinctiveWords.some((word) => hostWords.includes(word)) || hostWords.includes(nameWords.join("")));
+    const distinctiveWords = nameWords.filter((word) => word.length >= 4 && !genericHostTerms.has(word));
+    if (distinctiveWords.length === 0) return false;
+
+    return distinctiveWords.some((word) => hostWords.includes(word))
+      || hostWords.includes(nameWords.join(""))
+      || nameWords.slice(1).some((word, index) => {
+        const previousWord = nameWords[index];
+        return distinctiveWords.includes(previousWord) && distinctiveWords.includes(word) && hostWords.includes(previousWord + word);
+      });
   });
 }
 
