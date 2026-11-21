@@ -222,3 +222,24 @@ test("S5-12 · S5-13 공개 빌드는 브라우저에 배정만 저장하고 메
   expect(await response.json()).toEqual({ code: "public-demo", message: "공개 시연에서는 메일을 보내지 않습니다." });
   await page.screenshot({ path: testInfo.outputPath("scene-5-public-approval.png"), fullPage: true });
 });
+
+test("공개 정답 대조 패널에 최종 측정과 오판 사례를 표시한다", async ({ page }, testInfo) => {
+  await page.goto(publicBaseUrl);
+  await page.getByText("판정 정답 대조", { exact: true }).click();
+  const panel = page.locator("details").filter({ has: page.getByText("판정 정답 대조", { exact: true }) });
+  await expect(panel.getByText(/공개 문의함은 저장된 근거/u)).toBeVisible();
+  for (const score of ["30/30", "27/30", "33/70"]) {
+    await expect(panel.getByText(score, { exact: true })).toBeVisible();
+  }
+  await expect(panel.getByText("원본 정답 기준 23/70 (32.9%)")).toBeVisible();
+  await expect(panel.getByText(/23:43:06~23:47:32 KST/u)).toBeVisible();
+  await expect(panel.getByRole("link", { name: "최종 평가 기록" })).toHaveAttribute(
+    "href", /\/docs\/qa\/FINAL_EVALUATION_2026-11-20\.md$/u,
+  );
+  const cases = panel.getByRole("listitem");
+  await expect(cases).toHaveCount(2);
+  await expect(cases.filter({ hasText: "E02" })).toContainText("정답 유효 → 판정 애매");
+  await expect(cases.filter({ hasText: "E58" })).toContainText("정답 유효 → 판정 무효");
+  await expect(panel.getByRole("button", { name: /마케팅 협조 요청/u })).toBeDisabled();
+  await page.screenshot({ path: testInfo.outputPath("public-final-evaluation.png") });
+});
