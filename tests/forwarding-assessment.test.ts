@@ -209,6 +209,19 @@ test("a reserved-email institution can be corroborated by its distinctive name i
   }
 });
 
+test("a short acronym can corroborate a reserved-email institution as part of a distinctive hostname", () => {
+  const acronymLead = { ...syntheticLead, institution: "QDX Northhaven Health", email: "orders@qdxnorthhaven.test" };
+  const acronymSource = { title: acronymLead.institution, url: "https://qdxnorthhaven.org/about", description: "Explore our work." };
+  const acronym = classifyLead(acronymLead, evidence([acronymSource]));
+  assert.equal(acronym.assessment.verdict, "ambiguous");
+  assert.equal(acronym.assessment.details?.domain, "suspicious");
+  assert.deepEqual(acronym.assessment.handoff, { kind: "regional-sales", region: "NA" });
+  for (const host of ["qdx.org", "qdxhealth.org", "qdxnorthhavens.org"]) {
+    const result = classifyLead(acronymLead, evidence([{ ...acronymSource, url: "https://" + host + "/about" }]));
+    assert.equal(result.assessment.verdict, "invalid", host);
+  }
+});
+
 test("a name match on the claimed host cannot override configured impersonation checks", () => {
   const configuredLead = { ...syntheticLead, institution: "Cleveland Clinic", email: "orders@clevelandclinic-lookup.test" };
   const claimedSource = { ...cleveland, url: "https://clevelandclinic-lookup.test/contact" };

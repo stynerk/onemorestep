@@ -98,7 +98,9 @@ function titleAndHostIdentifyInstitution(title: string, host: string, names: str
       || hostWords.includes(nameWords.join(""))
       || nameWords.slice(1).some((word, index) => {
         const previousWord = nameWords[index];
-        return distinctiveWords.includes(previousWord) && distinctiveWords.includes(word) && hostWords.includes(previousWord + word);
+        const compoundName = previousWord + word;
+        return previousWord.length >= 3 && word.length >= 3 && compoundName.length >= 8
+          && !genericHostTerms.has(previousWord) && !genericHostTerms.has(word) && hostWords.includes(compoundName);
       });
   });
 }
