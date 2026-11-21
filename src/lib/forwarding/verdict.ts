@@ -82,6 +82,20 @@ function resemblesInstitutionHost(emailDomain: string, host: string, names: stri
   return brandedLabel >= 0 && !matchesDomain(emailDomain, sourceLabels.slice(brandedLabel).join("."));
 }
 
+function titleAndHostIdentifyInstitution(title: string, host: string, names: string[]): boolean {
+  const normalizedTitle = institutionalName(title);
+  const hostWords = institutionalName(host.split(".").slice(0, -1).join(" ")).split(" ");
+  return names.some((name) => {
+    const normalizedName = institutionalName(name);
+    if (!normalizedName || (normalizedTitle !== normalizedName && !normalizedTitle.startsWith(normalizedName + " "))) return false;
+
+    const nameWords = normalizedName.split(" ");
+    const distinctiveWords = nameWords.filter((word) => word.length >= 4 && !genericVariantTerms.has(word));
+    return distinctiveWords.length > 0
+      && (distinctiveWords.some((word) => hostWords.includes(word)) || hostWords.includes(nameWords.join("")));
+  });
+}
+
 function namesFor(institution: string, includeVariants: boolean) {
   const profile = Object.hasOwn(institutionProfiles, institution) ? institutionProfiles[institution] : undefined;
   const variants = includeVariants
@@ -183,7 +197,7 @@ export function classifyLead(lead: LeadInput, evidence: SearchEvidence, regional
       if (!reservedEmail) return resemblesInstitutionHost(emailDomain, host, names);
       // Short institution names may also occur as unrelated acronyms in search results.
       return configuredOfficial.includes(source) || institutionCategory.test(source.title + " " + source.description)
-        || findCountries([source], names).length > 0;
+        || findCountries([source], names).length > 0 || titleAndHostIdentifyInstitution(source.title, host, names);
     });
   const official = inferredOfficial.length > 0 ? inferredOfficial : configuredOfficial;
   const domain = inferredOfficial.length > 0 ? "matched" : suspectPublicMismatch ? "suspicious" : configuredDomain;

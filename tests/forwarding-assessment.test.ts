@@ -176,6 +176,29 @@ test("acronym matches in glossaries and software results do not corroborate a re
   }
 });
 
+test("a reserved-email institution can be corroborated by its distinctive name in both title and host", () => {
+  const lead = { ...syntheticLead, institution: "Cedarvale Research", email: "orders@cedarvale.test" };
+  const branded = { title: "Cedarvale Research", url: "https://WWW.CEDARVALE.org/about", description: "Explore our work." };
+  for (const source of [branded, { ...branded, title: "CEDARVALE RESEARCH – Our work", url: "https://cedarvaleresearch.org/about" }]) {
+    const { assessment } = classifyLead(lead, evidence([source]));
+    assert.equal(assessment.verdict, "ambiguous");
+    assert.equal(assessment.details?.domain, "suspicious");
+    assert.deepEqual(assessment.handoff, { kind: "regional-sales", region: "NA" });
+  }
+
+  for (const source of [
+    { ...branded, url: "https://wordbook.org/cedarvale" },
+    { ...branded, url: "https://uncedarvale.org/about" },
+    { ...branded, url: "https://cedarvaleresearchers.org/about" },
+    { ...branded, url: "https://research.org/about" },
+    { ...branded, title: "Getting started", description: "Install the Cedarvale Research package." },
+    { ...branded, title: "Translation of Cedarvale Research" },
+    { ...branded, title: "Cedarvale Researches", description: "A guide to Cedarvale Research." },
+  ]) {
+    assert.equal(classifyLead(lead, evidence([source])).assessment.verdict, "invalid", source.title + " " + source.url);
+  }
+});
+
 test("a name match on the claimed host cannot override configured impersonation checks", () => {
   const configuredLead = { ...syntheticLead, institution: "Cleveland Clinic", email: "orders@clevelandclinic-lookup.test" };
   const claimedSource = { ...cleveland, url: "https://clevelandclinic-lookup.test/contact" };
