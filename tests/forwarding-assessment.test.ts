@@ -122,12 +122,14 @@ test("a completed no-match purchase needs a plausible work address and routes to
 });
 
 test("a name match on the claimed host cannot override configured impersonation checks", () => {
-  const lookalike = classifyLead(
-    { ...syntheticLead, institution: "Cleveland Clinic", email: "orders@clevelandclinic-lookup.org" },
-    evidence([cleveland, { ...cleveland, url: "https://clevelandclinic-lookup.org/contact" }]),
-  );
+  const configuredLead = { ...syntheticLead, institution: "Cleveland Clinic", email: "orders@clevelandclinic-lookup.test" };
+  const claimedSource = { ...cleveland, url: "https://clevelandclinic-lookup.test/contact" };
+  const lookalike = classifyLead(configuredLead, evidence([cleveland, claimedSource]));
   assert.equal(lookalike.assessment.verdict, "ambiguous");
   assert.equal(lookalike.assessment.details?.domain, "suspicious");
+  const withoutOfficial = classifyLead(configuredLead, evidence([claimedSource]));
+  assert.equal(withoutOfficial.assessment.verdict, "ambiguous");
+  assert.equal(withoutOfficial.assessment.details?.domain, "unverified");
   const otherInstitution = classifyLead(
     { ...syntheticLead, email: "orders@clevelandclinic.org" },
     evidence([{ ...cleveland, title: syntheticLead.institution }]),

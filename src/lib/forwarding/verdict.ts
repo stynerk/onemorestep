@@ -199,7 +199,7 @@ export function classifyLead(lead: LeadInput, evidence: SearchEvidence, regional
   if (domain === "suspicious") {
     return result("ambiguous", "이메일이 공식 도메인과 다른 닮은꼴 또는 타기관 도메인이어서 사칭 의심으로 분류했어요.");
   }
-  if (completeLiveEvidence && official.length === 0 && emailDomain && reservedDomains.some((reserved) => matchesDomain(emailDomain, reserved))) {
+  if (completeLiveEvidence && domains.length === 0 && emailDomain && reservedDomains.some((reserved) => matchesDomain(emailDomain, reserved))) {
     return result("invalid", "예시용 또는 테스트 이메일 주소로 기관 소속을 확인할 수 없어요.");
   }
   if (completeLiveEvidence && matching.length === 0) {
