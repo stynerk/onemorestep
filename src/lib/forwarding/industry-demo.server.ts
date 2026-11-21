@@ -1,0 +1,44 @@
+import { rankAvailableDealers } from "./dealers";
+import { createIndustryState, medicom, regionalHandoffForPolicy, type DemoIndustry, type DemoIndustryOption } from "./industry-demo";
+import { classifyLead } from "./verdict";
+import type { Source } from "../liner-search";
+import type { LeadInput } from "./types";
+
+type StoredEvidence = { searchedAt: string; sources: Source[] };
+export type SavedIndustry = { demo: Extract<DemoIndustry, { id: "b2b-saas" }>; evidence: Readonly<Partial<Record<string, StoredEvidence>>> };
+
+const saasLabels = { id: "b2b-saas", label: "B2B SaaS", brand: "B2B SaaS", dealer: "파트너" } as const;
+
+// The second dataset is registered after its approved inputs and source evidence arrive.
+const savedIndustries: { "b2b-saas"?: SavedIndustry } = {};
+export const demoIndustries: readonly DemoIndustryOption[] = [
+  medicom,
+  savedIndustries["b2b-saas"]?.demo ?? { ...saasLabels, seed: null, unavailable: "B2B SaaS 시연 데이터 준비 중" },
+];
+
+export function getSavedIndustry(id: string): SavedIndustry | undefined {
+  return id === "b2b-saas" ? savedIndustries[id] : undefined;
+}
+
+export function assessSavedIndustryLead(industry: SavedIndustry, lead: LeadInput, regionalCountry = lead.country) {
+  const evidence = Object.hasOwn(industry.evidence, lead.id) ? industry.evidence[lead.id] : undefined;
+  const result = classifyLead(lead, {
+    // Cache indicates a stored search response, and enables the same evidence checks as a completed live search.
+    kind: "cache",
+    status: evidence ? "complete" : "saved-unavailable",
+    sources: evidence?.sources ?? [],
+    searchedAt: evidence?.searchedAt ?? industry.demo.seed.policy.referenceDate,
+  }, regionalCountry);
+  const state = createIndustryState(industry.demo);
+  const policy = industry.demo.seed.policy;
+  let { handoff } = result.assessment;
+  if (result.assessment.verdict === "valid") {
+    const recommendation = rankAvailableDealers(state, lead);
+    handoff = recommendation.route === "dealer"
+      ? { kind: "dealer", dealerId: recommendation.ranked[0].dealer.id }
+      : regionalHandoffForPolicy({ kind: "regional-sales", region: null }, lead.country, policy);
+  } else if (handoff) {
+    handoff = regionalHandoffForPolicy(handoff, regionalCountry, policy);
+  }
+  return { ...result, assessment: { ...result.assessment, handoff } };
+}

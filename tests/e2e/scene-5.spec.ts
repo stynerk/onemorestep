@@ -1,6 +1,7 @@
 import { expect, test } from "@playwright/test";
 import { sendTestMail } from "../../src/lib/forwarding/gmail-test-transport.server";
 import { mailKindFor } from "../../src/lib/forwarding/inbox";
+import { getSavedIndustry } from "../../src/lib/forwarding/industry-demo.server";
 import { assessLead, leadRow, mailPath, mockMail, storedEvents, testMailbox, testMailEnv } from "./scene-5-helper";
 
 const publicBaseUrl = "http://127.0.0.1:3150";
@@ -9,6 +10,7 @@ test("S5-01 승인 대기 카드의 머리, 마스킹과 추천 이유", async (
   await mockMail(page, testInfo);
   const card = await assessLead(page, "L01");
 
+  await expect(page.getByRole("group", { name: "시연 업종" })).toHaveCount(0);
   await expect(card.getByRole("heading", { name: "서울대학교병원", exact: true })).toBeVisible();
   await expect(card.getByText("대한민국", { exact: true })).toBeVisible();
   await expect(card.getByText("PM-50", { exact: true })).toBeVisible();
@@ -225,6 +227,16 @@ test("S5-12 · S5-13 공개 빌드는 브라우저에 배정만 저장하고 메
 
 test("공개 정답 대조 패널에 최종 측정과 오판 사례를 표시한다", async ({ page }, testInfo) => {
   await page.goto(publicBaseUrl);
+  const industries = page.getByRole("group", { name: "시연 업종" });
+  const medicom = industries.getByRole("button", { name: "의료기기(Medicom)", exact: true });
+  const saas = industries.getByRole("button", { name: "B2B SaaS", exact: true });
+  await expect(medicom).toHaveAttribute("aria-pressed", "true");
+  if (getSavedIndustry("b2b-saas")) {
+    await expect(saas).toBeEnabled();
+  } else {
+    await expect(saas).toBeDisabled();
+    await expect(industries.getByText("B2B SaaS 시연 데이터 준비 중", { exact: true })).toBeVisible();
+  }
   await page.getByText("판정 정답 대조", { exact: true }).click();
   const panel = page.locator("details").filter({ has: page.getByText("판정 정답 대조", { exact: true }) });
   await expect(panel.getByText(/공개 문의함은 저장된 근거/u)).toBeVisible();

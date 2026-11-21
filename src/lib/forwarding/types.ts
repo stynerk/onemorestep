@@ -15,7 +15,7 @@ export interface LeadInput {
   phone: string;
   institution: string;
   country: string;
-  product: Product;
+  product: string;
   memo: string;
   receivedAt: string;
 }
@@ -23,7 +23,7 @@ export interface Dealer {
   id: string;
   name: string;
   countries: string[];
-  products: Product[];
+  products: string[];
   active: boolean;
 }
 export interface DealerDelivery {
@@ -94,7 +94,19 @@ export type ForwardingEvent =
   | (EventBase & { type: "review-reopened" })
   | (EventBase & { type: "mail-delivery"; mailId: string; kind: MailKind; recipientKind: RecipientKind; status: MailStatus; causeEventId?: string });
 
+export interface WorkflowPolicy {
+  aggregationDays: number;
+  minimumForwardedCount: number;
+  responseBusinessDays: number;
+  responseTimeZone: "Asia/Seoul";
+  weights: { noResponse: number; priorRelationship: number };
+  referenceDate: string;
+  countryRegions: Readonly<Record<string, Region>>;
+  managers: readonly { id: string; name: string; region: Region }[];
+}
+
 export interface ForwardingState {
+  policy?: WorkflowPolicy;
   leads: LeadInput[];
   dealers: Dealer[];
   deliveries: DealerDelivery[];

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { handoffForLead } from "../../lib/forwarding/handoff";
+import { industryHandoffForLead, isAvailableIndustry, medicom, type DemoIndustry, type DemoIndustryOption } from "../../lib/forwarding/industry-demo";
 import { inboxBucket, inboxOrder, verdictLabels } from "../../lib/forwarding/inbox";
 import { forwardingPolicy } from "../../lib/forwarding/policy";
 import { reassignmentProposal } from "../../lib/forwarding/reassignment";
@@ -20,17 +20,32 @@ const rowState = {
   connected: "결과 기록", disqualified: "처리 완료",
 };
 
-export default function Inbox({ publicDemo, liveAssessment }: { publicDemo: boolean; liveAssessment: boolean }) {
-  const inbox = useInbox(publicDemo, liveAssessment);
+type InboxProps = { publicDemo: boolean; liveAssessment: boolean; industries?: readonly DemoIndustryOption[] };
+
+export default function Inbox({ publicDemo, liveAssessment, industries }: InboxProps) {
+  const [industry, setIndustry] = useState<DemoIndustry>(medicom);
+  const selected = publicDemo ? industry : medicom;
+  return <IndustryInbox key={selected.id} industry={selected} publicDemo={publicDemo} liveAssessment={liveAssessment && selected.id === "medicom"}
+    industries={publicDemo ? industries : undefined} chooseIndustry={(id) => {
+      const option = industries?.find((row) => row.id === id);
+      if (option && isAvailableIndustry(option)) setIndustry(option);
+    }} />;
+}
+
+function IndustryInbox({ industry, publicDemo, liveAssessment, industries, chooseIndustry }: InboxProps & {
+  industry: DemoIndustry; chooseIndustry: (id: string) => void;
+}) {
+  const inbox = useInbox(publicDemo, liveAssessment, industry);
   const [filter, setFilter] = useState<Group | "all">("all");
   const [confirmReset, setConfirmReset] = useState(false);
   const { state } = inbox;
+  const unavailable = industries?.find((option) => !isAvailableIndustry(option));
   const overdue = new Set(inbox.ready
     ? state.leads.filter((lead) => reassignmentProposal(state, lead, inbox.responseNow)).map((lead) => lead.id)
     : []);
   const groups = Object.fromEntries(sections.map((group) => {
     const bucket = group === "new" ? null : group;
-    const ordered = inboxOrder(state.leads.filter((lead) => inboxBucket(state, lead) === bucket), bucket);
+    const ordered = inboxOrder(state.leads.filter((lead) => inboxBucket(state, lead) === bucket), bucket, industry.id === "medicom" ? "L06" : null);
     return [group, ordered.sort((a, b) => Number(overdue.has(b.id)) - Number(overdue.has(a.id)))];
   })) as Record<Group, LeadInput[]>;
   const shown = filter === "all" ? sections : [filter];
@@ -49,7 +64,7 @@ export default function Inbox({ publicDemo, liveAssessment }: { publicDemo: bool
   return <main className="workspace">
     <header className="masthead">
       <div className="brand"><span className="brand-icon" aria-hidden="true">✦</span><div>
-        <p className="brand-name">미리내</p><p className="brand-company">MEDICOM</p>
+        <p className="brand-name">미리내</p><p className="brand-company">{industry.brand}</p>
       </div></div>
       <div className="masthead-actions">
         <span className="demo-disclosure">가상 리드, 공개 기관 정보만</span>
@@ -63,6 +78,16 @@ export default function Inbox({ publicDemo, liveAssessment }: { publicDemo: bool
           onClick={() => void inbox.assessAll()}>{inbox.running ? "판정 중…" : assessed === state.leads.length ? "다시 판정" : "판정 시작"}</button>
       </div>
       {publicDemo && <p className="feedback" role="status">저장된 결과로 보는 시연 버전 · 메일 발송 없음</p>}
+      {industries && <div className="industry-control" role="group" aria-label="시연 업종">
+        <span>시연 업종</span>
+        {industries.map((option) => <button key={option.id} type="button" className="button button-light"
+          aria-pressed={option.id === industry.id} disabled={!isAvailableIndustry(option)}
+          aria-describedby={isAvailableIndustry(option) ? undefined : "industry-unavailable"}
+          onClick={() => chooseIndustry(option.id)}>{option.label}</button>)}
+        {unavailable && !isAvailableIndustry(unavailable)
+          ? <p id="industry-unavailable">{unavailable.unavailable}</p>
+          : industry.id !== "medicom" && <p>같은 판정 엔진에 업종별 리드, {industry.dealer} 표와 정책을 적용합니다.</p>}
+      </div>}
       {confirmReset && <div className="feedback confirm" role="status">
         <p>이 브라우저의 판정, 결정, 회신 기록을 지울까요?</p>
         <button type="button" className="button button-light" onClick={() => setConfirmReset(false)}>취소</button>
@@ -77,7 +102,7 @@ export default function Inbox({ publicDemo, liveAssessment }: { publicDemo: bool
         {inbox.simulatedNow !== null && <button type="button" className="button button-light" onClick={inbox.clearSimulation}>시연 시각 해제</button>}
       </div>}
       {inbox.error && <p className="feedback" role="alert">{inbox.error}</p>}
-      {publicDemo && <PublicDemoResults />}
+      {publicDemo && industry.id === "medicom" && <PublicDemoResults />}
       <div className="board">
         <aside className="sidebar" aria-label="판정 그룹">
           <div className="progress-block">
@@ -103,16 +128,16 @@ export default function Inbox({ publicDemo, liveAssessment }: { publicDemo: bool
             {groups[group].length > 0 ? <ul className="leads">
               {groups[group].map((lead) => {
                 const status = state.leadStates[lead.id];
-                const handoff = handoffForLead(state, lead);
+                const handoff = industryHandoffForLead(state, lead);
                 const showReason = group === "invalid" || (group === "ambiguous" && status.assessment?.details?.domain === "suspicious");
                 return <li key={lead.id} className={"lead" + (lead.id === selected?.id ? " selected" : "")}>
                   <button type="button" className="lead-button" aria-pressed={lead.id === selected?.id}
                     onClick={() => inbox.setSelected(lead.id)}>
                     <span className="lead-meta"><span>{lead.id}</span>
                       {overdue.has(lead.id) ? <span className="reassignment-label">재배정 제안</span>
-                        : <span>{inbox.pending.includes(lead.id) ? "조사 중…" : rowState[status.workflow]}</span>}</span>
+                        : <span>{inbox.pending.includes(lead.id) ? "조사 중…" : status.workflow === "dealer-assigned" ? industry.dealer + " 배정" : rowState[status.workflow]}</span>}</span>
                     <strong title={lead.institution}>{lead.institution || "소속 미기재"}</strong>
-                    {handoff && <span className="lead-handoff">넘길 곳 · {handoffLabel(handoff, state.dealers)}</span>}
+                    {handoff && <span className="lead-handoff">넘길 곳 · {handoffLabel(handoff, state.dealers, industry.dealer)}</span>}
                     <span>{showReason ? status.assessment?.reason ?? "담당자 무효 처리" : lead.country + " · " + lead.product}</span>
                   </button>
                   {group === "invalid" && !status.dealerId && <button type="button" className="reopen"

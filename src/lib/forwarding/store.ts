@@ -1,8 +1,8 @@
 import { locales } from "./institution-policy";
 import { regionalSalesHandoff } from "./handoff";
+import { createIndustryState, medicom, regionalHandoffForPolicy, type DemoIndustry } from "./industry-demo";
 import { mailKindForLead } from "./inbox";
 import { openAssignment, reassignmentProposal, reassignmentTarget } from "./reassignment";
-import { createInitialForwardingState } from "./seed";
 import { DOMAIN_CHECKS, EXTERNAL_STATUSES, MEMO_INTENTS, REGIONS, SOURCE_KINDS, VERDICTS, WORKFLOW_STATES } from "./types";
 import type { Assessment, ForwardingEvent, ForwardingState } from "./types";
 
@@ -122,7 +122,7 @@ export function isForwardingEvent(value: unknown, state: ForwardingState): value
       if (Object.hasOwn(value, "causeEventId")) {
         fields.push("causeEventId");
         if (!lead || !isId(value.causeEventId) || !state.events.some((event) =>
-          event.id === value.causeEventId && event.leadId === lead.id && mailKindForLead(event, lead) === value.kind)) return false;
+          event.id === value.causeEventId && event.leadId === lead.id && mailKindForLead(event, lead, state.policy) === value.kind)) return false;
       }
       return leadExists && exactly(value, fields)
         && isId(value.mailId) && member(value.kind, ["dealer-summary", "country-check", "partnership-check", "manager-confirmation", "operations"])
@@ -208,7 +208,7 @@ function projectEvent(state: ForwardingState, input: unknown, validateProposal: 
     const country = next.leads.find((row) => row.id === event.leadId)?.country ?? "";
     lead.assessment = lead.assessment
       ? { ...lead.assessment, verdict: "ambiguous", reason: "무효 묶음에서 꺼냈어요. 다시 확인해 주세요.",
-        handoff: regionalSalesHandoff(country) }
+        handoff: regionalHandoffForPolicy(regionalSalesHandoff(country), country, next.policy) }
       : null;
     lead.workflow = "decision-pending";
   }
@@ -216,12 +216,12 @@ function projectEvent(state: ForwardingState, input: unknown, validateProposal: 
   return { ok: true, state: next };
 }
 
-function decode(raw: string): ForwardingState | null {
+function decode(raw: string, demo: DemoIndustry): ForwardingState | null {
   try {
     if (raw.length > 2_000_000) return null;
     const value: unknown = JSON.parse(raw);
     if (!isObject(value) || !exactly(value, ["version", "events"]) || value.version !== FORWARDING_STORAGE_VERSION || !Array.isArray(value.events) || value.events.length > 10_000) return null;
-    let state = createInitialForwardingState();
+    let state = createIndustryState(demo);
     for (const event of value.events) {
       const result = projectEvent(state, event, false);
       if (!result.ok) return null;
@@ -232,17 +232,18 @@ function decode(raw: string): ForwardingState | null {
 }
 
 /** Single-user event persistence. Callers display errors; rejected writes never change the committed snapshot. */
-export function createForwardingStore(storage: StorageAdapter | null) {
-  let state = createInitialForwardingState();
+export function createForwardingStore(storage: StorageAdapter | null, demo: DemoIndustry = medicom) {
+  const storageKey = demo.id === "medicom" ? FORWARDING_STORAGE_KEY : `${FORWARDING_STORAGE_KEY}.${demo.id}`;
+  let state = createIndustryState(demo);
   let hydrated = false;
   const result = (ok: boolean, error?: StoreFailure): StoreResult => ({ ok, error, state: structuredClone(state) });
   const hydrate = (): StoreResult => {
     hydrated = false;
     if (!storage) return result(false, "storage-unavailable");
     let raw: string | null;
-    try { raw = storage.getItem(FORWARDING_STORAGE_KEY); } catch { return result(false, "storage-read-failed"); }
-    if (raw === null) { state = createInitialForwardingState(); hydrated = true; return result(true); }
-    const restored = decode(raw);
+    try { raw = storage.getItem(storageKey); } catch { return result(false, "storage-read-failed"); }
+    if (raw === null) { state = createIndustryState(demo); hydrated = true; return result(true); }
+    const restored = decode(raw, demo);
     if (!restored) return result(false, "invalid-saved-data");
     state = restored;
     hydrated = true;
@@ -264,14 +265,14 @@ export function createForwardingStore(storage: StorageAdapter | null) {
       const envelope: Envelope = { version: 1, events: applied.state.events };
       const encoded = JSON.stringify(envelope);
       if (encoded.length > 2_000_000) return result(false, "invalid-event");
-      try { storage.setItem(FORWARDING_STORAGE_KEY, encoded); } catch { return result(false, "storage-write-failed"); }
+      try { storage.setItem(storageKey, encoded); } catch { return result(false, "storage-write-failed"); }
       state = applied.state;
       return result(true);
     },
     reset(): StoreResult {
       if (!storage) return result(false, "storage-unavailable");
-      try { storage.removeItem(FORWARDING_STORAGE_KEY); } catch { return result(false, "storage-write-failed"); }
-      state = createInitialForwardingState();
+      try { storage.removeItem(storageKey); } catch { return result(false, "storage-write-failed"); }
+      state = createIndustryState(demo);
       hydrated = true;
       return result(true);
     },
@@ -279,8 +280,8 @@ export function createForwardingStore(storage: StorageAdapter | null) {
 }
 
 /** SSR-safe: accessing localStorage can itself throw when browser storage is blocked. */
-export function createBrowserForwardingStore() {
+export function createBrowserForwardingStore(demo: DemoIndustry = medicom) {
   let storage: StorageAdapter | null = null;
   try { if (typeof window !== "undefined") storage = window.localStorage; } catch { /* Report unavailable through the store result. */ }
-  return createForwardingStore(storage);
+  return createForwardingStore(storage, demo);
 }

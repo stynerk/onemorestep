@@ -27,6 +27,10 @@ body:has(.workspace) { background: #f5f6fb; color: #18213a; margin: 0; }
 .page-heading { display: flex; align-items: center; justify-content: space-between; gap: 18px; margin: 3px 0 23px; }
 .page-heading p { margin-top: 7px; color: #555e79; }
 .run-button { padding: 9px 20px; }
+.industry-control { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 12px; margin: 0 0 14px; }
+.industry-control span { font-weight: 700; }
+.industry-control button[aria-pressed="true"] { background: #ece9ff; border-color: #a99fed; color: #392f88; }
+.industry-control p { color: #52607f; font-size: 12px; }
 .board { display: grid; grid-template-columns: 174px minmax(255px, 1fr) minmax(380px, 1.8fr); gap: 13px; align-items: start; }
 .sidebar, .inbox-column, .decision-card, .empty-card { background: #fff; border: 1px solid #e0e2ed; border-radius: 12px; }
 .sidebar { padding: 12px; }
