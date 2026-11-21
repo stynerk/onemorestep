@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { handoffForLead } from "../../lib/forwarding/handoff";
+import { industryHandoffForLead } from "../../lib/forwarding/industry-demo";
 import { dealerScore, recommendDealer, type DealerScore } from "../../lib/forwarding/dealers";
-import { confirmedCountry, confirmedManagerDealer, hasStaleEvidence, maskEmail, maskPhone, nextBusinessDate, verdictLabels } from "../../lib/forwarding/inbox";
+import { confirmedCountry, confirmedManagerDealer, hasStaleEvidence, maskEmail, maskPhone, responseDeadline, verdictLabels } from "../../lib/forwarding/inbox";
 import { locales } from "../../lib/forwarding/institution-policy";
 import { renderForwardingMail } from "../../lib/forwarding/mail-template";
 import { forwardingPolicy } from "../../lib/forwarding/policy";
@@ -37,8 +37,10 @@ function Evidence({ assessment, historicalCount }: { assessment: Assessment; his
   </div>;
 }
 
-function History({ record, saveOutcome, disabled }: {
+function History({ record, saveOutcome, disabled, dealerLabel, days }: {
   record: DealerScore;
+  dealerLabel: string;
+  days: number;
   saveOutcome: InboxController["saveOutcome"];
   disabled: boolean;
 }) {
@@ -47,20 +49,21 @@ function History({ record, saveOutcome, disabled }: {
     <p>전달 {record.forwarded}건 · 전환율 {record.conversionRate === null ? "—" : percent.format(record.conversionRate)}
        {" · "}진행 {record.inProgress}건 · 미응답 {record.noResponse}건</p>
     <p>{record.priorRelationship ? "이 기관 거래 기록 있음" : "이 기관 거래 기록 없음"}</p>
-    <details className="history"><summary>최근 90일 이력 보기</summary>
+    <details className="history"><summary>최근 {days}일 이력 보기</summary>
       {record.deliveries.length ? <ul className="history-list">
         {record.deliveries.map((row) => <li key={row.id}>
           <span>{time(row.forwardedAt)} · {row.institution} · {outcomeLabels[row.outcome]}</span>
           {row.outcome === "in-progress" &&
-            <OutcomeForm delivery={row} saveOutcome={saveOutcome} disabled={disabled} />}
+            <OutcomeForm delivery={row} dealerLabel={dealerLabel} saveOutcome={saveOutcome} disabled={disabled} />}
         </li>)}
       </ul> : <p>전달 이력이 없습니다.</p>}
     </details>
   </div>;
 }
 
-function OutcomeForm({ delivery, saveOutcome, disabled }: {
+function OutcomeForm({ delivery, saveOutcome, disabled, dealerLabel }: {
   delivery: DealerDelivery;
+  dealerLabel: string;
   saveOutcome: InboxController["saveOutcome"];
   disabled: boolean;
 }) {
@@ -70,15 +73,15 @@ function OutcomeForm({ delivery, saveOutcome, disabled }: {
     if (outcome) saveOutcome(delivery, outcome);
     setOutcome("");
   }}>
-    <select aria-label={delivery.institution + " 딜러 결과"} value={outcome} onChange={(event) => setOutcome(event.target.value as typeof outcome)}>
+    <select aria-label={delivery.institution + " " + dealerLabel + " 결과"} value={outcome} onChange={(event) => setOutcome(event.target.value as typeof outcome)}>
       <option value="">결과 선택</option><option value="deal">deal</option><option value="no-deal">no deal</option><option value="no-response">미응답</option>
     </select>
     <button type="submit" className="button button-light" disabled={disabled || !outcome}>결과 기록</button>
   </form>;
 }
 
-function ReplyForm({ formKey, kind, options, submit, disabled }: {
-  formKey: string; kind: ReplyKind; options: { value: string; label: string }[];
+function ReplyForm({ formKey, kind, options, submit, disabled, dealerLabel }: {
+  formKey: string; kind: ReplyKind; dealerLabel: string; options: { value: string; label: string }[];
   submit: (kind: ReplyKind, note: string, selection: string) => void;
   disabled: boolean;
 }) {
@@ -91,7 +94,7 @@ function ReplyForm({ formKey, kind, options, submit, disabled }: {
     setNote("");
   }}>
     <h3>{label}</h3>
-    <label htmlFor={formKey + "-choice"}>{kind === "country" ? "확인한 국가" : kind === "partnership" ? "회신 분류" : "확인한 딜러"}</label>
+    <label htmlFor={formKey + "-choice"}>{kind === "country" ? "확인한 국가" : kind === "partnership" ? "회신 분류" : "확인한 " + dealerLabel}</label>
     <select required id={formKey + "-choice"} value={selection} onChange={(event) => setSelection(event.target.value)}>
       <option value="">선택</option>
       {options.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
@@ -102,8 +105,10 @@ function ReplyForm({ formKey, kind, options, submit, disabled }: {
   </form>;
 }
 
-function ReassignmentCard({ proposal, approve, disabled }: {
+function ReassignmentCard({ proposal, approve, disabled, dealerLabel, days }: {
   proposal: ReassignmentProposal;
+  dealerLabel: string;
+  days: number;
   approve: () => void;
   disabled: boolean;
 }) {
@@ -111,14 +116,14 @@ function ReassignmentCard({ proposal, approve, disabled }: {
   const next = recommendation.route === "dealer" ? recommendation.ranked[0] : null;
   return <section className="reassignment" aria-label="재배정 제안">
     <h3>재배정 제안</h3>
-    <p>원래 딜러 <strong>{proposal.previous.name}</strong> · 응답 기한 {time(proposal.deadline)} 경과</p>
+    <p>원래 {dealerLabel} <strong>{proposal.previous.name}</strong> · 응답 기한 {time(proposal.deadline)} 경과</p>
     {next ? <>
       <p>다음 순위 <strong>{next.dealer.name}</strong> · 점수 {score(next.score)}</p>
-      <p>최근 90일 전달 {next.forwarded}건 · 전환율 {next.conversionRate === null ? "—" : percent.format(next.conversionRate)}
+      <p>최근 {days}일 전달 {next.forwarded}건 · 전환율 {next.conversionRate === null ? "—" : percent.format(next.conversionRate)}
         {" · "}미응답 {next.noResponse}건 · {next.priorRelationship ? "이 기관과 거래 이력 있음" : "이 기관과 거래 이력 없음"}</p>
     </> : recommendation.route === "manager-confirmation"
       ? <p>다음 후보의 이력 또는 전환 근거가 부족합니다. {recommendation.manager.name}의 확인이 필요해요.</p>
-      : <p>배정 가능한 다음 딜러가 없습니다. {recommendation.manager.name}에게 직접 처리를 넘겨요.</p>}
+      : <p>배정 가능한 다음 {dealerLabel}가 없습니다. {recommendation.manager.name}에게 직접 처리를 넘겨요.</p>}
     <button type="button" className="button button-primary" disabled={disabled} onClick={approve}>
       {next ? "재배정 승인" : "지역 담당자에게 넘기기"}
     </button>
@@ -129,10 +134,11 @@ export function DecisionCard({ lead, inbox }: { lead: LeadInput; inbox: InboxCon
   const [changeDealer, setChangeDealer] = useState(false);
   const [dealerId, setDealerId] = useState("");
   const [reason, setReason] = useState("");
-  const { state } = inbox;
+  const { state, dealerLabel } = inbox;
+  const days = state.policy?.aggregationDays ?? forwardingPolicy.aggregationDays;
   const status = state.leadStates[lead.id];
   const assessment = status.assessment;
-  const handoff = handoffForLead(state, lead);
+  const handoff = industryHandoffForLead(state, lead);
   const country = confirmedCountry(state, lead.id) ?? lead.country;
   const recommendation = recommendDealer(state, lead.id, { country });
   const waitingDealer = confirmedManagerDealer(state, lead.id);
@@ -166,7 +172,7 @@ export function DecisionCard({ lead, inbox }: { lead: LeadInput; inbox: InboxCon
   const fault = assessment?.details?.externalStatus === "failed";
   const recommendationText = assigned ? assigned.name + "에 배정했습니다." : dealer ? dealer.name + "에 넘기세요." :
     recommendation?.route === "manager-direct" ? recommendation.manager.name + "에게 넘기세요." :
-    recommendation?.route === "manager-confirmation" ? recommendation.manager.name + "의 딜러 확인이 필요해요." :
+    recommendation?.route === "manager-confirmation" ? recommendation.manager.name + "의 " + dealerLabel + " 확인이 필요해요." :
     handoff?.kind === "hr" ? "인사팀에서 채용 문의를 확인하세요." :
     handoff?.kind === "regional-sales" && assessment?.details?.domain === "suspicious" ? "권역 세일즈팀의 확인이 필요해요." :
     recommendation?.route === "operations" ? "운영에 담당 지역 확인을 요청했어요." :
@@ -181,7 +187,8 @@ export function DecisionCard({ lead, inbox }: { lead: LeadInput; inbox: InboxCon
       <p className="contact">{lead.name} · {maskEmail(lead.email)} · {maskPhone(lead.phone)}</p>
       <p className="muted">접수 {time(lead.receivedAt)}{inbox.ready && " · " + Math.max(0, Math.floor((inbox.now - Date.parse(lead.receivedAt)) / 3600000)) + "시간 경과"}</p>
       {assessment && <div className="badges">
-        <span className="badge">{assessment.details ? modeLabels[assessment.details.sourceKind] : assessment.mode === "live" ? "실시간 검색" : "저장된 결과"}</span>
+        <span className="badge">{inbox.publicDemo && assessment.mode === "saved" ? "저장된 결과" :
+          assessment.details ? modeLabels[assessment.details.sourceKind] : assessment.mode === "live" ? "실시간 검색" : "저장된 결과"}</span>
         {stale && <span className="badge warning">오래된 출처</span>}
         {fault && <span className="badge warning">외부 확인 실패</span>}
         {status.workflow === "disqualified" && <span className="badge neutral">무효 처리 완료</span>}
@@ -190,13 +197,13 @@ export function DecisionCard({ lead, inbox }: { lead: LeadInput; inbox: InboxCon
     {!assessment ? <div className="card-body"><h3>문의 메모</h3><blockquote>{lead.memo}</blockquote>
       <button className="button button-primary" disabled={disabled} onClick={() => void inbox.assess(lead)}>{disabled ? "확인 중…" : "이 문의 판정"}</button>
     </div> : <div className="card-body">
-      {proposal && <ReassignmentCard proposal={proposal} disabled={disabled} approve={() => inbox.approveReassignment(lead, proposal)} />}
+      {proposal && <ReassignmentCard proposal={proposal} dealerLabel={dealerLabel} days={days} disabled={disabled} approve={() => inbox.approveReassignment(lead, proposal)} />}
       <section className="recommendation">
         <p className="section-kicker">미리내 추천</p>
         <h3>{recommendationText}</h3>
         <p>{assessment.reason}</p>
         {handoff && <dl className="handoff-summary">
-          <dt>넘길 곳</dt><dd>{handoffLabel(handoff, state.dealers)}</dd>
+          <dt>넘길 곳</dt><dd>{handoffLabel(handoff, state.dealers, dealerLabel)}</dd>
         </dl>}
       </section>
       <section>
@@ -210,23 +217,23 @@ export function DecisionCard({ lead, inbox }: { lead: LeadInput; inbox: InboxCon
         <blockquote>{lead.memo}</blockquote>
         {assessment.details?.memoQuote && <p className="muted">판단 문구 “{assessment.details.memoQuote}”</p>}
       </section>
-      {ranked.length > 0 && <section><h3>추천 딜러</h3>
-        <History record={ranked[0]} saveOutcome={inbox.saveOutcome} disabled={disabled} />
+      {ranked.length > 0 && <section><h3>추천 {dealerLabel}</h3>
+        <History record={ranked[0]} dealerLabel={dealerLabel} days={days} saveOutcome={inbox.saveOutcome} disabled={disabled} />
         {ranked[1] && <details className="runner-up"><summary>2순위 · {ranked[1].dealer.name} · {score(ranked[1].score)}</summary>
-          <History record={ranked[1]} saveOutcome={inbox.saveOutcome} disabled={disabled} />
+          <History record={ranked[1]} dealerLabel={dealerLabel} days={days} saveOutcome={inbox.saveOutcome} disabled={disabled} />
         </details>}
       </section>}
-      {assessment.verdict === "valid" && <details className="preview"><summary>딜러 요약 미리보기</summary>
-        <pre>{renderForwardingMail("dealer-summary", { ...lead, country }).text}</pre>
+      {assessment.verdict === "valid" && <details className="preview"><summary>{dealerLabel} 요약 미리보기</summary>
+        <pre>{renderForwardingMail("dealer-summary", { ...lead, country }, dealerLabel).text}</pre>
       </details>}
       {savedReply?.type === "reply" && <section><h3>회신 기록</h3><p>{savedReply.text} · {time(savedReply.at)}</p></section>}
-      {replyKind && canDecide && <ReplyForm key={replyKind} formKey={lead.id + "-" + replyKind} kind={replyKind} options={replyOptions}
+      {replyKind && canDecide && <ReplyForm key={replyKind} dealerLabel={dealerLabel} formKey={lead.id + "-" + replyKind} kind={replyKind} options={replyOptions}
           disabled={disabled} submit={(kind, note, selection) => void inbox.saveReply(lead, kind, note, selection)} />}
       {canDecide && assessment.verdict !== "invalid" && <section className="decision-buttons" aria-label="결정">
         {dealer && <button type="button" className="button button-primary" disabled={disabled}
-          onClick={() => inbox.decide(lead, "approve", dealer.id, "추천 딜러 승인")}>승인</button>}
+          onClick={() => inbox.decide(lead, "approve", dealer.id, "추천 " + dealerLabel + " 승인")}>승인</button>}
         {dealChoices.length > 0 && <button type="button" className="button button-light" disabled={disabled}
-          onClick={() => setChangeDealer((current) => !current)}>딜러 변경</button>}
+          onClick={() => setChangeDealer((current) => !current)}>{dealerLabel} 변경</button>}
         <button type="button" className="button button-light" disabled={disabled}
           onClick={() => inbox.decide(lead, "phone", null, "전화로 추가 확인")}>전화 필요</button>
         <button type="button" className="button button-light" disabled={disabled}
@@ -237,23 +244,23 @@ export function DecisionCard({ lead, inbox }: { lead: LeadInput; inbox: InboxCon
         if (!dealerId || !reason.trim()) return;
         inbox.decide(lead, "change-dealer", dealerId, reason.trim());
       }}>
-        <label htmlFor="dealer-choice">배정 딜러</label><select id="dealer-choice" required value={dealerId} onChange={(event) => setDealerId(event.target.value)}>
-          <option value="">다른 딜러 선택</option>{dealChoices.map((row) => <option key={row.id} value={row.id}>{row.name}</option>)}
+        <label htmlFor="dealer-choice">배정 {dealerLabel}</label><select id="dealer-choice" required value={dealerId} onChange={(event) => setDealerId(event.target.value)}>
+          <option value="">다른 {dealerLabel} 선택</option>{dealChoices.map((row) => <option key={row.id} value={row.id}>{row.name}</option>)}
         </select>
         <label htmlFor="change-reason">변경 이유</label><textarea id="change-reason" aria-describedby="change-reason-hint" required maxLength={500} rows={2} value={reason} onChange={(event) => setReason(event.target.value)} />
-        <p className="muted" id="change-reason-hint">딜러를 변경하려면 이유를 입력해 주세요.</p>
-        <button type="submit" className="button button-primary" disabled={disabled || !dealerId || !reason.trim()}>딜러 변경 기록</button>
+        <p className="muted" id="change-reason-hint">{dealerLabel}를 변경하려면 이유를 입력해 주세요.</p>
+        <button type="submit" className="button button-primary" disabled={disabled || !dealerId || !reason.trim()}>{dealerLabel} 변경 기록</button>
       </form>}
       {(latestDecision || latestReassignment) && <section>
         <h3>결정 기록</h3>
         {latestDecision?.type === "decision" && <p>{latestDecision.reason} · {time(latestDecision.at)}</p>}
         {latestReassignment?.type === "reassigned" && previousScore && <p>
-          {time(latestReassignment.at)} · {previousScore.dealer.name} 미응답 기록 · 최근 90일 미응답 {previousScore.noResponse}건 · 갱신 점수 {score(previousScore.score)}
+          {time(latestReassignment.at)} · {previousScore.dealer.name} 미응답 기록 · 최근 {days}일 미응답 {previousScore.noResponse}건 · 갱신 점수 {score(previousScore.score)}
         </p>}
-        {active && <p>딜러 응답 기한 {time(nextBusinessDate(active.forwardedAt))} (한국 시간)</p>}
+        {active && <p>{dealerLabel} 응답 기한 {time(responseDeadline(state, active.forwardedAt))} (한국 시간)</p>}
         {active && !proposal && <button type="button" className="button button-light" disabled={disabled}
           onClick={() => inbox.simulateDeadline(lead)}>기한 경과 시뮬레이션</button>}
-        {delivery && <><p>현재 결과 · {outcomeLabels[delivery.outcome]}</p><OutcomeForm key={delivery.id} delivery={delivery} saveOutcome={inbox.saveOutcome} disabled={disabled} /></>}
+        {delivery && <><p>현재 결과 · {outcomeLabels[delivery.outcome]}</p><OutcomeForm key={delivery.id} delivery={delivery} dealerLabel={dealerLabel} saveOutcome={inbox.saveOutcome} disabled={disabled} /></>}
       </section>}
       {runMail.length > 0 && inbox.publicDemo && <section><h3>테스트 메일</h3><p>공개 시연에서는 메일을 보내지 않습니다.</p></section>}
       {runMail.length > 0 && !inbox.publicDemo && <section aria-live="polite"><h3>테스트 메일</h3>

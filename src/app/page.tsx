@@ -1,4 +1,5 @@
 import { isPublicDemo, linerRuntimeSettings } from "../lib/demo-mode";
+import { demoIndustries } from "../lib/forwarding/industry-demo.server";
 import Inbox from "./forwarding/inbox";
 import "./forwarding/forwarding.css";
 
@@ -8,5 +9,6 @@ export const dynamic = "force-dynamic";
 export default function Home() {
   const liner = linerRuntimeSettings();
   const liveAssessment = liner.mode?.trim() === "live" && Boolean(liner.apiKey?.trim());
-  return <Inbox publicDemo={isPublicDemo()} liveAssessment={liveAssessment} />;
+  const publicDemo = isPublicDemo();
+  return <Inbox publicDemo={publicDemo} liveAssessment={liveAssessment} industries={publicDemo ? demoIndustries : undefined} />;
 }

@@ -3,9 +3,9 @@
 import { useEffect, useRef, useState } from "react";
 import { recommendDealer, recordDealerOutcome } from "../../lib/forwarding/dealers";
 import { regionalSalesHandoff } from "../../lib/forwarding/handoff";
-import { confirmedCountry, confirmedManagerDealer, inboxBucket, lastReply, mailKindForLead, mailRequestsFor, nextBusinessDate } from "../../lib/forwarding/inbox";
+import { createIndustryState, regionalHandoffForPolicy, type DemoIndustry } from "../../lib/forwarding/industry-demo";
+import { confirmedCountry, confirmedManagerDealer, inboxBucket, lastReply, mailKindForLead, mailRequestsFor, responseDeadline } from "../../lib/forwarding/inbox";
 import { openAssignment, reassignmentTarget, responseClock, type ReassignmentProposal } from "../../lib/forwarding/reassignment";
-import { createInitialForwardingState } from "../../lib/forwarding/seed";
 import { createBrowserForwardingStore, type StoreResult } from "../../lib/forwarding/store";
 import type { Assessment, DecisionAction, DealerDelivery, DealerOutcome, ForwardingEvent, LeadInput, ReplyKind, WorkflowState } from "../../lib/forwarding/types";
 import type { ForwardingMailResult } from "../../lib/forwarding/forwarding-mail.server";
@@ -15,8 +15,8 @@ const eventBase = (leadId: string, at = Date.now()) => ({ id: crypto.randomUUID(
 
 type MailState = { message: string; pending: boolean };
 
-export function useInbox(publicDemo: boolean, liveAssessment: boolean) {
-  const [state, setState] = useState(createInitialForwardingState);
+export function useInbox(publicDemo: boolean, liveAssessment: boolean, industry: DemoIndustry) {
+  const [state, setState] = useState(() => createIndustryState(industry));
   const [ready, setReady] = useState(false);
   const [now, setNow] = useState(0);
   const [simulatedNow, setSimulatedNow] = useState<number | null>(null);
@@ -32,17 +32,19 @@ export function useInbox(publicDemo: boolean, liveAssessment: boolean) {
   const pageExit = useRef<AbortController | null>(null);
 
   useEffect(() => {
-    const browserStore = createBrowserForwardingStore();
+    const browserStore = createBrowserForwardingStore(industry);
     const loaded = browserStore.hydrate();
     store.current = browserStore;
+    const navigation = new AbortController();
+    pageExit.current = navigation;
     // Apply the external storage snapshot after the browser completes hydration.
     queueMicrotask(() => {
+      if (store.current !== browserStore) return;
       setState(loaded.state);
       setReady(loaded.ok);
       setNow(Date.now());
       if (!loaded.ok) setError("저장된 시연 기록을 열 수 없습니다. 시연 초기화로 다시 시작해 주세요.");
     });
-    pageExit.current = new AbortController();
     const suspend = () => pageExit.current?.abort();
     const resume = () => { if (pageExit.current?.signal.aborted) pageExit.current = new AbortController(); };
     window.addEventListener("pagehide", suspend);
@@ -50,11 +52,12 @@ export function useInbox(publicDemo: boolean, liveAssessment: boolean) {
     const timer = window.setInterval(() => setNow(Date.now()), 1000);
     return () => {
       suspend();
+      store.current = null;
       window.removeEventListener("pagehide", suspend);
       window.removeEventListener("pageshow", resume);
       window.clearInterval(timer);
     };
-  }, []);
+  }, [industry]);
 
   const responseNow = responseClock(state, now, simulatedNow);
 
@@ -100,13 +103,13 @@ export function useInbox(publicDemo: boolean, liveAssessment: boolean) {
   }
 
   function offerMail(event: ForwardingEvent, lead: LeadInput, previous: ForwardingEvent[]) {
-    const kind = mailKindForLead(event, lead);
-    if (!kind || (event.type === "assessed" && previous.some((item) => item.leadId === lead.id && mailKindForLead(item, lead) === kind))) return;
+    const kind = mailKindForLead(event, lead, state.policy);
+    if (!kind || (event.type === "assessed" && previous.some((item) => item.leadId === lead.id && mailKindForLead(item, lead, state.policy) === kind))) return;
     void sendMail(event);
   }
 
   function mailFor(lead: LeadInput) {
-    return mailRequestsFor(state.events, lead).map(({ kind, event, delivery }) => ({
+    return mailRequestsFor(state.events, lead, state.policy).map(({ kind, event, delivery }) => ({
       id: event.id, kind, delivery, status: mail[event.id],
       dealerName: event.type === "decision" || event.type === "reassigned" ? state.dealers.find((dealer) => dealer.id === event.dealerId)?.name : undefined,
       retry: () => sendMail(event, delivery?.status === "failed" ? delivery.id : undefined),
@@ -132,7 +135,8 @@ export function useInbox(publicDemo: boolean, liveAssessment: boolean) {
         const response = await fetch("/api/forwarding/assess", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ leadId: lead.id, country, partnershipPurchase: partnershipPurchase || undefined }),
+          body: JSON.stringify({ leadId: lead.id, industry: industry.id === "medicom" ? undefined : industry.id,
+            country, partnershipPurchase: partnershipPurchase || undefined }),
           // Live requests may queue behind the shared Liner concurrency limit.
           signal: AbortSignal.any([exit, AbortSignal.timeout(liveAssessment ? 60_000 : 8_000)]),
         });
@@ -143,7 +147,7 @@ export function useInbox(publicDemo: boolean, liveAssessment: boolean) {
         result = {
           assessment: {
             verdict: "ambiguous", reason: "외부 확인 실패, 다시 시도", sources: [], searchedAt: new Date().toISOString(),
-            handoff: regionalSalesHandoff(lead.country),
+            handoff: regionalHandoffForPolicy(regionalSalesHandoff(lead.country), lead.country, snapshot.policy),
             mode: "saved", details: { domain: "unverified", countries: [], industry: null, memoIntent: "unknown", memoQuote: null, externalStatus: "failed", sourceKind: "local" },
           },
           workflow: "decision-pending",
@@ -164,12 +168,12 @@ export function useInbox(publicDemo: boolean, liveAssessment: boolean) {
       const event: ForwardingEvent = { ...eventBase(lead.id), type: "assessed", assessment, workflow };
       if (append(event)) {
         offerMail(event, lead, previous.events);
-        if (lead.id === "L06" && assessment.verdict === "valid") setSelected((current) => current ?? lead.id);
+        if (industry.id === "medicom" && lead.id === "L06" && assessment.verdict === "valid") setSelected((current) => current ?? lead.id);
       }
     } finally {
       window.removeEventListener("beforeunload", cancelOnReload);
       assessing.current.delete(lead.id);
-      setPending((current) => current.filter((id) => id !== lead.id));
+      if (store.current) setPending((current) => current.filter((id) => id !== lead.id));
     }
   }
 
@@ -188,7 +192,7 @@ export function useInbox(publicDemo: boolean, liveAssessment: boolean) {
       await Promise.all([worker(), worker(), worker()]);
     } finally {
       batchRunning.current = false;
-      setRunning(false);
+      if (store.current) setRunning(false);
     }
   }
 
@@ -211,8 +215,8 @@ export function useInbox(publicDemo: boolean, liveAssessment: boolean) {
   function simulateDeadline(lead: LeadInput) {
     const snapshot = store.current?.snapshot();
     const delivery = snapshot && openAssignment(snapshot, lead.id);
-    if (!delivery) return;
-    setSimulatedNow((current) => Math.max(current ?? 0, Date.parse(nextBusinessDate(delivery.forwardedAt))));
+    if (!snapshot || !delivery) return;
+    setSimulatedNow((current) => Math.max(current ?? 0, Date.parse(responseDeadline(snapshot, delivery.forwardedAt))));
   }
 
   function approveReassignment(lead: LeadInput, proposal: ReassignmentProposal) {
@@ -265,7 +269,7 @@ export function useInbox(publicDemo: boolean, liveAssessment: boolean) {
     setReady(true);
   }
 
-  return { state, ready, publicDemo, now, responseNow, simulatedNow, clearSimulation: () => setSimulatedNow(null),
+  return { state, ready, publicDemo, dealerLabel: industry.dealer, now, responseNow, simulatedNow, clearSimulation: () => setSimulatedNow(null),
     error, running, pending, mail, selected, setSelected, assess, assessAll, decide,
     bulkInvalid, reopen, saveReply, saveOutcome, simulateDeadline, approveReassignment, reset, mailFor };
 }

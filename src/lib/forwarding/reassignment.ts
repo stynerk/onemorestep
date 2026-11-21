@@ -1,5 +1,5 @@
 import { rankAvailableDealers } from "./dealers";
-import { confirmedCountry, nextBusinessDate } from "./inbox";
+import { confirmedCountry, responseDeadline } from "./inbox";
 import type { ForwardingState, LeadInput, ReassignmentTarget } from "./types";
 
 export function responseClock(state: ForwardingState, realTime: number, simulatedTime: number | null) {
@@ -25,7 +25,7 @@ export function openAssignment(state: ForwardingState, leadId: string) {
 export function reassignmentProposal(state: ForwardingState, lead: LeadInput, now: number) {
   const delivery = openAssignment(state, lead.id);
   if (!delivery) return null;
-  const deadline = nextBusinessDate(delivery.forwardedAt);
+  const deadline = responseDeadline(state, delivery.forwardedAt);
   if (now < Date.parse(deadline)) return null;
   const previous = state.dealers.find((dealer) => dealer.id === delivery.dealerId);
   if (!previous) return null;

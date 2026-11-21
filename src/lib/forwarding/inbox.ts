@@ -1,5 +1,5 @@
 import { forwardingPolicy } from "./policy";
-import type { Assessment, ForwardingEvent, ForwardingState, LeadInput, MailKind, ReplyKind, Verdict } from "./types";
+import type { Assessment, ForwardingEvent, ForwardingState, LeadInput, MailKind, ReplyKind, Verdict, WorkflowPolicy } from "./types";
 
 export const verdictLabels: Record<Verdict, string> = {
   valid: "유효", ambiguous: "애매", "country-check": "국가 확인", "partnership-check": "제휴 확인", invalid: "무효",
@@ -14,12 +14,12 @@ export function inboxBucket(state: ForwardingState, lead: LeadInput): Verdict | 
   return status.assessment?.verdict ?? null;
 }
 
-export function inboxOrder(leads: LeadInput[], bucket: Verdict | null): LeadInput[] {
+export function inboxOrder(leads: LeadInput[], bucket: Verdict | null, prioritizedLeadId: string | null = "L06"): LeadInput[] {
   // Leave the newest inquiry at the bottom until its validity is confirmed.
   return [...leads].sort((a, b) => {
     if (bucket === "valid" && a.id !== b.id) {
-      if (a.id === "L06") return -1;
-      if (b.id === "L06") return 1;
+      if (a.id === prioritizedLeadId) return -1;
+      if (b.id === prioritizedLeadId) return 1;
     }
     return a.receivedAt.localeCompare(b.receivedAt);
   });
@@ -64,6 +64,10 @@ export function nextBusinessDate(date: string, businessDays: number = forwarding
   return new Date(end).toISOString();
 }
 
+export function responseDeadline(state: ForwardingState, date: string) {
+  return nextBusinessDate(date, state.policy?.responseBusinessDays);
+}
+
 export function hasStaleEvidence(assessment: Assessment, now: number) {
   return assessment.sources.length > 0 && now - Date.parse(assessment.searchedAt) >= 86_400_000;
 }
@@ -81,17 +85,17 @@ export function mailKindFor(event: ForwardingEvent): MailKind | null {
   return null;
 }
 
-export const mailKindForLead = (event: ForwardingEvent, lead: LeadInput): MailKind | null =>
-  event.type === "assessed" && !Object.hasOwn(forwardingPolicy.countryRegions, lead.country) ? "operations" : mailKindFor(event);
+export const mailKindForLead = (event: ForwardingEvent, lead: LeadInput, policy: WorkflowPolicy = forwardingPolicy): MailKind | null =>
+  event.type === "assessed" && !Object.hasOwn(policy.countryRegions, lead.country) ? "operations" : mailKindFor(event);
 
 type MailDelivery = Extract<ForwardingEvent, { type: "mail-delivery" }>;
 
-export function mailRequestsFor(events: ForwardingEvent[], lead: LeadInput) {
+export function mailRequestsFor(events: ForwardingEvent[], lead: LeadInput, policy?: WorkflowPolicy) {
   const seen = new Set<MailKind>();
   const requests = [];
   for (const event of events) {
     if (event.leadId !== lead.id) continue;
-    const kind = mailKindForLead(event, lead);
+    const kind = mailKindForLead(event, lead, policy);
     if (!kind) continue;
     const first = !seen.has(kind);
     if (event.type === "assessed" && !first) continue;

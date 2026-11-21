@@ -19,10 +19,10 @@ export function isMailKind(value: unknown): value is MailKind {
   return typeof value === "string" && Object.hasOwn(templates, value);
 }
 
-export function renderForwardingMail(kind: MailKind, lead: Pick<LeadInput, "id" | "institution" | "country" | "memo"> & { product: string }) {
+export function renderForwardingMail(kind: MailKind, lead: Pick<LeadInput, "id" | "institution" | "country" | "memo"> & { product: string }, dealerLabel = recipientLabels.dealer) {
   const { to: recipientKind, title, instruction } = templates[kind];
   const lines = [
-    `가상 리드 테스트 메일, 원래 수신자: ${recipientLabels[recipientKind]}`,
+    `가상 리드 테스트 메일, 원래 수신자: ${recipientKind === "dealer" ? dealerLabel : recipientLabels[recipientKind]}`,
     "",
     instruction,
     "",

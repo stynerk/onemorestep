@@ -1,6 +1,7 @@
-import { linerRuntimeSettings } from "../../../../lib/demo-mode";
+import { isPublicDemo, linerRuntimeSettings } from "../../../../lib/demo-mode";
 import { createAssessmentService } from "../../../../lib/forwarding/assessment-service";
 import { locales } from "../../../../lib/forwarding/institution-policy";
+import { assessSavedIndustryLead, getSavedIndustry } from "../../../../lib/forwarding/industry-demo.server";
 import { createInitialForwardingState } from "../../../../lib/forwarding/seed";
 
 export const runtime = "nodejs";
@@ -20,10 +21,14 @@ export async function POST(request: Request): Promise<Response> {
     return Response.json({ error: "올바른 JSON 요청이 필요합니다." }, { status: 400, headers });
   }
   if (body === null || typeof body !== "object" || !("leadId" in body) || typeof body.leadId !== "string"
-    || Object.keys(body).some((key) => key !== "leadId" && key !== "country" && key !== "partnershipPurchase")) {
+    || Object.keys(body).some((key) => key !== "leadId" && key !== "country" && key !== "partnershipPurchase" && key !== "industry")) {
     return Response.json({ error: "시연 리드 ID를 입력해 주세요." }, { status: 400, headers });
   }
-  const lead = leads.get(body.leadId);
+  const industry = "industry" in body ? body.industry : "medicom";
+  if (typeof industry !== "string") return Response.json({ error: "시연 업종을 확인해 주세요." }, { status: 400, headers });
+  const saved = industry !== "medicom" && isPublicDemo() ? getSavedIndustry(industry) : undefined;
+  if (industry !== "medicom" && !saved) return Response.json({ error: "선택할 수 있는 시연 업종이 아닙니다." }, { status: 404, headers });
+  const lead = saved ? saved.demo.seed.leads.find((row) => row.id === body.leadId) : leads.get(body.leadId);
   if (!lead) return Response.json({ error: "시연 리드를 찾지 못했습니다." }, { status: 404, headers });
   let country = lead.country;
   if ("country" in body) {
@@ -37,6 +42,8 @@ export async function POST(request: Request): Promise<Response> {
   }
   // The submitted reply note stays in browser storage. Only the confirmed intent changes.
   const memo = "partnershipPurchase" in body ? "회신에서 구매 견적 요청을 확인함" : lead.memo;
-  const result = await service.assess({ ...lead, country, memo }, { ...linerRuntimeSettings(), regionalCountry: lead.country });
+  const input = { ...lead, country, memo };
+  const result = saved ? assessSavedIndustryLead(saved, input, lead.country)
+    : await service.assess(input, { ...linerRuntimeSettings(), regionalCountry: lead.country });
   return Response.json({ leadId: lead.id, ...result }, { headers });
 }
