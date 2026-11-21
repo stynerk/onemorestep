@@ -1,58 +1,57 @@
 import styles from "./public-demo-results.module.css";
 
+const evaluationSource = "https://github.com/stynerk/onemorestep/blob/main/docs/qa/FINAL_EVALUATION_2026-11-20.md";
+
 const scores = [
-  { mode: "저장된 결과", matched: "30/30", rate: "100%", validToInvalid: 0, ambiguous: 6 },
-  { mode: "실시간 검색 응답 재생 · 기준 변경 전", matched: "25/30", rate: "83.3%", validToInvalid: 0, ambiguous: 8 },
+  { mode: "시연 30건 · 저장 근거", matched: "30/30", rate: "100%", detail: "유효 → 무효 0건 · 애매 6건" },
+  { mode: "시연 30건 · 실시간 검색", matched: "27/30", rate: "90.0%", detail: "유효 → 무효 0건 · 애매 9건" },
+  { mode: "평가 70건 · 정정 정답", matched: "33/70", rate: "47.1%", detail: "원본 정답 기준 23/70 (32.9%)" },
 ];
 
 const examples = [
   {
-    id: "L13",
-    label: "위험한 오류 · 11월 19일 실시간",
-    expected: "국가 확인",
-    actual: "유효",
-    reason: "당시 국가 확인 없이 유효로 판정해 잘못 넘길 위험이 있었습니다. 11월 20일 재생에서는 애매로 분류됐습니다.",
+    id: "E02",
+    institution: "분당서울대학교병원",
+    actual: "애매",
+    reason: "구매 의도는 인식했지만 공식 페이지를 확인하지 못해 권역 세일즈팀으로 넘겼습니다.",
   },
   {
-    id: "L05",
-    label: "안전한 오류 · 11월 19일 실시간",
-    expected: "유효",
-    actual: "애매",
-    reason: "당시 소재지가 불분명해 담당자 확인으로 넘겼습니다. 11월 20일 재생에서는 유효로 정답과 일치했습니다.",
-  },
-  {
-    id: "L08",
-    label: "한계 사례 · 저장",
-    expected: "애매",
-    actual: "애매",
-    reason: "무료 메일 주소로 소속을 확인하기 어려워 담당자 확인으로 넘겼습니다.",
+    id: "E58",
+    institution: "KAIST",
+    actual: "무효",
+    reason: "구매 의도는 인식했지만 검색 결과에서 기관 일치 근거를 찾지 못해 넘기지 않았습니다.",
   },
 ];
 
 export function PublicDemoResults() {
   return (
     <details className={styles.results}>
-      <summary>시연 30건 정답 대조</summary>
+      <summary>판정 정답 대조</summary>
       <div className={styles.content}>
         <p className={styles.context}>
-          공개 문의함은 저장된 결과를 사용합니다. 유효 8 · 애매 6 · 국가 확인 3 · 제휴 확인 2 · 무효 11입니다. 실시간 수치는 넘길 곳 기준을 변경하기 전인 2026년 11월 20일의 검색 응답 56건 재생 기록입니다.
+          공개 문의함은 저장된 근거로 판정합니다. 시연은 유효 8 · 애매 6 · 국가 확인 3 · 제휴 확인 2 · 무효 11건입니다.
         </p>
         <dl className={styles.scores}>
-          {scores.map(({ mode, matched, rate, validToInvalid, ambiguous }) => (
+          {scores.map(({ mode, matched, rate, detail }) => (
             <div className={styles.score} key={mode}>
               <dt>{mode}</dt>
               <dd><strong>{matched}</strong><span>{rate} 일치</span></dd>
-              <dd className={styles.scoreDetail}>유효 → 무효 {validToInvalid}건 · 애매 {ambiguous}건</dd>
+              <dd className={styles.scoreDetail}>{detail}</dd>
             </div>
           ))}
         </dl>
+        <p className={styles.context}>
+          실시간 검색 측정은 2026년 11월 20일 23:43:06~23:47:32 KST에 진행했습니다.
+          {" "}평가 70건은 11월 21일에 정답을 정정하고 같은 응답으로 다시 채점했습니다.
+          {" "}<a href={evaluationSource}>최종 평가 기록</a>
+        </p>
         <div>
-          <h2 className={styles.heading}>판정 사례</h2>
+          <h2 className={styles.heading}>평가에서 틀린 판정</h2>
           <ul className={styles.examples}>
-            {examples.map(({ id, label, expected, actual, reason }) => (
+            {examples.map(({ id, institution, actual, reason }) => (
               <li className={styles.example} key={id}>
-                <h3><span>{id}</span> {label}</h3>
-                <p className={styles.comparison}>정답 {expected} → 판정 {actual}</p>
+                <h3><span>{id}</span> {institution}</h3>
+                <p className={styles.comparison}>정답 유효 → 판정 {actual}</p>
                 <p>{reason}</p>
               </li>
             ))}
