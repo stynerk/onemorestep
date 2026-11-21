@@ -111,6 +111,7 @@ function affiliatedSources(institution: string, sources: Source[], includeVarian
 
 const locationCue = /\b(?:address|contact|directions|access|location|located|based|headquarters|head office|campus|street)\b|소재|주소|찾아오시는|오시는 길|所在地|住所|アクセス/iu;
 const unrelatedLocationCue = /\b(?:partners?|collaboration|patients from|study abroad|delegation|news coverage)\b|협력 기관|해외 환자|共同研究/iu;
+const institutionCategory = /\b(?:hospitals?|clinics?|universit(?:y|ies)|colleges?|institutes?|laborator(?:y|ies)|foundations?|associations?|corporations?|companies|company|organi[sz]ations?|ministr(?:y|ies)|government agenc(?:y|ies))\b|병원|의원|대학교|연구소|재단|협회|기업|病院|診療所|大学|研究所|財団|協会/iu;
 
 function findCountries(sources: Source[], names: string[]): string[] {
   const sortedNames = [...names].sort((left, right) => right.length - left.length);
@@ -178,7 +179,11 @@ export function classifyLead(lead: LeadInput, evidence: SearchEvidence, regional
   const suspectPublicMismatch = emailDomain !== undefined && inferredOfficial.length === 0
     && publicInstitutionSources.some((source) => {
       const host = hostOf(source);
-      return !relatedHosts(host, emailDomain) && (reservedEmail || resemblesInstitutionHost(emailDomain, host, names));
+      if (relatedHosts(host, emailDomain)) return false;
+      if (!reservedEmail) return resemblesInstitutionHost(emailDomain, host, names);
+      // Short institution names may also occur as unrelated acronyms in search results.
+      return configuredOfficial.includes(source) || institutionCategory.test(source.title + " " + source.description)
+        || findCountries([source], names).length > 0;
     });
   const official = inferredOfficial.length > 0 ? inferredOfficial : configuredOfficial;
   const domain = inferredOfficial.length > 0 ? "matched" : suspectPublicMismatch ? "suspicious" : configuredDomain;

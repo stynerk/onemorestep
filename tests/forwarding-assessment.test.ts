@@ -156,6 +156,26 @@ test("an independent public institution match makes reserved and lookalike email
   assert.equal(sibling.assessment.details?.domain, "unverified");
 });
 
+test("acronym matches in glossaries and software results do not corroborate a reserved-email institution", () => {
+  const lead = { ...syntheticLead, institution: "QDX", email: "orders@qdx.test" };
+  const unrelated = [
+    { title: "QDX — translation examples", url: "https://wordbook.org/qdx", description: "Translations, inflections and example sentences." },
+    { title: "QDX serialization failure", url: "https://codeforge.org/issues/108", description: "The patch fixes a memory address mismatch." },
+    { title: "Getting started", url: "https://qdx-tools.org/docs", description: "Install QDX from the package manager and configure your workspace." },
+  ];
+  const fake = classifyLead(lead, evidence(unrelated));
+  assert.equal(fake.assessment.verdict, "invalid");
+  assert.deepEqual(fake.assessment.handoff, { kind: "none" });
+
+  for (const description of ["An independent research institute.", "Our headquarters address is in Ohio, United States."]) {
+    const source = { title: "About QDX", url: "https://qdx.org/about", description };
+    const { assessment } = classifyLead(lead, evidence([...unrelated, source]));
+    assert.equal(assessment.verdict, "ambiguous");
+    assert.equal(assessment.details?.domain, "suspicious");
+    assert.deepEqual(assessment.handoff, { kind: "regional-sales", region: "NA" });
+  }
+});
+
 test("a name match on the claimed host cannot override configured impersonation checks", () => {
   const configuredLead = { ...syntheticLead, institution: "Cleveland Clinic", email: "orders@clevelandclinic-lookup.test" };
   const claimedSource = { ...cleveland, url: "https://clevelandclinic-lookup.test/contact" };
