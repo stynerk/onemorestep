@@ -6,7 +6,7 @@ const siemens = {
   sources: [{
     title: "Corporate governance | Siemens",
     url: "https://www.siemens.com/en-us/company/investor-relations/corporate-governance/",
-    description: "Siemens AG has its registered offices in Berlin and Munich, Germany.",
+    description: "Siemens AG has its registered offices in Berlin and Munich, Germany. Siemens is a German stock corporation.",
   }],
 };
 
@@ -18,7 +18,7 @@ export const flowlineSources: Readonly<Partial<Record<string, { searchedAt: stri
     sources: [{
       title: "LG Open Source Privacy Policy",
       url: "https://opensource.lge.com/privacy",
-      description: "The contact address for LG Electronics Inc. is in Seoul, Republic of Korea.",
+      description: "LG Electronics Inc. Contact address: Seoul, Republic of Korea.",
     }],
   },
   I03: {
