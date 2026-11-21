@@ -103,6 +103,7 @@ export interface WorkflowPolicy {
   referenceDate: string;
   countryRegions: Readonly<Record<string, Region>>;
   managers: readonly { id: string; name: string; region: Region }[];
+  customerIndustries?: Readonly<Record<string, readonly string[]>>;
 }
 
 export interface ForwardingState {
