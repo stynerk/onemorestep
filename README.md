@@ -1,154 +1,59 @@
-# onemorestep
+# 미리내 (onemorestep)
 
-제1회 라이너 해커톤 .EXE-THON 출품작 저장소.
+미리내는 딜러망을 운영하는 제조사의 리드를 판정하고, 넘길 곳과 적합한 딜러를 추천하는 세일즈 에이전트입니다. 제1회 라이너 해커톤 .EXE-THON 출품작입니다.
 
-- 프로젝트: onemorestep
-- 출품 에이전트: 미리내. 사용자가 묻기 전에 놓치고 있는 일과 지금 해 두면 좋은 일을 먼저 알려 주는 프로액티브 업무 에이전트.
-  - 이름의 뜻: "미리 내야 할 것"을 챙겨 준다는 뜻과, 은하수(미리내)처럼 일의 흐름을 따라가며 챙긴다는 뜻을 함께 담았다.
+## 공개 시연
 
-- 개발 기간: 2026-11-12부터 11-25까지. 제품 코드는 이 기간에 새로 작성한다.
-- 배점: 문제 정의 30, 완성도 30, Liner API 활용 20, 확장성과 임팩트 20.
+[미리내 공개 시연](https://onemorestep-wheat.vercel.app/)에서 **판정 시작**을 누르면 가상 리드 30건이 유효 8건, 애매 6건, 국가 확인 3건, 제휴 확인 2건, 무효 11건으로 분류됩니다. 목록과 카드에서 판정 근거와 넘길 곳을 확인할 수 있습니다.
 
-## 팀
+공개 문의함은 저장된 검색 근거로 판정하고 메일 발송을 차단합니다. 결정·회신·재배정 기록은 이 브라우저에 저장되며 **시연 초기화**로 지울 수 있습니다.
 
-HJ(오너), CPO Tony(Claude, 서비스PM), CTO Cap(Codex, 개발PM). Tony는 리서처·리뷰어를, Cap은 구현·QA·릴리즈 서브에이전트를 지휘한다. 역할과 공통 규칙의 정본은 hq 저장소(stynerk/hq)에 있다.
+## 심사위원 로컬 실시간 실행
 
-- `CLAUDE.md`: 서비스PM이 이 저장소에서 지킬 것
-- `AGENTS.md`: 개발PM과 서브에이전트가 이 저장소에서 지킬 것
-- `docs/team/DECISIONS.md`: 확정된 결정 (정본)
-- `docs/team/HANDOFF_SERVICE.md`, `docs/team/HANDOFF_DEV.md`: 인수인계
-- `docs/team/LEARNINGS.md`: 시행착오 기록
-- 흐름: hq `playbooks/workflow.md`
-
-## 로컬 개발 실행
-
-Node.js 24와 npm을 사용한다. 처음 실행할 때는 저장소 루트에서 `npm ci`로 의존성을 설치한다.
+Node.js 24에서 저장소 루트의 의존성을 설치합니다.
 
 ```powershell
 npm ci
-npm run dev
 ```
 
-<http://127.0.0.1:3000>에서 미리내 문의함을 연다. **판정 시작**을 누르면 가상 리드 30건이 근거와 함께 다섯 묶음으로 분류된다. 결정, 회신과 딜러 결과는 이 브라우저에 저장되며 **시연 초기화**로 지울 수 있다. Liner 단일 검색 화면은 <http://127.0.0.1:3000/research>에서 계속 사용할 수 있다.
+`.env.example`을 복사해 `.env.local`을 만듭니다. 이미 있는 로컬 환경 파일은 그대로 열어 편집합니다.
 
-### 심사용 로컬 실시간 판정
-
-Node.js 24에서 `npm ci`를 마친 뒤, 로컬 환경 파일이 없을 때만 다음 명령으로 만든다. 기존 파일이 있으면 그 파일을 편집한다.
-
-```powershell
-if (-not (Test-Path -LiteralPath .env.local)) {
-    Copy-Item .env.example .env.local
-}
+```dotenv
+LINER_MODE=live
+LINER_API_KEY=여기에_본인_Liner_API_키
 ```
-
-`.env.local`에 `LINER_MODE=live`와 본인의 `LINER_API_KEY`를 설정한다. 키와 로컬 환경 파일은 커밋하지 않는다. 메일도 확인할 때만 아래 [테스트 수신함 메일](#테스트-수신함-메일-25)을 별도로 설정한다.
 
 ```powershell
 npm run dev
 ```
 
-서버가 이미 실행 중이면 다시 시작한다. <http://127.0.0.1:3000>의 문의함에서 **판정 시작**을 누르면 Liner로 기관을 조사한다. 키 없이 실행하거나 `LINER_MODE=sample`로 설정하면 문의함은 저장된 근거를 사용한다.
+[로컬 문의함](http://127.0.0.1:3000)에서 **판정 시작**을 누르면 Liner로 기관을 조사합니다. 환경 파일을 편집한 뒤에는 서버를 다시 시작합니다. 키 없이 실행하거나 `LINER_MODE=sample`을 지정하면 저장된 근거로 시연할 수 있습니다. 메일 검증이 필요하면 [로컬 테스트 수신함 설정](docs/tech/FORWARDING_IMPLEMENTATION.md#테스트-수신함-메일-25)을 따릅니다.
 
-### 단일 검색 화면
+**장면 6 재배정.** 저장 모드에서 L23의 제휴 회신을 **구매 문의 확인**으로 기록하고 추천 순위가 V MedSource, U Health Supply 순인지 확인합니다. L03을 V MedSource에 배정한 뒤 **기한 경과 시뮬레이션**을 누르고 **재배정 승인**을 누르면 U Health Supply에 배정됩니다. L23에서 U Health Supply가 1위로 바뀌고 V MedSource가 2위로 내려간 이유를 확인할 수 있습니다.
 
-별도 단일 검색 화면(`/research`)은 기본 `LINER_MODE=auto`에서 키가 있으면 실제 검색, 없으면 예시로 동작한다. `LINER_MODE` 미설정·빈 값도 `auto`와 같다.
+## Liner를 쓰는 곳
 
-| 모드 | 키 있음 | 키 없음 |
-|---|---|---|
-| 미설정·빈 값·`auto` | 실제 검색 | 예시 |
-| `live` | 실제 검색 | 예시 |
-| `sample` | 외부 호출 없이 예시 | 예시 |
-| 알 수 없는 값 | 외부 호출 없이 예시·설정 안내 | 예시·설정 안내 |
+미리내는 Liner Web Search로 리드마다 **기관명 + 국가**, **기관명 + 업종**을 검색합니다. 검색 결과로 소속 기관과 소재지, 공식 도메인을 확인합니다. 리드의 이메일과 공식 도메인을 대조해 사칭 의심도 표시합니다. 담당자는 결정 카드에서 검색 근거와 넘길 곳을 확인한 뒤 승인할 수 있습니다.
 
-실시간 호출 실패·시간 초과·잘못된 응답도 실제 결과와 구분되는 예시 안내로 전환한다. 예시 재생은 인증·검색 성공이나 기관 부재로 집계하지 않는다. Search/Model 문서 확인과 5기관 평가 결과는 [Liner 검증 문서](docs/tech/LINER_API.md)를 읽는다.
+## 측정 결과
 
-```powershell
-npm run lint
-npm run typecheck
-npm test
-npm run build
-npm start
-```
+| 세트 | 판정 환경 | 판정 일치율 |
+| --- | --- | ---: |
+| 시연 30건 | 공개 시연과 같은 저장 근거 | 30/30 (100%) |
+| 시연 30건 | 실제 Liner 검색 | 27/30 (90.0%) |
+| 평가 70건 | 동일한 실제 검색 응답에 정정 정답 대조 | 33/70 (47.1%) |
+| 평가 70건 | 같은 응답에 원본 정답 대조 | 23/70 (32.9%) |
 
-`npm start`는 빌드 후 프로덕션 서버를 로컬에 실행한다. 자동 테스트는 외부 API 호출과 비용 없이 실행된다.
+확정 엔진 `8d4f0ac`을 2026년 11월 20일에 측정했습니다. 11월 21일에 가상 기관 11건의 정답을 무효로 정정하고 기존 응답으로 재채점했습니다. 측정 조건, 넘길 곳 일치율, 혼동행렬은 [최종 평가 기록](docs/qa/FINAL_EVALUATION_2026-11-20.md)에 있습니다.
 
-## 공개 시연 (#43)
+## 한계
 
-공개 주소에서 환경 설정 없이 문의함을 열 수 있다. [미리내 공개 시연](https://onemorestep-wheat.vercel.app/)
+- 평가에서 실제 기관의 유효 리드 15건 중 12건은 공식 페이지를 확인하지 못해 애매로 권역 세일즈팀에 이관했습니다. 3건은 검색 결과에서 기관 일치 근거를 찾지 못해 무효로 분류했습니다.
+- 기관 확인이 필요한 리드의 실시간 검색에 실패하면 화면에 이유를 표시하고 담당자 확인으로 넘깁니다.
+- 공개 시연은 가상 데이터와 저장된 검색 근거를 사용합니다. 여러 담당자가 공유하는 업무 기록과 실제 메일 발송은 데모에서 지원하지 않습니다.
 
-Vercel의 GitHub 연동을 선택해 현재 Next.js의 POST API를 사용한다. 연결된 프로젝트의 프로덕션 브랜치는 `main`이며, 저장소의 `vercel.json`이 프로덕션과 미리보기 모두 `npm run build:demo`를 실행하도록 설정한다. [Vercel 저장소 빌드 설정](https://vercel.com/docs/project-configuration/vercel-json)
+## 개발 문서
 
-공개 화면은 **저장된 결과로 보는 시연 버전**이다. 저장 근거를 사용한 시연 리드 판정은 정답표와 **30/30** 일치했다. 유효 8건, 애매 6건, 국가 확인 3건, 제휴 확인 2건, 무효 11건이다. 판정 뒤 목록과 카드에 **넘길 곳**이 표시된다. 공개 시연은 Liner 크레딧을 사용하지 않으며 화면과 API에서 메일 발송을 차단한다. 결정·회신·재배정은 이 브라우저에 저장된다. Vercel 환경에도 Liner·Gmail·테스트 수신함 설정을 두지 않는다.
-
-실시간 보정의 **25/30**은 넘길 곳 기준을 변경하기 전인 2026년 11월 20일에 시연 리드 30건에 동일한 Liner 검색 응답 56건을 재생해 검증한 일치율이다. 로컬 실시간 판정은 검증된 공식 도메인의 국가 코드로 소재지를 보충하며, 소재지가 불명확한 제휴 문의를 제휴 확인으로 보낸다. 공개 시연의 판정은 저장 근거를 사용한다. [동일 응답 재생 결과](https://github.com/stynerk/onemorestep/pull/44#issuecomment-7013087467)
-
-깨끗한 로컬 체크아웃에서 공개 버전을 확인한다. 공개 빌드는 `.env`, `.env.local`, `.env.production`, `.env.production.local` 파일이나 Liner·Gmail·테스트 수신함 값이 있으면 시작 전에 종료한다.
-
-```powershell
-npm ci
-npm run build:demo
-npm start
-```
-
-## 세일즈 포워딩 데이터·저장 계층 (#28)
-
-`src/lib/forwarding/seed.ts`는 PR #23의 `1da2b58` 표에서 리드 30건, 딜러 7곳, 가상 전달 내역 41건을 새 객체로 만든다. L06은 마지막 접수다. 표의 `(빈칸)`은 빈 기관명으로, `카자흐스탄(지역 미지정)`은 국가명 `카자흐스탄`으로 정규화했다. 이름·전화는 `Demo L01`·`DEMO-NOT-A-PHONE-L01` 같은 명백한 가상 값이다. 딜러 상품 범위는 원문에 제한이 없어 시연 상품 세 종류를 모두 취급하는 가정이다. 기존 거래 관계는 현재 리드 기관과 겹치지 않는 90일 전달 내역과 별도로 보존한다.
-
-기본값은 `policy.ts` 한 파일에서 바꾼다. 시연 기준 시각은 `2026-11-18T00:00:00.000Z`이며 후속 계산에 전달해 실제 날짜 경과로 시연 이력이 사라지지 않게 한다. 판정과 업무 상태는 별도 필드이고 초기 판정은 없다. 평가 정답은 `evaluation/ground-truth.json`에만 있고 런타임 입력·저장 모듈은 가져오지 않는다. 원문 표 스냅샷 대조, 정답 분리, 딜러별 합계는 `npm test`로 확인한다.
-
-`store.ts`의 `createBrowserForwardingStore()`는 단일 사용자의 브라우저 localStorage에 버전이 있는 이벤트만 저장한다. 화면 연결은 #31의 범위이며 이번 변경에는 버튼·판정·추천·발송 구현이 없다.
-
-```ts
-const store = createBrowserForwardingStore();
-const restored = store.hydrate();
-// 실패하면 error를 표시하고, 저장값을 임의로 덮어쓰지 않는다.
-const saved = store.append(event); // 호출자가 제공하는 안정적인 이벤트 ID
-const reset = store.reset();       // '시연 초기화' 버튼에서 호출할 API
-```
-
-동일 ID와 내용은 한 번만 반영되고 다른 내용은 거절된다. 분리한 콜백도 동작한다. 처음 append할 때 기존 저장값을 먼저 읽고, 손상 JSON·지원하지 않는 버전·없는 대상·알 수 없는 필드는 오류로 반환한다. 손상 저장값은 사용자가 `reset()`하기 전 덮어쓰지 않는다. 초기화는 앱 전용 키만 지운다. 저장소 차단·용량 초과·삭제 실패는 호출자에게 명시적 결과를 반환하며 메모리 상태도 부분 변경하지 않는다. 스냅샷의 외부 수정은 내부 상태에 반영되지 않는다. 재판정·회신은 이미 승인한 배정을 취소하지 않는다.
-
-이벤트에는 판정 근거·결정·딜러 결과·회신·메일 상태만 담으며 별도의 수신 주소나 인증 정보 필드는 없다. 메일 상태 `unknown`은 전송 여부 불명이다. SMTP 전송·재시도는 #25가 맡는다. 서버와 브라우저 저장소는 공유되지 않으므로 #31/#25 연결에서 서버가 검증한 전송 결과를 이벤트로 반영해야 한다. 이 계층은 메일·검색을 호출하지 않으며 import 시 window에 접근하지 않는다. 다중 사용자·다중 탭 동시 편집과 저장 형식 마이그레이션은 범위 밖이다.
-
-## 세일즈 포워딩 기관 판정 (#29)
-
-`POST /api/forwarding/assess`에 JSON으로 `{"leadId":"L01"}`을 보내면 해당 리드의 `assessment`와 `workflow`를 받는다. 국가 회신 확인에는 지원 국가를 `country`로 함께 보낼 수 있다. 여러 리드는 요청별 응답이 도착하는 순서대로 화면과 저장소에 반영한다. 한 서버 프로세스에서 Liner 외부 요청은 최대 2개가 동시에 실행된다.
-
-리드 판정(`/api/forwarding/assess`)은 `LINER_MODE=live`를 명시하고 키가 있을 때만 Liner를 쓴다. 일괄 판정 영상처럼 저장 결과를 재생하려면 `LINER_MODE=sample`로 실행한다. `details.sourceKind`는 실제 검색(`liner`), 서버 캐시(`cache`), 실제 검색과 캐시 혼합(`mixed`), 수동 검토한 공개 페이지와 저장 검색 결과(`curated`), 소속 없음처럼 외부 조사가 불필요한 내부 규칙(`local`)을 구분한다. 두 질의 모두 이번 요청에서 성공한 건만 `liner`와 `externalStatus=complete`가 함께 붙는다. 수동 검토한 공개 페이지에는 검토 기준일을, 저장 검색 결과에는 당시 검색 시각을 표시한다. 저장 자료가 없는 기관은 `saved-unavailable`이다. 두 질의가 정상 완료되고 기관 일치 근거가 없으면 미발견으로 판정한다. 저장 모드는 [공개 검색 기록](docs/qa/LINER_SAVED_NONMATCHES_2026-11-19.md)과 같은 기관명·국가 조합일 때만 검색 미발견을 재생한다. 검색 일부 또는 전체 실패는 `failed`로 표시한다.
-
-정답 30건과의 혼동행렬은 출시 키 설정과 관계없이 로컬에서 저장 근거와 내부 규칙으로 검증할 수 있다.
-
-```powershell
-npm exec -- tsx scripts/evaluate-forwarding.ts
-```
-
-## 장면 6 딜러 결과 입력 (#30)
-
-시연 입력 한 번으로 추천 순위가 바뀌도록 V MedSource의 가상 이력 `delivery-030`을 거래 성사에서 미성사로 바꿨다. 아래 행과 L03 점수 예시를 기획 문서에 반영하면 된다. [DEMO_DATA 딜러 표](https://github.com/stynerk/onemorestep/blob/1da2b587b393b4e627338fada671031965c12c41/docs/product/DEMO_DATA.md)
-
-| 딜러 | 국가 | 최근 90일 전달 | deal | no deal | 진행 중 | 미응답 |
-|---|---|---:|---:|---:|---:|---:|
-| V MedSource | 미국 | 7 | 2 | 4 | 1 | 0 |
-
-L03(Cleveland Clinic)을 승인 대기로 두면 V MedSource 0.333이 U Health Supply 0.300보다 앞선다. V MedSource의 진행 중 이력 `delivery-034`을 미응답으로 한 번 저장하면 U Health Supply 0.300이 V MedSource 0.233보다 앞선다. 딜러 7곳과 전달 41건을 유지한다.
-
-## 기한 경과와 재배정 시연 (#41)
-
-`LINER_MODE=sample`에서 L03(Cleveland Clinic)을 판정하고 V MedSource 배정을 승인한다. 결정 기록에서 **기한 경과 시뮬레이션**을 누르면 기기 시각은 그대로이고, 문의함과 카드에 **재배정 제안**이 표시된다. U Health Supply가 다음 후보인지 확인하고 **재배정 승인**을 누른다. V MedSource의 미응답과 U Health Supply의 새 전달을 함께 저장한다. 테스트 메일에는 딜러별 요약 상태가 표시된다.
-
-기한은 전달한 한국 시각을 기준으로 `forwardingPolicy.responseBusinessDays`만큼 센다. 기본값은 업무일 1일이며 토·일요일은 건너뛴다. 아직 전달하지 않은 추천 후보가 없으면 지역 담당자가 직접 처리하고, 이력이나 전환 근거가 부족한 후보만 남으면 담당자 확인 후 배정한다. 시연 시각을 해제해도 승인한 시연 기록은 유지된다.
-
-- [기획 초안](docs/product/PLAN.md)
-- [기술 구조·공수·위험](docs/tech/ARCHITECTURE.md)
-- [Liner 공식 사양과 검증 상태](docs/tech/LINER_API.md)
-
-## 테스트 수신함 메일 (#25)
-
-테스트 메일을 확인할 때만 HJ가 지정한 테스트 수신함과 발신 설정을 로컬 `.env.local`에 넣고 서버를 다시 실행한다.
-
-- `TEST_MAIL_TO`에는 테스트 수신함 주소 하나를 적는다.
-- `MAIL_FROM`에는 발신 전용 Gmail 주소, `GMAIL_APP_PASSWORD`에는 해당 계정의 앱 비밀번호를 적는다. 앱 비밀번호는 2단계 인증이 필요하다. [Gmail 앱 비밀번호 안내](https://support.google.com/mail/answer/185833)
-
-메일 5종은 발송 직전에 수신함 제한을 검증한다. 설정이 없거나 SMTP가 실패하면 화면에 표시할 상태를 반환한다. 명시적인 실패는 사용자가 다시 시도할 수 있고, 전송 여부가 불명인 경우에는 테스트 수신함을 먼저 확인한다. 가상 리드의 이메일 앞부분은 가상이며, 가상 기관은 `example.com`이나 `.test` 같은 예약 도메인을 사용한다. 발송 기록과 로그에는 수신 주소나 인증 정보를 넣지 않는다.
-
-화면 연결(#31)은 서버에서 처리한 업무 이벤트의 안정적인 ID와 리드 ID, 메일 종류를 `dispatchForwardingMail`에 전달하고 결과의 `event`를 기존 저장소에 반영한다. 재시도는 직전 실패의 기록 ID를 `retryOf`로 전달한다. 단일 사용자 로컬 서버의 `.forwarding-mail/` 기록은 새로고침과 재시작 뒤에도 유지된다. 브라우저 시연을 초기화하면 새 세션에서 새 업무 이벤트 ID를 사용한다. [Gmail SMTP 설정](https://support.google.com/mail/answer/7104828)과 [Nodemailer의 SMTP 전송 사양](https://nodemailer.com/smtp)을 사용한다.
+- [기획서](docs/product/PROPOSAL.md) · [시연 대본](docs/product/DEMO_SCRIPT.md)
+- [세일즈 포워딩 구현과 검증](docs/tech/FORWARDING_IMPLEMENTATION.md) · [기술 구조](docs/tech/ARCHITECTURE.md) · [Liner API](docs/tech/LINER_API.md)
+- [QA 체크리스트](docs/qa/CHECKLIST.md) · [브라우저 E2E](tests/e2e/README.md)
