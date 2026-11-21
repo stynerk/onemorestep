@@ -121,6 +121,107 @@ test("a completed no-match purchase needs a plausible work address and routes to
   assert.equal(example.assessment.verdict, "invalid");
 });
 
+test("an independent public institution match makes reserved and lookalike email domains suspicious", () => {
+  const copiedPage = { ...syntheticSource, url: "https://ridgeleaf-institute.test/contact" };
+  for (const email of [
+    "orders@ridgeleaf-institute.test",
+    "orders@inquiries.example.org",
+    "orders@ridgeleaf-forms.org",
+    "orders@ridgeleaf-institute.net",
+    "orders@ridgeleaf-institute.org.mailer.co",
+  ]) {
+    for (const kind of ["liner", "cache", "mixed"] as const) {
+      const { assessment } = classifyLead({ ...syntheticLead, email }, { ...evidence([copiedPage, syntheticSource]), kind });
+      assert.equal(assessment.verdict, "ambiguous", email);
+      assert.equal(assessment.details?.domain, "suspicious", email);
+      assert.deepEqual(assessment.handoff, { kind: "regional-sales", region: "NA" });
+      assert.deepEqual(assessment.details?.countries, []);
+    }
+  }
+  const fake = classifyLead({ ...syntheticLead, email: "orders@ridgeleaf-institute.test" }, evidence([
+    copiedPage,
+    { ...syntheticSource, title: "Another Research Institute" },
+    { ...syntheticSource, url: "https://directory.ridgeleaf-institute.org/contact" },
+  ]));
+  assert.equal(fake.assessment.verdict, "invalid");
+  assert.deepEqual(fake.assessment.handoff, { kind: "none" });
+
+  const verified = classifyLead(syntheticLead, evidence([copiedPage, syntheticSource]));
+  assert.equal(verified.assessment.verdict, "valid");
+  assert.equal(verified.assessment.details?.domain, "matched");
+  const sibling = classifyLead(
+    { ...syntheticLead, email: "orders@mail.ridgeleaf-institute.org" },
+    evidence([{ ...syntheticSource, url: "https://www.ridgeleaf-institute.org/contact" }]),
+  );
+  assert.equal(sibling.assessment.details?.domain, "unverified");
+});
+
+test("acronym matches in glossaries and software results do not corroborate a reserved-email institution", () => {
+  const lead = { ...syntheticLead, institution: "QDX", email: "orders@qdx.test" };
+  const unrelated = [
+    { title: "QDX — translation examples", url: "https://wordbook.org/qdx", description: "Translations, inflections and example sentences." },
+    { title: "QDX serialization failure", url: "https://codeforge.org/issues/108", description: "The patch fixes a memory address mismatch." },
+    { title: "Getting started", url: "https://qdx-tools.org/docs", description: "Install QDX from the package manager and configure your workspace." },
+  ];
+  const fake = classifyLead(lead, evidence(unrelated));
+  assert.equal(fake.assessment.verdict, "invalid");
+  assert.deepEqual(fake.assessment.handoff, { kind: "none" });
+
+  for (const description of ["An independent research institute.", "Our headquarters address is in Ohio, United States."]) {
+    const source = { title: "About QDX", url: "https://qdx.org/about", description };
+    const { assessment } = classifyLead(lead, evidence([...unrelated, source]));
+    assert.equal(assessment.verdict, "ambiguous");
+    assert.equal(assessment.details?.domain, "suspicious");
+    assert.deepEqual(assessment.handoff, { kind: "regional-sales", region: "NA" });
+  }
+});
+
+test("a reserved-email institution can be corroborated by its distinctive name in both title and host", () => {
+  const lead = { ...syntheticLead, institution: "Cedarvale Research", email: "orders@cedarvale.test" };
+  const branded = { title: "Cedarvale Research", url: "https://WWW.CEDARVALE.org/about", description: "Explore our work." };
+  for (const source of [branded, { ...branded, title: "CEDARVALE RESEARCH – Our work", url: "https://cedarvaleresearch.org/about" }]) {
+    const { assessment } = classifyLead(lead, evidence([source]));
+    assert.equal(assessment.verdict, "ambiguous");
+    assert.equal(assessment.details?.domain, "suspicious");
+    assert.deepEqual(assessment.handoff, { kind: "regional-sales", region: "NA" });
+  }
+
+  for (const source of [
+    { ...branded, url: "https://wordbook.org/cedarvale" },
+    { ...branded, url: "https://uncedarvale.org/about" },
+    { ...branded, url: "https://cedarvaleresearchers.org/about" },
+    { ...branded, url: "https://research.org/about" },
+    { ...branded, title: "Getting started", description: "Install the Cedarvale Research package." },
+    { ...branded, title: "Translation of Cedarvale Research" },
+    { ...branded, title: "Cedarvale Researches", description: "A guide to Cedarvale Research." },
+  ]) {
+    assert.equal(classifyLead(lead, evidence([source])).assessment.verdict, "invalid", source.title + " " + source.url);
+  }
+
+  const compoundLead = { ...lead, institution: "Elmshore Beacon Health System", email: "orders@elmshorebeacon.test" };
+  const compoundSource = { ...branded, title: compoundLead.institution, url: "https://elmshorebeacon.org/about" };
+  const compound = classifyLead(compoundLead, evidence([compoundSource]));
+  assert.equal(compound.assessment.verdict, "ambiguous");
+  assert.equal(compound.assessment.details?.domain, "suspicious");
+  for (const host of ["healthsystem.org", "system.org", "elmshorebeacons.org", "elmshorehealth.org"]) {
+    const source = { ...compoundSource, url: "https://" + host + "/about" };
+    assert.equal(classifyLead(compoundLead, evidence([source])).assessment.verdict, "invalid", host);
+  }
+});
+
+test("a short acronym can corroborate a reserved-email institution as part of a distinctive hostname", () => {
+  const acronymLead = { ...syntheticLead, institution: "QDX Northhaven Health", email: "orders@qdxnorthhaven.test" };
+  const acronymSource = { title: acronymLead.institution, url: "https://qdxnorthhaven.org/about", description: "Explore our work." };
+  const acronym = classifyLead(acronymLead, evidence([acronymSource]));
+  assert.equal(acronym.assessment.verdict, "ambiguous");
+  assert.equal(acronym.assessment.details?.domain, "suspicious");
+  assert.deepEqual(acronym.assessment.handoff, { kind: "regional-sales", region: "NA" });
+  for (const host of ["qdx.org", "qdxhealth.org", "qdxnorthhavens.org"]) {
+    const result = classifyLead(acronymLead, evidence([{ ...acronymSource, url: "https://" + host + "/about" }]));
+    assert.equal(result.assessment.verdict, "invalid", host);
+  }
+});
+
 test("a name match on the claimed host cannot override configured impersonation checks", () => {
   const configuredLead = { ...syntheticLead, institution: "Cleveland Clinic", email: "orders@clevelandclinic-lookup.test" };
   const claimedSource = { ...cleveland, url: "https://clevelandclinic-lookup.test/contact" };
@@ -152,7 +253,7 @@ test("official domains are checked at a dot boundary; lookalikes and ambiguous d
   assert.deepEqual(poisoned.assessment.handoff, { kind: "regional-sales", region: "APAC" });
   const unknown = classifyLead({ ...lead, email: "example@dominio.example" }, evidence([tokyo]));
   assert.equal(unknown.assessment.verdict, "ambiguous");
-  assert.equal(unknown.assessment.details?.domain, "unverified");
+  assert.equal(unknown.assessment.details?.domain, "suspicious");
   const alias = classifyLead(getLead("L03"), evidence([cleveland]));
   assert.equal(alias.assessment.verdict, "valid");
   assert.ok(alias.assessment.sources.some((source) => source.includes("privacy-security")));

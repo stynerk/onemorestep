@@ -5,8 +5,8 @@ const evaluationSource = "https://github.com/stynerk/onemorestep/blob/main/docs/
 const scores = [
   { mode: "시연 30건 · 저장 근거", matched: "30/30", rate: "100%", detail: "유효 → 무효 0건 · 애매 6건" },
   { mode: "시연 30건 · 실시간 응답 재생", matched: "28/30", rate: "93.3%", detail: "개선 전 27/30 · 개선 후 유효 → 무효 0건" },
-  { mode: "평가 70건 · 개선 전·블라인드", matched: "33/70", rate: "47.1%", detail: "원본 정답 기준 23/70 (32.9%)" },
-  { mode: "평가 70건 · 개선 후·평가 결과를 본 뒤", matched: "39/70", rate: "55.7%", detail: "유효가 아닌 정답을 유효로 판정한 건 0건" },
+  { mode: "평가 70건 · 개선 전·블라인드", matched: "33/70", rate: "47.1%", detail: "원본 정답 기준 23/70 (32.9%) · 넘길 곳 38/67" },
+  { mode: "평가 70건 · 개선 후·평가 결과를 본 뒤", matched: "45/70", rate: "64.3%", detail: "넘길 곳 46/67 · 유효 오탐 0건 · 유효 → 무효 0건" },
 ];
 
 const examples = [
