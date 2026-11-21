@@ -228,10 +228,12 @@ test("공개 정답 대조 패널에 최종 측정과 오판 사례를 표시한
   await page.getByText("판정 정답 대조", { exact: true }).click();
   const panel = page.locator("details").filter({ has: page.getByText("판정 정답 대조", { exact: true }) });
   await expect(panel.getByText(/공개 문의함은 저장된 근거/u)).toBeVisible();
-  for (const score of ["30/30", "28/30", "33/70", "44/70"]) {
+  for (const score of ["30/30", "28/30", "33/70", "45/70"]) {
     await expect(panel.getByText(score, { exact: true })).toBeVisible();
   }
   await expect(panel.getByText("원본 정답 기준 23/70 (32.9%)")).toBeVisible();
+  await expect(panel.getByText("넘길 곳 38/67")).toBeVisible();
+  await expect(panel.getByText("넘길 곳 46/67")).toBeVisible();
   await expect(panel.getByText(/개선 전 27\/30/u)).toBeVisible();
   await expect(panel.getByText(/개선 전·블라인드/u)).toBeVisible();
   await expect(panel.getByText(/개선 후·평가 결과를 본 뒤/u)).toBeVisible();
