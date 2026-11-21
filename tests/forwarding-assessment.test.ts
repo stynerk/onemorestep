@@ -121,6 +121,41 @@ test("a completed no-match purchase needs a plausible work address and routes to
   assert.equal(example.assessment.verdict, "invalid");
 });
 
+test("an independent public institution match makes reserved and lookalike email domains suspicious", () => {
+  const copiedPage = { ...syntheticSource, url: "https://ridgeleaf-institute.test/contact" };
+  for (const email of [
+    "orders@ridgeleaf-institute.test",
+    "orders@inquiries.example.org",
+    "orders@ridgeleaf-forms.org",
+    "orders@ridgeleaf-institute.net",
+    "orders@ridgeleaf-institute.org.mailer.co",
+  ]) {
+    for (const kind of ["liner", "cache", "mixed"] as const) {
+      const { assessment } = classifyLead({ ...syntheticLead, email }, { ...evidence([copiedPage, syntheticSource]), kind });
+      assert.equal(assessment.verdict, "ambiguous", email);
+      assert.equal(assessment.details?.domain, "suspicious", email);
+      assert.deepEqual(assessment.handoff, { kind: "regional-sales", region: "NA" });
+      assert.deepEqual(assessment.details?.countries, []);
+    }
+  }
+  const fake = classifyLead({ ...syntheticLead, email: "orders@ridgeleaf-institute.test" }, evidence([
+    copiedPage,
+    { ...syntheticSource, title: "Another Research Institute" },
+    { ...syntheticSource, url: "https://directory.ridgeleaf-institute.org/contact" },
+  ]));
+  assert.equal(fake.assessment.verdict, "invalid");
+  assert.deepEqual(fake.assessment.handoff, { kind: "none" });
+
+  const verified = classifyLead(syntheticLead, evidence([copiedPage, syntheticSource]));
+  assert.equal(verified.assessment.verdict, "valid");
+  assert.equal(verified.assessment.details?.domain, "matched");
+  const sibling = classifyLead(
+    { ...syntheticLead, email: "orders@mail.ridgeleaf-institute.org" },
+    evidence([{ ...syntheticSource, url: "https://www.ridgeleaf-institute.org/contact" }]),
+  );
+  assert.equal(sibling.assessment.details?.domain, "unverified");
+});
+
 test("a name match on the claimed host cannot override configured impersonation checks", () => {
   const configuredLead = { ...syntheticLead, institution: "Cleveland Clinic", email: "orders@clevelandclinic-lookup.test" };
   const claimedSource = { ...cleveland, url: "https://clevelandclinic-lookup.test/contact" };
@@ -152,7 +187,7 @@ test("official domains are checked at a dot boundary; lookalikes and ambiguous d
   assert.deepEqual(poisoned.assessment.handoff, { kind: "regional-sales", region: "APAC" });
   const unknown = classifyLead({ ...lead, email: "example@dominio.example" }, evidence([tokyo]));
   assert.equal(unknown.assessment.verdict, "ambiguous");
-  assert.equal(unknown.assessment.details?.domain, "unverified");
+  assert.equal(unknown.assessment.details?.domain, "suspicious");
   const alias = classifyLead(getLead("L03"), evidence([cleveland]));
   assert.equal(alias.assessment.verdict, "valid");
   assert.ok(alias.assessment.sources.some((source) => source.includes("privacy-security")));

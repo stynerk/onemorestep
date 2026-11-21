@@ -63,9 +63,23 @@ export function matchesDomain(host: string, domain: string): boolean {
   return host === domain || host.endsWith("." + domain);
 }
 
+function relatedHosts(left: string, right: string): boolean {
+  return matchesDomain(left, right) || matchesDomain(right, left);
+}
+
 function isInstitutionalHost(host: string): boolean {
   return !excludedInstitutionalDomains.some((domain) => matchesDomain(host, domain))
     && !host.split(".").some((label) => /^(?:news|wiki|directory|directories|social)$/u.test(label));
+}
+
+function resemblesInstitutionHost(emailDomain: string, host: string, names: string[]): boolean {
+  const emailLabels = emailDomain.split(".").map(compact);
+  const sharedBrandWords = names.flatMap((name) => institutionalName(name).split(" ")).filter((word) =>
+    word.length >= 4 && !genericVariantTerms.has(word) && emailLabels.some((label) => label.includes(word)));
+  const sourceLabels = host.split(".");
+  const brandedLabel = sourceLabels.findLastIndex((label) => sharedBrandWords.some((word) => compact(label).includes(word)));
+  // Sibling subdomains under the same branded domain do not suggest impersonation.
+  return brandedLabel >= 0 && !matchesDomain(emailDomain, sourceLabels.slice(brandedLabel).join("."));
 }
 
 function namesFor(institution: string, includeVariants: boolean) {
@@ -150,18 +164,24 @@ export function classifyLead(lead: LeadInput, evidence: SearchEvidence, regional
   const liveEvidence = evidence.kind === "liner" || evidence.kind === "cache" || evidence.kind === "mixed";
   const completeLiveEvidence = liveEvidence && evidence.status === "complete";
   const emailDomain = /^[^\s@]+@([a-z0-9]+(?:[.-][a-z0-9]+)+)$/i.exec(lead.email.trim())?.[1].toLowerCase();
+  const reservedEmail = emailDomain !== undefined && reservedDomains.some((domain) => matchesDomain(emailDomain, domain));
   const institutionalEmailDomain = emailDomain && /\.[a-z]{2,}$/u.test(emailDomain) && isInstitutionalHost(emailDomain) ? emailDomain : undefined;
   const { matching, official: configuredOfficial, names, domains } = affiliatedSources(lead.institution, evidence.sources, completeLiveEvidence);
   const [configuredDomain, aliasSources, verifiedAlias] = domainEvidence(lead.institution, emailDomain, configuredOfficial, names, domains, evidence.sources);
-  // Keep configured ownership and impersonation checks ahead of inference for new institutions.
-  const inferredOfficial = completeLiveEvidence && configuredDomain === "unverified" && domains.length === 0 && institutionalEmailDomain
-    ? matching.filter((source) => {
-      const host = hostOf(source);
-      return isInstitutionalHost(host) && (matchesDomain(host, institutionalEmailDomain) || matchesDomain(institutionalEmailDomain, host));
-    })
+  const publicInstitutionSources = completeLiveEvidence && configuredDomain === "unverified" && emailDomain
+    ? matching.filter((source) => isInstitutionalHost(hostOf(source)))
     : [];
+  // Keep configured ownership and impersonation checks ahead of inference for new institutions.
+  const inferredOfficial = domains.length === 0 && institutionalEmailDomain
+    ? publicInstitutionSources.filter((source) => relatedHosts(hostOf(source), institutionalEmailDomain))
+    : [];
+  const suspectPublicMismatch = emailDomain !== undefined && inferredOfficial.length === 0
+    && publicInstitutionSources.some((source) => {
+      const host = hostOf(source);
+      return !relatedHosts(host, emailDomain) && (reservedEmail || resemblesInstitutionHost(emailDomain, host, names));
+    });
   const official = inferredOfficial.length > 0 ? inferredOfficial : configuredOfficial;
-  const domain = inferredOfficial.length > 0 ? "matched" : configuredDomain;
+  const domain = inferredOfficial.length > 0 ? "matched" : suspectPublicMismatch ? "suspicious" : configuredDomain;
   const intent = memoMatch(lead.memo);
   const memoIntent = intent?.[0] ?? "unknown";
   const textCountries = findCountries(official, names);
@@ -197,9 +217,10 @@ export function classifyLead(lead: LeadInput, evidence: SearchEvidence, regional
     return result("ambiguous", "외부 확인 실패, 다시 시도" + warning);
   }
   if (domain === "suspicious") {
+    if (suspectPublicMismatch) return result("ambiguous", "공개 출처에서 기관을 확인했지만 이메일 도메인이 달라 사칭 여부를 확인해야 해요.");
     return result("ambiguous", "이메일이 공식 도메인과 다른 닮은꼴 또는 타기관 도메인이어서 사칭 의심으로 분류했어요.");
   }
-  if (completeLiveEvidence && domains.length === 0 && emailDomain && reservedDomains.some((reserved) => matchesDomain(emailDomain, reserved))) {
+  if (completeLiveEvidence && domains.length === 0 && reservedEmail) {
     return result("invalid", "예시용 또는 테스트 이메일 주소로 기관 소속을 확인할 수 없어요.");
   }
   if (completeLiveEvidence && matching.length === 0) {
