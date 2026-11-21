@@ -168,10 +168,12 @@ function findCountries(sources: Source[], names: string[], structuredLocations =
     sources.some(({ title, description }) => {
       // An institution name can contain a country or city without proving its address.
       const sentences = [title, ...description.split(/(?<=[.!?])\s+|[。\n]/u)];
+      const currentLocationTitle = structuredLocations && !nonCurrentLocation.test(title);
       return sentences.some((sentence) => {
         if (unrelatedLocationCue.test(sentence)) return false;
-        const postalAddress = structuredLocations && usStreetAddress.test(sentence);
-        const facilityLocation = structuredLocations && institutionLocations.test(sentence) && !nonCurrentLocation.test(sentence);
+        const currentLocation = currentLocationTitle && !nonCurrentLocation.test(sentence);
+        const postalAddress = currentLocation && usStreetAddress.test(sentence);
+        const facilityLocation = currentLocation && institutionLocations.test(sentence);
         if (!postalAddress && !facilityLocation && !(locationCue.test(title) || locationCue.test(sentence))) return false;
         const content = sortedNames.reduce((text, name) => {
           const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");

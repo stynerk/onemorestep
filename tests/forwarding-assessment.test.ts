@@ -161,6 +161,9 @@ test("verified contacts can establish a country from local facilities or a full 
     { ...facility, description: "Explore partner facilities in Canada." },
     { ...facility, description: "We have no facilities in Canada." },
     { ...facility, description: "See our planned offices in Canada." },
+    { ...facility, title: "Former offices", description: "Ridgeleaf Research Institute maintained facilities in Canada." },
+    { ...postal, description: "Former address: 27 Science Boulevard, Fremont, CA 94536. Ridgeleaf Research Institute." },
+    { ...postal, title: "Former offices" },
     { ...postal, description: "Product reference 2760, Fremont, CA 94536. Ridgeleaf Research Institute." },
     { ...facility, url: "https://directory.ridgeleaf-institute.org/contact" },
   ]) {
