@@ -44,25 +44,46 @@ const industryRules: [string, RegExp][] = [
 ];
 
 const genericNameTerms = new Set(["the", "and", "university", "hospital", "clinic", "medical", "center", "international", "general", "corporation", "company", "group", "foundation"]);
+const genericVariantTerms = new Set([...genericNameTerms, "research", "institute", "laboratory", "school", "college", "regional", "national", "health", "healthcare", "inc", "ltd", "llc"]);
 const institutionalName = (value: string) => value.normalize("NFKD").replace(/\p{M}/gu, "").toLowerCase().replace(/[^\p{L}\p{N}]+/gu, " ").trim();
+const genericNameVariants = new Set(["병원", "대학", "대학교", "의원", "연구소", "病院", "大学", "診療所", "研究所"].map(institutionalName));
+const variantSeparator = /[()[\]\/|]|\s+[-–—]\s+/u;
+const scriptSeparator = /(?<=\p{Script=Latin})\s+(?=[\p{Script=Hangul}\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}])|(?<=[\p{Script=Hangul}\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}])\s+(?=\p{Script=Latin})/u;
 const compact = (value: string) => institutionalName(value).replace(/ /g, "");
 const matchesName = (text: string, name: string) => {
   const normalized = institutionalName(name);
   return normalized.length > 0 && (" " + institutionalName(text) + " ").includes(" " + normalized + " ");
 };
-const hostOf = (source: Source) => new URL(source.url).hostname;
+const hostOf = (source: Source) => new URL(source.url).hostname.replace(/\.$/u, "");
+const reservedDomains = ["example", "example.com", "example.net", "example.org", "test", "invalid", "localhost"];
+const excludedInstitutionalDomains = [...freeEmailDomains, ...reservedDomains, ...thirdPartyDomains];
+const spamPromotion = /\b(?:buy (?:social media followers|backlinks)|guaranteed (?:investment returns|profits)|casino bonus|crypto airdrop)\b|팔로워\s*구매|수익\s*보장|フォロワー購入/iu;
 
 export function matchesDomain(host: string, domain: string): boolean {
   return host === domain || host.endsWith("." + domain);
 }
 
-function namesFor(institution: string) {
-  const profile = Object.hasOwn(institutionProfiles, institution) ? institutionProfiles[institution] : undefined;
-  return { names: [institution, ...(profile?.names ?? [])], domains: profile?.domains ?? [] };
+function isInstitutionalHost(host: string): boolean {
+  return !excludedInstitutionalDomains.some((domain) => matchesDomain(host, domain))
+    && !host.split(".").some((label) => /^(?:news|wiki|directory|directories|social)$/u.test(label));
 }
 
-function affiliatedSources(institution: string, sources: Source[]) {
-  const { names, domains } = namesFor(institution);
+function namesFor(institution: string, includeVariants: boolean) {
+  const profile = Object.hasOwn(institutionProfiles, institution) ? institutionProfiles[institution] : undefined;
+  const variants = includeVariants
+    ? institution.normalize("NFKC").split(variantSeparator).flatMap((name) => name.split(scriptSeparator))
+      .map((name) => name.trim())
+      .filter((name) => {
+        const normalized = institutionalName(name);
+        return normalized.length >= 3 && !genericNameVariants.has(normalized)
+          && normalized.split(" ").some((term) => !genericVariantTerms.has(term));
+      })
+    : [];
+  return { names: [...new Set([institution, ...(profile?.names ?? []), ...variants])], domains: profile?.domains ?? [] };
+}
+
+function affiliatedSources(institution: string, sources: Source[], includeVariants: boolean) {
+  const { names, domains } = namesFor(institution, includeVariants);
   const matching = sources.filter((source) =>
     names.some((name) => matchesName(source.title, name) || matchesName(source.description, name))
     || domains.some((domain) => matchesDomain(hostOf(source), domain)));
@@ -102,9 +123,7 @@ function countriesFromDomains(official: Source[], verifiedAlias: string | undefi
   return Object.entries(locales).flatMap(([country, [, , code]]) => suffixes.has(code === "gb" ? "uk" : code) ? [country] : []);
 }
 
-function domainEvidence(institution: string, email: string, official: Source[], names: string[], domains: string[], sources: Source[]): [AssessmentDetails["domain"], string[], string?] {
-  const match = /^[^\s@]+@([a-z0-9]+(?:[.-][a-z0-9]+)+)$/i.exec(email.trim());
-  const emailDomain = match?.[1].toLowerCase();
+function domainEvidence(institution: string, emailDomain: string | undefined, official: Source[], names: string[], domains: string[], sources: Source[]): [AssessmentDetails["domain"], string[], string?] {
   if (!emailDomain) return ["unverified", []];
   if (freeEmailDomains.some((domain) => matchesDomain(emailDomain, domain))) return ["free-email", []];
 
@@ -128,13 +147,25 @@ function domainEvidence(institution: string, email: string, official: Source[], 
 }
 
 export function classifyLead(lead: LeadInput, evidence: SearchEvidence, regionalCountry = lead.country): { assessment: Assessment; workflow: WorkflowState } {
-  const { matching, official, names, domains } = affiliatedSources(lead.institution, evidence.sources);
-  const [domain, aliasSources, verifiedAlias] = domainEvidence(lead.institution, lead.email, official, names, domains, evidence.sources);
+  const liveEvidence = evidence.kind === "liner" || evidence.kind === "cache" || evidence.kind === "mixed";
+  const completeLiveEvidence = liveEvidence && evidence.status === "complete";
+  const emailDomain = /^[^\s@]+@([a-z0-9]+(?:[.-][a-z0-9]+)+)$/i.exec(lead.email.trim())?.[1].toLowerCase();
+  const institutionalEmailDomain = emailDomain && /\.[a-z]{2,}$/u.test(emailDomain) && isInstitutionalHost(emailDomain) ? emailDomain : undefined;
+  const { matching, official: configuredOfficial, names, domains } = affiliatedSources(lead.institution, evidence.sources, completeLiveEvidence);
+  const [configuredDomain, aliasSources, verifiedAlias] = domainEvidence(lead.institution, emailDomain, configuredOfficial, names, domains, evidence.sources);
+  // Keep configured ownership and impersonation checks ahead of inference for new institutions.
+  const inferredOfficial = completeLiveEvidence && configuredDomain === "unverified" && domains.length === 0 && institutionalEmailDomain
+    ? matching.filter((source) => {
+      const host = hostOf(source);
+      return isInstitutionalHost(host) && (matchesDomain(host, institutionalEmailDomain) || matchesDomain(institutionalEmailDomain, host));
+    })
+    : [];
+  const official = inferredOfficial.length > 0 ? inferredOfficial : configuredOfficial;
+  const domain = inferredOfficial.length > 0 ? "matched" : configuredDomain;
   const intent = memoMatch(lead.memo);
   const memoIntent = intent?.[0] ?? "unknown";
-  const liveEvidence = evidence.kind === "liner" || evidence.kind === "cache" || evidence.kind === "mixed";
   const textCountries = findCountries(official, names);
-  const domainCountries = liveEvidence && evidence.status === "complete" && textCountries.length === 0
+  const domainCountries = completeLiveEvidence && textCountries.length === 0
     && official.length > 0 && domain === "matched" ? countriesFromDomains(official, verifiedAlias) : [];
   const countries = textCountries.length > 0 ? textCountries : domainCountries;
   const domainReason = domainCountries.length === 1 ? " 기관 소재지는 확인된 기관 도메인의 국가 코드를 근거로 추정했어요." : "";
@@ -159,13 +190,23 @@ export function classifyLead(lead: LeadInput, evidence: SearchEvidence, regional
   }
   if (memoIntent === "sales") return result("invalid", "제품 구매 문의 대신 영업 제안으로 확인됐어요.");
   if (memoIntent === "student") return result("invalid", "과제나 논문 자료 요청으로 확인됐어요.");
-  if (evidence.status === "complete" && matching.length === 0) return result("invalid", "공개 정보에서 기관을 찾지 못함");
+  if (completeLiveEvidence && spamPromotion.test(lead.memo)) return result("invalid", "스팸성 홍보 문의로 확인됐어요.");
+  if (evidence.status === "complete" && matching.length === 0 && !completeLiveEvidence) return result("invalid", "공개 정보에서 기관을 찾지 못함");
   if (evidence.status === "failed") {
     const warning = domain === "suspicious" ? " 이메일 도메인의 사칭 의심도 확인해 주세요." : "";
     return result("ambiguous", "외부 확인 실패, 다시 시도" + warning);
   }
   if (domain === "suspicious") {
     return result("ambiguous", "이메일이 공식 도메인과 다른 닮은꼴 또는 타기관 도메인이어서 사칭 의심으로 분류했어요.");
+  }
+  if (completeLiveEvidence && official.length === 0 && emailDomain && reservedDomains.some((reserved) => matchesDomain(emailDomain, reserved))) {
+    return result("invalid", "예시용 또는 테스트 이메일 주소로 기관 소속을 확인할 수 없어요.");
+  }
+  if (completeLiveEvidence && matching.length === 0) {
+    // A completed search can miss a real institution, even when a buyer uses a plausible work address.
+    return memoIntent === "buying" && institutionalEmailDomain
+      ? result("ambiguous", "공개 검색에서 기관을 확인하지 못해 구매 문의와 소속을 다시 확인해야 해요.")
+      : result("invalid", "공개 정보에서 기관을 찾지 못함");
   }
   if (evidence.status === "saved-unavailable") return result("ambiguous", "저장된 기관 근거가 없어 확인이 필요해요.");
   if (official.length === 0) return result("ambiguous", "기관 공식 페이지를 확인하지 못했어요.");
