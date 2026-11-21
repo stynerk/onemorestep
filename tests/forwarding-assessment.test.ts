@@ -117,20 +117,24 @@ test("a related institutional host corroborates a company name with a legal suff
 test("a self-identifying first-party source must publish the exact alternate contact domain", () => {
   const lead = { ...syntheticLead, email: "orders@researchmail.org" };
   const source = { ...syntheticSource, url: "https://ridgeleaf.org/contact", description: "Address in Ohio, United States. E-mail: purchasing@researchmail.org." };
-  const matched = classifyLead(lead, evidence([source]));
-  assert.equal(matched.assessment.verdict, "valid");
-  assert.equal(matched.assessment.details?.domain, "matched");
+  for (const url of [source.url, "https://www.ridgeleaf.org/contact"]) {
+    const matched = classifyLead(lead, evidence([{ ...source, url }]));
+    assert.equal(matched.assessment.verdict, "valid");
+    assert.equal(matched.assessment.details?.domain, "matched");
+  }
 
   for (const sourceWithoutProof of [
     { ...source, url: "https://www.linkedin.com/company/ridgeleaf" },
     { ...source, url: "https://directory.ridgeleaf.org/contact" },
     { ...source, url: "https://claims-ridgeleaf.org/contact" },
+    { ...source, url: "https://ridgeleaf.unrelated.org/contact" },
     { ...source, title: "Other Institute", description: "Ridgeleaf Research Institute. E-mail: purchasing@researchmail.org." },
     { ...source, url: "https://ridgeleaf.org/partners" },
     { ...source, description: "Address in Ohio, United States. Our vendor's E-mail: purchasing@researchmail.org." },
     { ...source, description: "Contact our supplier. E-mail: purchasing@researchmail.org." },
     { ...source, description: "Address in Ohio, United States. We link to the external site researchmail.org." },
     { ...source, description: "Address in Ohio, United States. E-mail: purchasing@researchmail.org.other.org." },
+    { ...source, description: "Address in Ohio, United States. E-mail: purchasing@researchmail.org-fake." },
   ]) {
     const { assessment } = classifyLead(lead, evidence([sourceWithoutProof]));
     assert.equal(assessment.verdict, "ambiguous");
@@ -155,6 +159,8 @@ test("verified contacts can establish a country from local facilities or a full 
 
   for (const source of [
     { ...facility, description: "Explore partner facilities in Canada." },
+    { ...facility, description: "We have no facilities in Canada." },
+    { ...facility, description: "See our planned offices in Canada." },
     { ...postal, description: "Product reference 2760, Fremont, CA 94536. Ridgeleaf Research Institute." },
     { ...facility, url: "https://directory.ridgeleaf-institute.org/contact" },
   ]) {

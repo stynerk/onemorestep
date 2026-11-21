@@ -87,7 +87,9 @@ function resemblesInstitutionHost(emailDomain: string, host: string, names: stri
 function titleAndHostIdentifyInstitution(title: string, host: string, names: string[], exactHostLabel = false): boolean {
   const normalizedTitle = institutionalName(title);
   const hostLabels = host.split(".").slice(0, -1);
-  const hostWords = exactHostLabel ? hostLabels.map(compact) : institutionalName(hostLabels.join(" ")).split(" ");
+  // Alternate-domain contact proof needs a brand at the website root, outside a delegated subdomain.
+  const rootBrand = /^(?:www\.)?([a-z\d-]+)\.[a-z]{2,}$/u.exec(host)?.[1];
+  const hostWords = exactHostLabel ? (rootBrand ? [compact(rootBrand)] : []) : institutionalName(hostLabels.join(" ")).split(" ");
   return names.some((name) => {
     const normalizedName = institutionalName(name);
     if (!normalizedName || (normalizedTitle !== normalizedName && !normalizedTitle.startsWith(normalizedName + " "))) return false;
@@ -135,7 +137,7 @@ function listsOwnContactDomain(source: Source, domain: string): boolean {
   const contactPage = /\b(?:contact|imprint)\b/iu.test(source.title + " " + new URL(source.url).pathname);
   const thirdPartyContact = /\b(?:partner|vendor|supplier|external|third[- ]party|collaboration)\b/iu;
   if (!contactPage || thirdPartyContact.test(source.description)) return false;
-  const addresses = source.description.matchAll(/(?:^|[.!?;|·\n]\s*)(?:e[- ]?mail|mailto)\s*:\s*[a-z\d._%+-]+@([a-z\d.-]+\.[a-z]{2,})\b/giu);
+  const addresses = source.description.matchAll(/(?:^|[.!?;|·\n]\s*)(?:e[- ]?mail|mailto)\s*:\s*[a-z\d._%+-]+@([a-z\d.-]+\.[a-z]{2,})(?=$|[\s,;|·)\]}!?]|\.(?:$|\s))/giu);
   return Array.from(addresses).some(([, host]) => host.toLowerCase() === domain);
 }
 
@@ -157,6 +159,7 @@ const unrelatedLocationCue = /\b(?:partners?|collaboration|patients from|study a
 const institutionCategory = /\b(?:hospitals?|clinics?|universit(?:y|ies)|colleges?|institutes?|laborator(?:y|ies)|foundations?|associations?|corporations?|companies|company|organi[sz]ations?|ministr(?:y|ies)|government agenc(?:y|ies))\b|병원|의원|대학교|연구소|재단|협회|기업|病院|診療所|大学|研究所|財団|協会/iu;
 
 const institutionLocations = /\b(?:locations|facilities|campuses|offices|hospitals|clinics)\s+(?:across|throughout|in)\b/iu;
+const nonCurrentLocation = /\b(?:no|not|former|closed|planned|proposed|future)\b/iu;
 const usStreetAddress = /\b\d{1,6}\s+[^,.\n]{1,70}\s+(?:St(?:reet)?|Ave(?:nue)?|Rd|Road|Blvd|Boulevard|Dr(?:ive)?|Ln|Lane|Ct|Court|Way|Pkwy|Parkway|Pl(?:ace)?|Cir(?:cle)?|Ter(?:race)?|Hwy|Highway)\.?,\s*[^,.\n]{2,40},\s*(?:AL|AK|AZ|AR|CA|CO|CT|DE|DC|FL|GA|HI|ID|IL|IN|IA|KS|KY|LA|ME|MD|MA|MI|MN|MS|MO|MT|NE|NV|NH|NJ|NM|NY|NC|ND|OH|OK|OR|PA|RI|SC|SD|TN|TX|UT|VT|VA|WA|WV|WI|WY)\s+\d{5}(?:-\d{4})?\b/u;
 
 function findCountries(sources: Source[], names: string[], structuredLocations = false): string[] {
@@ -168,7 +171,7 @@ function findCountries(sources: Source[], names: string[], structuredLocations =
       return sentences.some((sentence) => {
         if (unrelatedLocationCue.test(sentence)) return false;
         const postalAddress = structuredLocations && usStreetAddress.test(sentence);
-        const facilityLocation = structuredLocations && institutionLocations.test(sentence);
+        const facilityLocation = structuredLocations && institutionLocations.test(sentence) && !nonCurrentLocation.test(sentence);
         if (!postalAddress && !facilityLocation && !(locationCue.test(title) || locationCue.test(sentence))) return false;
         const content = sortedNames.reduce((text, name) => {
           const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
