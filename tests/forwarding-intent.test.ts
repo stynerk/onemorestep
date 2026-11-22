@@ -190,7 +190,7 @@ test("AI disagreement preserves existing valid, country-check, fraudulent and fi
   assert.equal(modelSpam.assessment.details?.memoSource, "liner");
 });
 
-test("the assessment route only enables the Router for a configured live mode and persists verified intent", async (t) => {
+test("the assessment route replays public intent and only calls the Router in configured live mode", async (t) => {
   const settings = new Map(["MIRINAE_DEMO_TARGET", "VERCEL", "LINER_MODE", "LINER_API_KEY"].map((key) => [key, process.env[key]]));
   const originalFetch = globalThis.fetch;
   t.after(() => {
@@ -225,10 +225,21 @@ test("the assessment route only enables the Router for a configured live mode an
   });
   const stored = await POST(request());
   assert.equal(stored.status, 200);
-  assert.equal((await stored.json()).assessment.details.memoSource, undefined);
+  const publicResult = await stored.json();
+  assert.equal(publicResult.assessment.details.memoSource, "liner");
+  assert.equal(publicResult.assessment.details.memoIntent, "buying");
+  assert.ok(publicResult.assessment.details.memoQuote.trim());
+  assert.ok(seed.memo.includes(publicResult.assessment.details.memoQuote));
   assert.deepEqual(sent, []);
 
   process.env.MIRINAE_DEMO_TARGET = "local";
+  process.env.LINER_MODE = "sample";
+  const local = await POST(request());
+  assert.equal(local.status, 200);
+  assert.equal((await local.json()).assessment.details.memoSource, undefined);
+  assert.deepEqual(sent, []);
+
+  process.env.LINER_MODE = "live";
   const live = await POST(request());
   assert.equal(live.status, 200);
   assert.equal(sent.filter((url) => url === endpoint).length, 1);

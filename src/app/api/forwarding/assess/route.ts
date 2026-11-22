@@ -28,7 +28,8 @@ export async function POST(request: Request): Promise<Response> {
   }
   const industry = "industry" in body ? body.industry : "medicom";
   if (typeof industry !== "string") return Response.json({ error: "시연 업종을 확인해 주세요." }, { status: 400, headers });
-  const saved = industry !== "medicom" && isPublicDemo() ? getSavedIndustry(industry) : undefined;
+  const publicDemo = isPublicDemo();
+  const saved = industry !== "medicom" && publicDemo ? getSavedIndustry(industry) : undefined;
   if (industry !== "medicom" && !saved) return Response.json({ error: "선택할 수 있는 시연 업종이 아닙니다." }, { status: 404, headers });
   const lead = saved ? saved.demo.seed.leads.find((row) => row.id === body.leadId) : leads.get(body.leadId);
   if (!lead) return Response.json({ error: "시연 리드를 찾지 못했습니다." }, { status: 404, headers });
@@ -47,8 +48,8 @@ export async function POST(request: Request): Promise<Response> {
   const memo = confirmedPurchase ? "회신에서 구매 견적 요청을 확인함" : lead.memo;
   const input = { ...lead, country, memo };
   const runtime = linerRuntimeSettings();
-  // Use saved Router output only for the captured SaaS dataset. A confirmed reply already gives the intent.
-  const intent = confirmedPurchase ? null : saved ? lookupSavedInquiryIntent(memo, savedInquiryIntents)
+  // Public assessment only uses recorded Router output. A confirmed reply already gives the intent.
+  const intent = confirmedPurchase ? null : publicDemo ? lookupSavedInquiryIntent(memo, savedInquiryIntents)
     : runtime.mode?.trim() === "live" && lead.institution.trim() ? requestInquiryIntent(memo, runtime) : null;
   const result = saved ? assessSavedIndustryLead(saved, input, lead.country, await intent)
     : await service.assess(input, { ...runtime, regionalCountry: lead.country, intent });
