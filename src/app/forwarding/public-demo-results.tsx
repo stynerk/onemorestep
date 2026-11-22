@@ -1,5 +1,6 @@
 import styles from "./public-demo-results.module.css";
 
+const blindEvaluationSource = "https://github.com/stynerk/onemorestep/blob/main/docs/qa/BLIND_EVALUATION_2026-11-23.md";
 const evaluationSource = "https://github.com/stynerk/onemorestep/blob/main/docs/qa/FINAL_EVALUATION_2026-11-20.md";
 
 const scores = [
@@ -34,6 +35,17 @@ export function PublicDemoResults() {
         <p className={styles.context}>
           공개 문의함은 저장된 근거로 판정합니다. 시연은 유효 8 · 애매 6 · 국가 확인 3 · 제휴 확인 2 · 무효 11건입니다.
         </p>
+        <section aria-labelledby="new-blind-results">
+          <h2 className={styles.heading} id="new-blind-results">새 블라인드 평가 30건</h2>
+          <dl className={styles.scores}>
+            <div className={styles.score}><dt>판정 일치</dt><dd><strong>17/30</strong><span>56.7% 일치</span></dd></div>
+            <div className={styles.score}><dt>넘길 곳 일치</dt><dd><strong>21/30</strong><span>70.0% 일치</span></dd></div>
+          </dl>
+          <p className={styles.context}>
+            유효 → 무효 0건, 거짓 유효 0건. 정답이 유효인 11건 중 8건은 애매로 분류됐습니다.
+            {" "}11월 23일, 고정 엔진에서 실제 Liner 응답으로 측정했습니다. <a href={blindEvaluationSource}>새 블라인드 평가 보고서</a>
+          </p>
+        </section>
         <dl className={styles.scores}>
           {scores.map(({ mode, matched, rate, detail }) => (
             <div className={styles.score} key={mode}>
