@@ -96,6 +96,8 @@ body:has(.workspace) { background: #f5f6fb; color: #18213a; margin: 0; }
 .evidence > div { min-width: 0; background: #f7f8fc; padding: 8px; border-radius: 7px; }
 .evidence h3 { margin-bottom: 3px; font-size: 12px; }
 .evidence p, .source-list { font-size: 11px; }
+.domain-evidence { display: grid; gap: 5px; margin-top: 7px; font-size: 11px; }
+.domain-evidence blockquote { white-space: pre-wrap; }
 .source-list { margin-top: 4px !important; }
 .workspace blockquote { border-left: 2px solid #c9c4ee; padding-left: 9px; color: #485276; overflow-wrap: anywhere; }
 .dealer-entry, .preview, .runner-up, .reply-form { padding: 9px 11px; border: 1px solid #e0e2ee; border-radius: 7px; }

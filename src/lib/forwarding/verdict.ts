@@ -1,11 +1,12 @@
 import type { Source } from "../liner-search";
+import { buildDomainEvidenceInput, validateDomainEvidenceAdvice, type DomainEvidenceAdvice, type DomainEvidenceInput } from "./domain-router";
 import { handoffForAssessment } from "./handoff";
 import { validateInquiryIntent } from "./intent-router";
-import { freeEmailDomains, institutionProfiles, locales, thirdPartyDomains } from "./institution-policy";
+import { freeEmailDomains, institutionProfiles, locales, reservedDomains, thirdPartyDomains } from "./institution-policy";
 import { forwardingPolicy } from "./policy";
 import type { Assessment, AssessmentDetails, InquiryIntent, LeadInput, MemoIntent, Verdict, WorkflowState } from "./types";
 
-type SearchEvidence = {
+export type SearchEvidence = {
   sources: Source[];
   searchedAt: string;
   kind: AssessmentDetails["sourceKind"];
@@ -58,7 +59,6 @@ const matchesName = (text: string, name: string) => {
 };
 const legalSuffix = /\s+(?:inc(?:orporated)?|ltd|limited|corp(?:oration)?|llc|plc|gmbh|ag|s a|s a s|sarl)$/u;
 const hostOf = (source: Source) => new URL(source.url).hostname.replace(/\.$/u, "");
-const reservedDomains = ["example", "example.com", "example.net", "example.org", "test", "invalid", "localhost"];
 const excludedInstitutionalDomains = [...freeEmailDomains, ...reservedDomains, ...thirdPartyDomains];
 const spamPromotion = /\b(?:buy (?:social media followers|backlinks)|guaranteed (?:investment returns|profits)|casino bonus|crypto airdrop)\b|팔로워\s*구매|수익\s*보장|フォロワー購入/iu;
 
@@ -216,9 +216,16 @@ function domainEvidence(institution: string, emailDomain: string | undefined, of
   return [otherInstitution || lookalike ? "suspicious" : "unverified", []];
 }
 
-export function classifyLead(
-  lead: LeadInput, evidence: SearchEvidence, regionalCountry = lead.country, inquiryIntent?: InquiryIntent | null,
-): { assessment: Assessment; workflow: WorkflowState } {
+const citesSource = (source: Source, citation: { url: string; quote: string }) =>
+  source.url === citation.url && (source.title.includes(citation.quote) || source.description.includes(citation.quote));
+
+type LeadAssessment = { assessment: Assessment; workflow: WorkflowState };
+export type DomainEvidenceResolver = (input: DomainEvidenceInput) => DomainEvidenceAdvice | null | Promise<DomainEvidenceAdvice | null>;
+
+function evaluateLead(
+  lead: LeadInput, evidence: SearchEvidence, regionalCountry: string, inquiryIntent?: InquiryIntent | null,
+  verifiedDomain?: { advice: DomainEvidenceAdvice; source: Source },
+): LeadAssessment {
   const liveEvidence = evidence.kind === "liner" || evidence.kind === "cache" || evidence.kind === "mixed";
   const completeLiveEvidence = liveEvidence && evidence.status === "complete";
   const emailDomain = /^[^\s@]+@([a-z0-9]+(?:[.-][a-z0-9]+)+)$/i.exec(lead.email.trim())?.[1].toLowerCase();
@@ -252,12 +259,34 @@ export function classifyLead(
         && listsOwnContactDomain(source, institutionalEmailDomain);
     }) : [];
   const inferredOfficial = directOfficial.length > 0 ? directOfficial : supplementalOfficial;
-  const official = inferredOfficial.length > 0 ? inferredOfficial : configuredOfficial;
-  const domain = inferredOfficial.length > 0 ? "matched" : suspectPublicMismatch ? "suspicious" : configuredDomain;
-  const textCountries = findCountries(official, names, completeLiveEvidence && domain === "matched");
-  const domainCountries = completeLiveEvidence && textCountries.length === 0
+  const ruleOfficial = inferredOfficial.length > 0 ? inferredOfficial : configuredOfficial;
+  const ownershipSource = verifiedDomain?.source;
+  const official = ownershipSource && !ruleOfficial.includes(ownershipSource) ? [...ruleOfficial, ownershipSource] : ruleOfficial;
+  const domain = ownershipSource || inferredOfficial.length > 0 ? "matched" : suspectPublicMismatch ? "suspicious" : configuredDomain;
+  const trustedEvidence = completeLiveEvidence || Boolean(ownershipSource);
+  const countrySources = official.map((source) => {
+    if (source !== ownershipSource) return source;
+    // Newly adopted evidence must locate the current institution, not a former site.
+    if (nonCurrentLocation.test(source.title)) return { ...source, title: "", description: "" };
+    return { ...source, description: source.description.split(/(?<=[.!?])\s+|[。\n]/u)
+      .filter((sentence) => !nonCurrentLocation.test(sentence)).join(" ") };
+  });
+  const textCountries = findCountries(countrySources, names, trustedEvidence && domain === "matched");
+  const domainCountries = trustedEvidence && textCountries.length === 0
     && official.length > 0 && domain === "matched" ? countriesFromDomains(official, verifiedAlias) : [];
-  const countries = textCountries.length > 0 ? textCountries : domainCountries;
+  const ruleCountries = textCountries.length > 0 ? textCountries : domainCountries;
+  const citedLocation = verifiedDomain?.advice.location;
+  const locationSource = citedLocation && evidence.sources.find((source) => citesSource(source, citedLocation));
+  const quotedCountries = citedLocation && locationSource && !nonCurrentLocation.test(citedLocation.quote)
+    && !nonCurrentLocation.test(locationSource.title)
+    ? findCountries([{ url: locationSource.url, title: "", description: citedLocation.quote }], names, true) : [];
+  const corroboratedLocation = ownershipSource && citedLocation && locationSource
+    && isInstitutionalHost(hostOf(locationSource)) && relatedHosts(hostOf(ownershipSource), hostOf(locationSource))
+    && quotedCountries.length === 1 && quotedCountries[0] === citedLocation.country
+    && (ruleCountries.length === 0 || (ruleCountries.length === 1 && ruleCountries[0] === citedLocation.country))
+    ? citedLocation : null;
+  const countries = ruleCountries.length === 0 && corroboratedLocation ? [corroboratedLocation.country] : ruleCountries;
+  const verifiedDomainDetails = verifiedDomain && { ...verifiedDomain.advice, location: corroboratedLocation };
   const domainReason = domainCountries.length === 1 ? " 기관 소재지는 확인된 기관 도메인의 국가 코드를 근거로 추정했어요." : "";
   const industryText = official.map(({ title, description }) => title + " " + description).join(" ");
   const industry = industryRules.find(([, pattern]) => pattern.test(industryText))?.[0] ?? null;
@@ -273,6 +302,7 @@ export function classifyLead(
         searchedAt: evidence.searchedAt,
         mode: evidence.kind === "liner" || evidence.kind === "mixed" ? "live" as const : "saved" as const,
         details: { domain, countries, industry, memoIntent, memoQuote, ...(memoSource ? { memoSource } : {}),
+          ...(verifiedDomainDetails ? { domainEvidence: verifiedDomainDetails } : {}),
           externalStatus: evidence.status, sourceKind: evidence.kind },
       },
       workflow: verdict === "country-check" || verdict === "partnership-check" ? "reply-pending" as const : "decision-pending" as const,
@@ -325,4 +355,77 @@ export function classifyLead(
   const advised = decide(advice.intent, advice.quote, "liner");
   // A model judgment can clarify the memo, but cannot make a lead valid on its own.
   return advised.assessment.verdict === "valid" && baseline.assessment.verdict !== "valid" ? baseline : advised;
+}
+
+function shareInstitutionSite(host: string, emailDomain: string) {
+  const [, ...webParent] = host.split(".");
+  const [, ...mailParent] = emailDomain.split(".");
+  // Same-site sibling hosts are allowed only below a domain label, never a common public suffix.
+  const publicCountryLevel = webParent.length === 2 && /^[a-z]{2}$/u.test(webParent[1])
+    && /^(?:ac|co|com|edu|go|gov|net|ne|or|org)$/u.test(webParent[0]);
+  return webParent.length >= 2 && !publicCountryLevel && webParent.join(".") === mailParent.join(".");
+}
+
+function publishesOwnWebsite(source: Source, emailDomain: string) {
+  const websites = source.description.matchAll(/(?:^|[.!?;|·\n]\s*)(?:our|official)\s+(?:website|domain)\s*:\s*(?:https?:\/\/)?([a-z\d.-]+\.[a-z]{2,})(?=$|[\/\s,;|·)\]}!?]|\.(?:$|\s))/giu);
+  return Array.from(websites).some(([, host]) => host.toLowerCase() === emailDomain);
+}
+
+function corroboratingOwnershipSource(lead: LeadInput, evidence: SearchEvidence, advice: DomainEvidenceAdvice, emailDomain: string) {
+  const { matching, official, names } = affiliatedSources(lead.institution, evidence.sources, true);
+  return matching.find((source) => {
+    if (!citesSource(source, advice)) return false;
+    const host = hostOf(source);
+    if (!isInstitutionalHost(host)) return false;
+    if (relatedHosts(host, emailDomain)) return true;
+    const ownDomainField = listsOwnContactDomain(source, emailDomain) || publishesOwnWebsite(source, emailDomain);
+    return ownDomainField && (official.includes(source) || shareInstitutionSite(host, emailDomain)
+      || titleAndHostIdentifyInstitution(source.title, host, names, true));
+  });
+}
+
+function applyDomainAdvice(
+  lead: LeadInput, evidence: SearchEvidence, regionalCountry: string, intent: InquiryIntent | null | undefined,
+  baseline: LeadAssessment, input: DomainEvidenceInput, answer: DomainEvidenceAdvice | null,
+): LeadAssessment {
+  const advice = validateDomainEvidenceAdvice(answer, input);
+  if (!advice || !baseline.assessment.details) return baseline;
+  if (advice.ownership === "belongs") {
+    const source = corroboratingOwnershipSource(lead, evidence, advice, input.emailDomain);
+    if (!source) return baseline;
+    const candidate = evaluateLead(lead, evidence, regionalCountry, intent, { advice, source });
+    return candidate.assessment.verdict === "invalid" ? baseline : candidate;
+  }
+  return {
+    ...baseline,
+    assessment: {
+      ...baseline.assessment,
+      details: { ...baseline.assessment.details, domainEvidence: { ...advice, location: null } },
+    },
+  };
+}
+
+export function classifyLead(
+  lead: LeadInput, evidence: SearchEvidence, regionalCountry = lead.country,
+  intent?: InquiryIntent | null, domainAdvice?: DomainEvidenceAdvice | null,
+): LeadAssessment {
+  const baseline = evaluateLead(lead, evidence, regionalCountry, intent);
+  if (!domainAdvice) return baseline;
+  const input = buildDomainEvidenceInput(lead, evidence.sources, baseline.assessment);
+  return input ? applyDomainAdvice(lead, evidence, regionalCountry, intent, baseline, input, domainAdvice) : baseline;
+}
+
+export async function classifyLeadWithDomainEvidence(
+  lead: LeadInput, evidence: SearchEvidence, regionalCountry = lead.country,
+  intent?: InquiryIntent | null, resolveDomain?: DomainEvidenceResolver,
+): Promise<LeadAssessment> {
+  const baseline = evaluateLead(lead, evidence, regionalCountry, intent);
+  if (!resolveDomain) return baseline;
+  const input = buildDomainEvidenceInput(lead, evidence.sources, baseline.assessment);
+  if (!input) return baseline;
+  try {
+    return applyDomainAdvice(lead, evidence, regionalCountry, intent, baseline, input, await resolveDomain(input));
+  } catch {
+    return baseline;
+  }
 }

@@ -3,7 +3,7 @@ import type { LinerSearchResult, Source } from "../liner-search";
 import { locales } from "./institution-policy";
 import { savedInstitutionSources, savedNonMatchSearchedAt, savedSourcesReviewedAt } from "./saved-institution-sources";
 import type { InquiryIntent, LeadInput } from "./types";
-import { classifyLead } from "./verdict";
+import { classifyLeadWithDomainEvidence, type DomainEvidenceResolver } from "./verdict";
 
 const cacheVersion = "institution-extraction-v1";
 const freshnessMs = 24 * 60 * 60 * 1000;
@@ -17,6 +17,7 @@ type AssessmentConfig = {
   apiKey?: string;
   regionalCountry?: string;
   intent?: InquiryIntent | null | Promise<InquiryIntent | null>;
+  domainAdvice?: DomainEvidenceResolver;
 };
 type Options = {
   fetcher?: typeof fetch;
@@ -108,16 +109,16 @@ export function createAssessmentService(options: Options = {}) {
     async assess(lead: LeadInput, config: AssessmentConfig) {
       const nowIso = () => new Date(now()).toISOString();
       if (!lead.institution.trim()) {
-        return classifyLead(lead, { sources: [], searchedAt: nowIso(), kind: "local", status: "not-needed" }, config.regionalCountry, await config.intent);
+        return classifyLeadWithDomainEvidence(lead, { sources: [], searchedAt: nowIso(), kind: "local", status: "not-needed" }, config.regionalCountry, await config.intent, config.domainAdvice);
       }
       const apiKey = config.apiKey?.trim();
       if (config.mode?.trim() !== "live" || !apiKey) {
         const sources = savedInstitutionSources(lead.institution);
         const savedAt = sources.length ? savedSourcesReviewedAt : savedNonMatchSearchedAt(lead.institution, lead.country);
-        return classifyLead(lead, {
+        return classifyLeadWithDomainEvidence(lead, {
           sources, searchedAt: savedAt ?? nowIso(), kind: "curated",
           status: savedAt ? "complete" : "saved-unavailable",
-        }, config.regionalCountry, await config.intent);
+        }, config.regionalCountry, await config.intent, config.domainAdvice);
       }
 
       const { queries, language, countryCode } = queriesFor(lead);
@@ -126,12 +127,12 @@ export function createAssessmentService(options: Options = {}) {
       const complete = successes.length === results.length;
       const storedCount = successes.filter((result) => result.fromCache).length;
       const kind = storedCount === results.length ? "cache" : storedCount > 0 ? "mixed" : "liner";
-      return classifyLead(lead, {
+      return classifyLeadWithDomainEvidence(lead, {
         sources: successes.flatMap((result) => result.sources),
         searchedAt: successes.map((result) => result.searchedAt).sort().at(-1) ?? nowIso(),
         kind,
         status: complete ? "complete" : "failed",
-      }, config.regionalCountry, await config.intent);
+      }, config.regionalCountry, await config.intent, config.domainAdvice);
     },
   };
 }

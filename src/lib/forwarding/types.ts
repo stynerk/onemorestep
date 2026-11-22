@@ -1,3 +1,5 @@
+import type { DomainEvidenceAdvice } from "./domain-router";
+
 export const VERDICTS = ["valid", "ambiguous", "country-check", "partnership-check", "invalid"] as const;
 export type Verdict = (typeof VERDICTS)[number];
 export const WORKFLOW_STATES = ["new", "decision-pending", "reply-pending", "manager-confirmation-pending", "manager-direct-pending", "dealer-assigned", "connected", "disqualified"] as const;
@@ -52,6 +54,7 @@ export interface AssessmentDetails {
   memoIntent: MemoIntent;
   memoQuote: string | null;
   memoSource?: "liner";
+  domainEvidence?: DomainEvidenceAdvice;
   externalStatus: (typeof EXTERNAL_STATUSES)[number];
   sourceKind: (typeof SOURCE_KINDS)[number];
 }

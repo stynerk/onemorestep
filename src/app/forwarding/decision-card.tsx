@@ -16,6 +16,7 @@ const date = new Intl.DateTimeFormat("ko-KR", { timeZone: forwardingPolicy.respo
 const time = (value: string) => date.format(new Date(value));
 const percent = new Intl.NumberFormat("ko-KR", { style: "percent", maximumFractionDigits: 1 });
 const score = (value: number | null) => value === null ? "집계 중" : value.toFixed(2);
+const ownershipLabels = { belongs: "기관 소유", not_belongs: "다른 소유자", unknown: "확인 보류" };
 const domainLabels = { matched: "기관 공식 이메일과 일치", "free-email": "무료 이메일", suspicious: "사칭 의심", unverified: "소유 관계 미확인" };
 const modeLabels = { liner: "실시간 검색", cache: "Liner 캐시", mixed: "실시간 및 캐시", curated: "저장된 결과", local: "시연 판정" };
 const memoLabels = { buying: "구매", partnership: "제휴", job: "채용", student: "학생 과제", sales: "영업 제안", spam: "스팸", unknown: "불명" };
@@ -25,6 +26,7 @@ const statusLabels = { sent: "테스트 메일 발송 완료", failed: "발송 �
 
 function Evidence({ assessment, historicalCount }: { assessment: Assessment; historicalCount: number }) {
   const detail = assessment.details;
+  const domainEvidence = detail?.domainEvidence;
   return <div className="evidence">
     <div><h3>소속 기관 확인</h3>
       <p>{detail?.industry ?? "업종 확인 전"} · {detail?.countries.join(", ") || "소재지 확인 전"}</p>
@@ -33,7 +35,18 @@ function Evidence({ assessment, historicalCount }: { assessment: Assessment; his
         {assessment.sources.map((url) => <li key={url}><a href={url} target="_blank" rel="noopener noreferrer">{new URL(url).hostname}</a></li>)}
       </ul>}
     </div>
-    <div><h3>이메일 도메인</h3><p>{detail ? domainLabels[detail.domain] : "확인 전"}</p></div>
+    <div><h3>이메일 도메인</h3><p>{detail ? domainLabels[detail.domain] : "확인 전"}</p>
+      {domainEvidence && <div className="domain-evidence">
+        <p><strong>Liner 도메인 판단 · {ownershipLabels[domainEvidence.ownership]}</strong></p>
+        <blockquote>{domainEvidence.quote}</blockquote>
+        <a href={domainEvidence.url} target="_blank" rel="noopener noreferrer">도메인 근거 출처</a>
+        {domainEvidence.location && <>
+          <p><strong>소재지 근거 · {domainEvidence.location.country}</strong></p>
+          <blockquote>{domainEvidence.location.quote}</blockquote>
+          <a href={domainEvidence.location.url} target="_blank" rel="noopener noreferrer">소재지 근거 출처</a>
+        </>}
+      </div>}
+    </div>
     <div><h3>자사 기록</h3><p>같은 기관의 전달 이력 {historicalCount}건</p></div>
   </div>;
 }

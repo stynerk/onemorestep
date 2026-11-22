@@ -1,10 +1,13 @@
 import { isPublicDemo, linerRuntimeSettings } from "../../../../lib/demo-mode";
 import { createAssessmentService } from "../../../../lib/forwarding/assessment-service";
+import { lookupSavedDomainEvidence, requestDomainEvidence } from "../../../../lib/forwarding/domain-router";
 import { locales } from "../../../../lib/forwarding/institution-policy";
-import { assessSavedIndustryLead, getSavedIndustry } from "../../../../lib/forwarding/industry-demo.server";
+import { assessSavedIndustryLeadWithDomainEvidence, getSavedIndustry } from "../../../../lib/forwarding/industry-demo.server";
 import { lookupSavedInquiryIntent, requestInquiryIntent } from "../../../../lib/forwarding/intent-router";
+import { savedDomainEvidence } from "../../../../lib/forwarding/saved-domain-evidence";
 import { savedInquiryIntents } from "../../../../lib/forwarding/saved-inquiry-intents";
 import { createInitialForwardingState } from "../../../../lib/forwarding/seed";
+import type { DomainEvidenceResolver } from "../../../../lib/forwarding/verdict";
 
 export const runtime = "nodejs";
 
@@ -51,7 +54,10 @@ export async function POST(request: Request): Promise<Response> {
   // Public assessment only uses recorded Router output. A confirmed reply already gives the intent.
   const intent = confirmedPurchase ? null : publicDemo ? lookupSavedInquiryIntent(memo, savedInquiryIntents)
     : runtime.mode?.trim() === "live" && lead.institution.trim() ? requestInquiryIntent(memo, runtime) : null;
-  const result = saved ? assessSavedIndustryLead(saved, input, lead.country, await intent)
-    : await service.assess(input, { ...runtime, regionalCountry: lead.country, intent });
+  const domainAdvice: DomainEvidenceResolver | undefined = publicDemo
+    ? (evidence) => lookupSavedDomainEvidence(evidence, savedDomainEvidence)
+    : runtime.mode?.trim() === "live" && runtime.apiKey?.trim() ? (evidence) => requestDomainEvidence(evidence, runtime) : undefined;
+  const result = saved ? await assessSavedIndustryLeadWithDomainEvidence(saved, input, lead.country, await intent, domainAdvice)
+    : await service.assess(input, { ...runtime, regionalCountry: lead.country, intent, domainAdvice });
   return Response.json({ leadId: lead.id, ...result }, { headers });
 }
