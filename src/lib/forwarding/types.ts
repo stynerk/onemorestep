@@ -38,8 +38,9 @@ export interface PriorRelationship {
   dealerId: string;
   institution: string;
 }
-export const MEMO_INTENTS = ["buying", "partnership", "sales", "student", "job", "unknown"] as const;
+export const MEMO_INTENTS = ["buying", "partnership", "job", "student", "sales", "spam", "unknown"] as const;
 export type MemoIntent = (typeof MEMO_INTENTS)[number];
+export type InquiryIntent = { intent: MemoIntent; quote: string };
 export const DOMAIN_CHECKS = ["matched", "free-email", "suspicious", "unverified"] as const;
 export const EXTERNAL_STATUSES = ["complete", "failed", "saved-unavailable", "not-needed"] as const;
 export const SOURCE_KINDS = ["liner", "cache", "mixed", "curated", "local"] as const;
@@ -50,6 +51,7 @@ export interface AssessmentDetails {
   industry: string | null;
   memoIntent: MemoIntent;
   memoQuote: string | null;
+  memoSource?: "liner";
   externalStatus: (typeof EXTERNAL_STATUSES)[number];
   sourceKind: (typeof SOURCE_KINDS)[number];
 }

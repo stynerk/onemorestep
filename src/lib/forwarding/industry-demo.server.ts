@@ -4,7 +4,7 @@ import { flowlineSources } from "./flowline-sources";
 import { createIndustryState, medicom, regionalHandoffForPolicy, type DemoIndustry, type DemoIndustryOption } from "./industry-demo";
 import { classifyLead } from "./verdict";
 import type { Source } from "../liner-search";
-import type { LeadInput } from "./types";
+import type { InquiryIntent, LeadInput } from "./types";
 
 type StoredEvidence = { searchedAt: string; sources: Source[] };
 export type SavedIndustry = { demo: Extract<DemoIndustry, { id: "b2b-saas" }>; evidence: Readonly<Partial<Record<string, StoredEvidence>>> };
@@ -22,7 +22,7 @@ export function getSavedIndustry(id: string): SavedIndustry | undefined {
   return id === "b2b-saas" ? savedIndustries[id] : undefined;
 }
 
-export function assessSavedIndustryLead(industry: SavedIndustry, lead: LeadInput, regionalCountry = lead.country) {
+export function assessSavedIndustryLead(industry: SavedIndustry, lead: LeadInput, regionalCountry = lead.country, intent?: InquiryIntent | null) {
   const evidence = Object.hasOwn(industry.evidence, lead.id) ? industry.evidence[lead.id] : undefined;
   const result = classifyLead(lead, {
     // Use the frozen classifier's saved-cache input for reviewed public evidence as well as recorded results.
@@ -30,7 +30,7 @@ export function assessSavedIndustryLead(industry: SavedIndustry, lead: LeadInput
     status: evidence ? "complete" : "saved-unavailable",
     sources: evidence?.sources ?? [],
     searchedAt: evidence?.searchedAt ?? industry.demo.seed.policy.referenceDate,
-  }, regionalCountry);
+  }, regionalCountry, intent);
   const state = createIndustryState(industry.demo);
   const policy = industry.demo.seed.policy;
   let { handoff } = result.assessment;

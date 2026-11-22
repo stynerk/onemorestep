@@ -2,7 +2,7 @@ import { searchLiner } from "../liner-search";
 import type { LinerSearchResult, Source } from "../liner-search";
 import { locales } from "./institution-policy";
 import { savedInstitutionSources, savedNonMatchSearchedAt, savedSourcesReviewedAt } from "./saved-institution-sources";
-import type { LeadInput } from "./types";
+import type { InquiryIntent, LeadInput } from "./types";
 import { classifyLead } from "./verdict";
 
 const cacheVersion = "institution-extraction-v1";
@@ -12,6 +12,12 @@ const maximumRetryDelayMs = 8000;
 
 type SearchSuccess = { ok: true; sources: Source[]; searchedAt: string; fromCache: boolean };
 type QueryResult = SearchSuccess | Extract<LinerSearchResult, { ok: false }>;
+type AssessmentConfig = {
+  mode?: string;
+  apiKey?: string;
+  regionalCountry?: string;
+  intent?: InquiryIntent | null | Promise<InquiryIntent | null>;
+};
 type Options = {
   fetcher?: typeof fetch;
   now?: () => number;
@@ -99,10 +105,10 @@ export function createAssessmentService(options: Options = {}) {
   }
 
   return {
-    async assess(lead: LeadInput, config: { mode?: string; apiKey?: string; regionalCountry?: string }) {
+    async assess(lead: LeadInput, config: AssessmentConfig) {
       const nowIso = () => new Date(now()).toISOString();
       if (!lead.institution.trim()) {
-        return classifyLead(lead, { sources: [], searchedAt: nowIso(), kind: "local", status: "not-needed" }, config.regionalCountry);
+        return classifyLead(lead, { sources: [], searchedAt: nowIso(), kind: "local", status: "not-needed" }, config.regionalCountry, await config.intent);
       }
       const apiKey = config.apiKey?.trim();
       if (config.mode?.trim() !== "live" || !apiKey) {
@@ -111,7 +117,7 @@ export function createAssessmentService(options: Options = {}) {
         return classifyLead(lead, {
           sources, searchedAt: savedAt ?? nowIso(), kind: "curated",
           status: savedAt ? "complete" : "saved-unavailable",
-        }, config.regionalCountry);
+        }, config.regionalCountry, await config.intent);
       }
 
       const { queries, language, countryCode } = queriesFor(lead);
@@ -125,7 +131,7 @@ export function createAssessmentService(options: Options = {}) {
         searchedAt: successes.map((result) => result.searchedAt).sort().at(-1) ?? nowIso(),
         kind,
         status: complete ? "complete" : "failed",
-      }, config.regionalCountry);
+      }, config.regionalCountry, await config.intent);
     },
   };
 }
