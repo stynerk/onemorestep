@@ -240,6 +240,13 @@ test("공개 정답 대조 패널에 최종 측정과 오판 사례를 표시한
   await page.getByText("판정 정답 대조", { exact: true }).click();
   const panel = page.locator("details").filter({ has: page.getByText("판정 정답 대조", { exact: true }) });
   await expect(panel.getByText(/공개 문의함은 저장된 근거/u)).toBeVisible();
+  const blind = panel.getByRole("region", { name: "새 블라인드 평가 30건" });
+  await expect(blind.getByText("17/30", { exact: true })).toBeVisible();
+  await expect(blind.getByText("21/30", { exact: true })).toBeVisible();
+  await expect(blind.getByText(/유효 → 무효 0건, 거짓 유효 0건/u)).toBeVisible();
+  await expect(blind.getByRole("link", { name: "새 블라인드 평가 보고서" })).toHaveAttribute(
+    "href", /\/docs\/qa\/BLIND_EVALUATION_2026-11-23\.md$/u,
+  );
   for (const score of ["30/30", "28/30", "33/70", "47/70"]) {
     await expect(panel.getByText(score, { exact: true })).toBeVisible();
   }
