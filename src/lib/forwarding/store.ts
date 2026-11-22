@@ -1,10 +1,11 @@
 import { locales } from "./institution-policy";
+import { DIRECTION_ACTOR, matchesPreviousDirectionConfirmation } from "./direction-resolution";
 import { regionalSalesHandoff } from "./handoff";
 import { createIndustryState, medicom, regionalHandoffForPolicy, type DemoIndustry } from "./industry-demo";
 import { mailKindForLead } from "./inbox";
 import { openAssignment, reassignmentProposal, reassignmentTarget } from "./reassignment";
 import { DOMAIN_CHECKS, EXTERNAL_STATUSES, MEMO_INTENTS, REGIONS, SOURCE_KINDS, VERDICTS, WORKFLOW_STATES } from "./types";
-import type { Assessment, ForwardingEvent, ForwardingState } from "./types";
+import type { Assessment, DirectionConfirmation, ForwardingEvent, ForwardingState } from "./types";
 
 export const FORWARDING_STORAGE_KEY = "mirinae.forwarding.v1";
 export const FORWARDING_STORAGE_VERSION = 1;
@@ -65,9 +66,34 @@ function isHandoff(value: unknown, verdict: unknown, state: ForwardingState) {
   }
 }
 
+function isDirectionConfirmation(value: unknown): value is DirectionConfirmation {
+  if (!isObject(value) || value.actor !== DIRECTION_ACTOR || !isTimestamp(value.at) || !isText(value.note, 1000)
+    || typeof value.previous !== "boolean" || !member(value.kind, ["domain", "location", "spoof", "intent", "evidence"])) return false;
+  const fields = ["kind", "choice", "actor", "at", "note", "previous"];
+  if (value.previous && (value.choice === "unknown" || (value.kind !== "domain" && value.kind !== "location"))) return false;
+  if (value.kind === "location" && value.choice !== "unknown") {
+    return exactly(value, [...fields, "country"]) && member(value.choice, ["yes", "other-country"])
+      && typeof value.country === "string" && Object.hasOwn(locales, value.country);
+  }
+  return exactly(value, fields) && (value.kind === "evidence" ? value.choice === "unknown" : member(value.choice, ["yes", "no", "unknown"]));
+}
+
 function isAssessment(value: unknown, state: ForwardingState): value is Assessment {
   if (!isObject(value)) return false;
   const fields = ["verdict", "reason", "sources", "searchedAt", "mode"];
+  if (Object.hasOwn(value, "directionConfirmation")) {
+    fields.push("directionConfirmation");
+    if (!isDirectionConfirmation(value.directionConfirmation)
+      || (value.directionConfirmation.choice === "unknown" && value.verdict !== "ambiguous")
+      || (value.directionConfirmation.choice === "no" && value.verdict !== "invalid")
+      || (value.directionConfirmation.choice !== "no" && value.verdict === "invalid")) return false;
+  }
+  if (Object.hasOwn(value, "directionQuestion")) {
+    fields.push("directionQuestion");
+    const question = value.directionQuestion;
+    if (value.verdict !== "ambiguous" || !isObject(question) || !exactly(question, ["question", "summary"])
+      || !isText(question.question, 400) || !question.question.trim() || !isText(question.summary, 600) || !question.summary.trim()) return false;
+  }
   if (Object.hasOwn(value, "handoff")) {
     fields.push("handoff");
     if (!isHandoff(value.handoff, value.verdict, state)) return false;
@@ -166,6 +192,13 @@ function projectEvent(state: ForwardingState, input: unknown, validateProposal: 
     // Reusing an ID for different content is a conflict rather than a silently lost action.
     const same = canonical(existing) === canonical(input);
     return { ok: same, duplicate: same || undefined, error: same ? undefined : "invalid-event", state: structuredClone(state) };
+  }
+  if (input.type === "assessed" && input.assessment.directionConfirmation) {
+    const confirmation = input.assessment.directionConfirmation;
+    const lead = state.leads.find((row) => row.id === input.leadId)!;
+    if (confirmation.at > input.at || (confirmation.previous && !matchesPreviousDirectionConfirmation(state, lead, confirmation))) {
+      return { ok: false, error: "invalid-event", state: structuredClone(state) };
+    }
   }
   if (input.type === "review-reopened") {
     const status = state.leadStates[input.leadId];

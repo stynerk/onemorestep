@@ -1,5 +1,6 @@
 import { isPublicDemo, linerRuntimeSettings } from "../../../../lib/demo-mode";
 import { createAssessmentService } from "../../../../lib/forwarding/assessment-service";
+import { formulateDirectionQuestion } from "../../../../lib/forwarding/direction-question-router";
 import { lookupSavedDomainEvidence, requestDomainEvidence } from "../../../../lib/forwarding/domain-router";
 import { locales } from "../../../../lib/forwarding/institution-policy";
 import { assessSavedIndustryLeadWithDomainEvidence, getSavedIndustry } from "../../../../lib/forwarding/industry-demo.server";
@@ -61,5 +62,11 @@ export async function POST(request: Request): Promise<Response> {
     : runtime.mode?.trim() === "live" && runtime.apiKey?.trim() ? (evidence) => requestDomainEvidence(evidence, runtime) : undefined;
   const result = saved ? await assessSavedIndustryLeadWithDomainEvidence(saved, input, lead.country, await intent, domainAdvice)
     : await service.assess(input, { ...runtime, regionalCountry: lead.country, intent, domainAdvice });
+  if (result.assessment.verdict === "ambiguous") {
+    const directionQuestion = await formulateDirectionQuestion(input, result.assessment, { ...runtime, publicDemo });
+    if (directionQuestion) return Response.json({
+      leadId: lead.id, ...result, assessment: { ...result.assessment, directionQuestion },
+    }, { headers });
+  }
   return Response.json({ leadId: lead.id, ...result }, { headers });
 }

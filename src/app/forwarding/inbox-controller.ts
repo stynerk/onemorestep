@@ -2,12 +2,14 @@
 
 import { useEffect, useRef, useState } from "react";
 import { recommendDealer, recordDealerOutcome } from "../../lib/forwarding/dealers";
+import { getDirectionQuestion, type DirectionKind } from "../../lib/forwarding/direction-questions";
+import { applyDirectionConfirmation, DIRECTION_ACTOR, directionConfirmationFor, isDirectionAnswerFor } from "../../lib/forwarding/direction-resolution";
 import { regionalSalesHandoff } from "../../lib/forwarding/handoff";
 import { createIndustryState, regionalHandoffForPolicy, type DemoIndustry } from "../../lib/forwarding/industry-demo";
 import { confirmedCountry, confirmedManagerDealer, inboxBucket, lastReply, mailKindForLead, mailRequestsFor, responseDeadline } from "../../lib/forwarding/inbox";
 import { openAssignment, reassignmentTarget, responseClock, type ReassignmentProposal } from "../../lib/forwarding/reassignment";
 import { createBrowserForwardingStore, type StoreResult } from "../../lib/forwarding/store";
-import type { Assessment, DecisionAction, DealerDelivery, DealerOutcome, ForwardingEvent, LeadInput, ReplyKind, WorkflowState } from "../../lib/forwarding/types";
+import type { Assessment, DecisionAction, DealerDelivery, DealerOutcome, DirectionAnswer, ForwardingEvent, ForwardingState, LeadInput, ReplyKind, WorkflowState } from "../../lib/forwarding/types";
 import type { ForwardingMailResult } from "../../lib/forwarding/forwarding-mail.server";
 
 type Assessed = { assessment: Assessment; workflow: WorkflowState };
@@ -116,6 +118,60 @@ export function useInbox(publicDemo: boolean, liveAssessment: boolean, industry:
     }));
   }
 
+  function needsDirection(snapshot: ForwardingState, lead: LeadInput) {
+    const status = snapshot.leadStates[lead.id];
+    const assessment = status?.assessment;
+    if (status?.workflow !== "decision-pending" || assessment?.verdict !== "ambiguous"
+      || snapshot.events.findLast((event) => event.leadId === lead.id && (event.type === "assessed" || event.type === "decision"))?.type === "decision") return false;
+    const question = getDirectionQuestion(lead, assessment);
+    return assessment.directionConfirmation?.kind !== question.kind && assessment.directionConfirmation?.choice !== "unknown";
+  }
+
+  function applyRememberedDirections(snapshot: ForwardingState, lead: LeadInput, initial: Assessment) {
+    let assessment = initial;
+    const applied = new Set<DirectionKind>();
+    if (initial.directionConfirmation) applied.add(initial.directionConfirmation.kind);
+    while (assessment.verdict === "ambiguous" && assessment.directionConfirmation?.choice !== "unknown") {
+      const confirmation = directionConfirmationFor(snapshot, lead, assessment);
+      if (!confirmation || applied.has(confirmation.kind)) break;
+      applied.add(confirmation.kind);
+      assessment = applyDirectionConfirmation(lead, assessment, confirmation, snapshot);
+    }
+    return assessment;
+  }
+
+  function saveAssessment(lead: LeadInput, assessment: Assessment, workflow: WorkflowState, previous: ForwardingState, country?: string) {
+    if (assessment.verdict === "valid") {
+      previous.leadStates[lead.id].assessment = assessment;
+      const recommendation = recommendDealer(previous, lead.id, { country: confirmedCountry(previous, lead.id) ?? country });
+      if (recommendation?.route === "manager-confirmation" && !lastReply(previous.events, lead.id, "manager-confirmation")?.selection) {
+        workflow = "manager-confirmation-pending";
+      }
+    }
+    const event: ForwardingEvent = { ...eventBase(lead.id), type: "assessed", assessment, workflow };
+    if (!append(event)) return false;
+    offerMail(event, lead, previous.events);
+    if (industry.id === "medicom" && lead.id === "L06" && assessment.verdict === "valid") setSelected((current) => current ?? lead.id);
+    return true;
+  }
+
+  function directionWorkflow(assessment: Assessment): WorkflowState {
+    return assessment.verdict === "country-check" || assessment.verdict === "partnership-check" ? "reply-pending" : "decision-pending";
+  }
+
+  function answerDirection(lead: LeadInput, answer: DirectionAnswer & { note: string }) {
+    const snapshot = store.current?.snapshot();
+    if (!snapshot || !ready || batchRunning.current || assessing.current.has(lead.id) || !needsDirection(snapshot, lead)) return;
+    const assessment = snapshot.leadStates[lead.id].assessment;
+    if (!assessment || !isDirectionAnswerFor(lead, assessment, answer)) return;
+    const confirmation = { ...answer, note: answer.note.trim().slice(0, 400), at: new Date().toISOString(),
+      actor: DIRECTION_ACTOR, previous: false };
+    const updated = applyDirectionConfirmation(lead, assessment, confirmation, snapshot);
+    if (updated === assessment || !saveAssessment(lead, updated, directionWorkflow(updated), snapshot)) return;
+    setSelected(lead.id);
+    return answer.choice === "unknown" || updated.verdict !== "ambiguous" || getDirectionQuestion(lead, updated).kind === answer.kind;
+  }
+
   async function assess(lead: LeadInput) {
     const navigation = pageExit.current;
     if (!navigation || navigation.signal.aborted || assessing.current.has(lead.id)) return;
@@ -128,7 +184,7 @@ export function useInbox(publicDemo: boolean, liveAssessment: boolean, industry:
     try {
       const snapshot = store.current?.snapshot();
       if (!snapshot) return;
-      const country = confirmedCountry(snapshot, lead.id);
+      const country = lastReply(snapshot.events, lead.id, "country")?.selection;
       const partnershipPurchase = lastReply(snapshot.events, lead.id, "partnership")?.selection === "purchase";
       let result: Assessed;
       try {
@@ -156,20 +212,8 @@ export function useInbox(publicDemo: boolean, liveAssessment: boolean, industry:
       if (exit.aborted) return;
       const previous = store.current?.snapshot();
       if (!previous) return;
-      const assessment = result.assessment;
-      let workflow = result.workflow;
-      if (assessment.verdict === "valid") {
-        previous.leadStates[lead.id].assessment = assessment;
-        const recommendation = recommendDealer(previous, lead.id, { country });
-        if (recommendation?.route === "manager-confirmation" && !lastReply(previous.events, lead.id, "manager-confirmation")?.selection) {
-          workflow = "manager-confirmation-pending";
-        }
-      }
-      const event: ForwardingEvent = { ...eventBase(lead.id), type: "assessed", assessment, workflow };
-      if (append(event)) {
-        offerMail(event, lead, previous.events);
-        if (industry.id === "medicom" && lead.id === "L06" && assessment.verdict === "valid") setSelected((current) => current ?? lead.id);
-      }
+      const assessment = applyRememberedDirections(previous, country ? { ...lead, country } : lead, result.assessment);
+      saveAssessment(lead, assessment, assessment === result.assessment ? result.workflow : directionWorkflow(assessment), previous, country);
     } finally {
       window.removeEventListener("beforeunload", cancelOnReload);
       assessing.current.delete(lead.id);
@@ -271,6 +315,7 @@ export function useInbox(publicDemo: boolean, liveAssessment: boolean, industry:
 
   return { state, ready, publicDemo, dealerLabel: industry.dealer, now, responseNow, simulatedNow, clearSimulation: () => setSimulatedNow(null),
     error, running, pending, mail, selected, setSelected, assess, assessAll, decide,
+    directionLeads: state.leads.filter((lead) => needsDirection(state, lead)), answerDirection,
     bulkInvalid, reopen, saveReply, saveOutcome, simulateDeadline, approveReassignment, reset, mailFor };
 }
 

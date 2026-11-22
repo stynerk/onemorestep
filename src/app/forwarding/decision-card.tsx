@@ -3,12 +3,13 @@
 import { useState } from "react";
 import { industryHandoffForLead } from "../../lib/forwarding/industry-demo";
 import { dealerScore, recommendDealer, type DealerScore } from "../../lib/forwarding/dealers";
+import { directionChoiceLabel } from "../../lib/forwarding/direction-questions";
 import { confirmedCountry, confirmedManagerDealer, hasStaleEvidence, maskEmail, maskPhone, responseDeadline, verdictLabels } from "../../lib/forwarding/inbox";
 import { locales } from "../../lib/forwarding/institution-policy";
 import { renderForwardingMail } from "../../lib/forwarding/mail-template";
 import { forwardingPolicy } from "../../lib/forwarding/policy";
 import { currentDelivery, openAssignment, reassignmentProposal, type ReassignmentProposal } from "../../lib/forwarding/reassignment";
-import type { Assessment, DealerDelivery, DealerOutcome, LeadInput, MailKind, ReplyKind } from "../../lib/forwarding/types";
+import type { Assessment, DealerDelivery, DealerOutcome, DirectionConfirmation as Confirmation, ForwardingEvent, LeadInput, MailKind, ReplyKind } from "../../lib/forwarding/types";
 import { handoffLabel } from "./handoff-label";
 import type { InboxController } from "./inbox-controller";
 
@@ -24,7 +25,17 @@ const outcomeLabels: Record<DealerOutcome, string> = { deal: "deal", "no-deal": 
 const mailLabels: Record<MailKind, string> = { "dealer-summary": "딜러용 요약", "country-check": "국가 확인", "partnership-check": "제휴 확인", "manager-confirmation": "담당자 확인", operations: "운영 알림" };
 const statusLabels = { sent: "테스트 메일 발송 완료", failed: "발송 실패", unknown: "전송 불명", blocked: "수신자 검증으로 차단" };
 
-function Evidence({ assessment, historicalCount }: { assessment: Assessment; historicalCount: number }) {
+function confirmationsFor(events: ForwardingEvent[], leadId: string) {
+  const confirmations = new Map<Confirmation["kind"], Confirmation>();
+  for (const event of events.filter((row) => row.leadId === leadId && row.type === "assessed").reverse()) {
+    if (event.type !== "assessed" || !event.assessment.directionConfirmation) break;
+    const confirmation = event.assessment.directionConfirmation;
+    if (!confirmations.has(confirmation.kind)) confirmations.set(confirmation.kind, confirmation);
+  }
+  return [...confirmations.values()].reverse();
+}
+
+function Evidence({ assessment, historicalCount, confirmedDomain }: { assessment: Assessment; historicalCount: number; confirmedDomain: boolean }) {
   const detail = assessment.details;
   const domainEvidence = detail?.domainEvidence;
   return <div className="evidence">
@@ -35,7 +46,7 @@ function Evidence({ assessment, historicalCount }: { assessment: Assessment; his
         {assessment.sources.map((url) => <li key={url}><a href={url} target="_blank" rel="noopener noreferrer">{new URL(url).hostname}</a></li>)}
       </ul>}
     </div>
-    <div><h3>이메일 도메인</h3><p>{detail ? domainLabels[detail.domain] : "확인 전"}</p>
+    <div><h3>이메일 도메인</h3><p>{confirmedDomain ? "담당자가 기관 소속 확인" : detail ? domainLabels[detail.domain] : "확인 전"}</p>
       {domainEvidence && <div className="domain-evidence">
         <p><strong>Liner 도메인 판단 · {ownershipLabels[domainEvidence.ownership]}</strong></p>
         <blockquote>{domainEvidence.quote}</blockquote>
@@ -144,7 +155,9 @@ function ReassignmentCard({ proposal, approve, disabled, dealerLabel, days }: {
   </section>;
 }
 
-export function DecisionCard({ lead, inbox }: { lead: LeadInput; inbox: InboxController }) {
+export function DecisionCard({ lead, inbox, openDirection }: {
+  lead: LeadInput; inbox: InboxController; openDirection?: () => void;
+}) {
   const [changeDealer, setChangeDealer] = useState(false);
   const [dealerId, setDealerId] = useState("");
   const [reason, setReason] = useState("");
@@ -152,6 +165,8 @@ export function DecisionCard({ lead, inbox }: { lead: LeadInput; inbox: InboxCon
   const days = state.policy?.aggregationDays ?? forwardingPolicy.aggregationDays;
   const status = state.leadStates[lead.id];
   const assessment = status.assessment;
+  const confirmations = assessment?.directionConfirmation ? confirmationsFor(state.events, lead.id) : [];
+  const confirmedDomain = confirmations.some(({ kind, choice }) => choice === "yes" && (kind === "domain" || kind === "spoof"));
   const handoff = industryHandoffForLead(state, lead);
   const country = confirmedCountry(state, lead.id) ?? lead.country;
   const recommendation = recommendDealer(state, lead.id, { country });
@@ -184,7 +199,8 @@ export function DecisionCard({ lead, inbox }: { lead: LeadInput; inbox: InboxCon
   const runMail = inbox.mailFor(lead);
   const stale = assessment && hasStaleEvidence(assessment, inbox.now);
   const fault = assessment?.details?.externalStatus === "failed";
-  const recommendationText = assigned ? assigned.name + "에 배정했습니다." : dealer ? dealer.name + "에 넘기세요." :
+  const recommendationText = openDirection ? "담당자에게 진행 방향을 물어요." :
+    assigned ? assigned.name + "에 배정했습니다." : dealer ? dealer.name + "에 넘기세요." :
     recommendation?.route === "manager-direct" ? recommendation.manager.name + "에게 넘기세요." :
     recommendation?.route === "manager-confirmation" ? recommendation.manager.name + "의 " + dealerLabel + " 확인이 필요해요." :
     handoff?.kind === "hr" ? "인사팀에서 채용 문의를 확인하세요." :
@@ -216,13 +232,15 @@ export function DecisionCard({ lead, inbox }: { lead: LeadInput; inbox: InboxCon
         <p className="section-kicker">미리내 추천</p>
         <h3>{recommendationText}</h3>
         <p>{assessment.reason}</p>
+        {openDirection && <a href="#direction-questions" onClick={openDirection}>질문에 답하기</a>}
         {handoff && <dl className="handoff-summary">
-          <dt>넘길 곳</dt><dd>{handoffLabel(handoff, state.dealers, dealerLabel)}</dd>
+          <dt>{openDirection ? "모르겠으면 넘길 곳" : "넘길 곳"}</dt><dd>{handoffLabel(handoff, state.dealers, dealerLabel)}</dd>
         </dl>}
       </section>
       <section>
         <div className="section-heading"><h3>판정 근거</h3><span className={"verdict " + assessment.verdict}>{verdictLabels[assessment.verdict]}</span></div>
-        <Evidence assessment={assessment} historicalCount={historicalCount} />
+        <Evidence assessment={assessment} historicalCount={historicalCount} confirmedDomain={confirmedDomain} />
+        {confirmations.map((confirmation) => <DirectionConfirmation key={confirmation.kind} confirmation={confirmation} />)}
         {reference > 0 && <p className="muted">과거 거래 관계 {reference}건</p>}
         {fault && <button className="button button-light" disabled={disabled} onClick={() => void inbox.assess(lead)}>외부 확인 다시 시도</button>}
       </section>
@@ -286,4 +304,13 @@ export function DecisionCard({ lead, inbox }: { lead: LeadInput; inbox: InboxCon
       </section>}
     </div>}
   </article>;
+}
+
+function DirectionConfirmation({ confirmation }: { confirmation: NonNullable<Assessment["directionConfirmation"]> }) {
+  const { kind, choice, at, actor, note, country, previous } = confirmation;
+  return <div className="direction-confirmation">
+    <p><strong>{previous ? "이전 담당자 확인" : "담당자 확인"}</strong>{" ("}<time dateTime={at}>{time(at)}</time>{")"}</p>
+    <p>{actor} · {directionChoiceLabel(kind, choice)}{country && " · " + country}</p>
+    {note && <p>{note}</p>}
+  </div>;
 }

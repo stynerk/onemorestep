@@ -31,7 +31,10 @@ export function lastReply(events: ForwardingEvent[], leadId: string, kind: Reply
 }
 
 export function confirmedCountry(state: ForwardingState, leadId: string) {
-  return lastReply(state.events, leadId, "country")?.selection;
+  const assessment = state.leadStates[leadId]?.assessment;
+  const country = assessment?.directionConfirmation && assessment.verdict === "valid" && assessment.details?.countries.length === 1
+    ? assessment.details.countries[0] : undefined;
+  return country ?? lastReply(state.events, leadId, "country")?.selection;
 }
 
 export function confirmedManagerDealer(state: ForwardingState, leadId: string) {
