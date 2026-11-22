@@ -56,6 +56,8 @@ export async function POST(request: Request): Promise<Response> {
     : runtime.mode?.trim() === "live" && lead.institution.trim() ? requestInquiryIntent(memo, runtime) : null;
   const domainAdvice: DomainEvidenceResolver | undefined = publicDemo
     ? (evidence) => lookupSavedDomainEvidence(evidence, savedDomainEvidence)
+      // A confirmed country changes the routing decision, but the ownership sources are the same.
+      ?? (evidence.country === lead.country ? null : lookupSavedDomainEvidence({ ...evidence, country: lead.country }, savedDomainEvidence))
     : runtime.mode?.trim() === "live" && runtime.apiKey?.trim() ? (evidence) => requestDomainEvidence(evidence, runtime) : undefined;
   const result = saved ? await assessSavedIndustryLeadWithDomainEvidence(saved, input, lead.country, await intent, domainAdvice)
     : await service.assess(input, { ...runtime, regionalCountry: lead.country, intent, domainAdvice });
