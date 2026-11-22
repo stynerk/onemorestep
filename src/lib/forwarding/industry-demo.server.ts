@@ -2,7 +2,7 @@ import { rankAvailableDealers } from "./dealers";
 import { flowline } from "./flowline";
 import { flowlineSources } from "./flowline-sources";
 import { createIndustryState, medicom, regionalHandoffForPolicy, type DemoIndustry, type DemoIndustryOption } from "./industry-demo";
-import { classifyLead } from "./verdict";
+import { classifyLead, classifyLeadWithDomainEvidence, type DomainEvidenceResolver, type SearchEvidence } from "./verdict";
 import type { Source } from "../liner-search";
 import type { InquiryIntent, LeadInput } from "./types";
 
@@ -22,15 +22,18 @@ export function getSavedIndustry(id: string): SavedIndustry | undefined {
   return id === "b2b-saas" ? savedIndustries[id] : undefined;
 }
 
-export function assessSavedIndustryLead(industry: SavedIndustry, lead: LeadInput, regionalCountry = lead.country, intent?: InquiryIntent | null) {
+function savedSearchEvidence(industry: SavedIndustry, lead: LeadInput): SearchEvidence {
   const evidence = Object.hasOwn(industry.evidence, lead.id) ? industry.evidence[lead.id] : undefined;
-  const result = classifyLead(lead, {
+  return {
     // Use the frozen classifier's saved-cache input for reviewed public evidence as well as recorded results.
     kind: "cache",
     status: evidence ? "complete" : "saved-unavailable",
     sources: evidence?.sources ?? [],
     searchedAt: evidence?.searchedAt ?? industry.demo.seed.policy.referenceDate,
-  }, regionalCountry, intent);
+  };
+}
+
+function projectIndustryHandoff(industry: SavedIndustry, lead: LeadInput, regionalCountry: string, result: ReturnType<typeof classifyLead>) {
   const state = createIndustryState(industry.demo);
   const policy = industry.demo.seed.policy;
   let { handoff } = result.assessment;
@@ -43,4 +46,15 @@ export function assessSavedIndustryLead(industry: SavedIndustry, lead: LeadInput
     handoff = regionalHandoffForPolicy(handoff, regionalCountry, policy);
   }
   return { ...result, assessment: { ...result.assessment, handoff } };
+}
+
+export function assessSavedIndustryLead(industry: SavedIndustry, lead: LeadInput, regionalCountry = lead.country, intent?: InquiryIntent | null) {
+  return projectIndustryHandoff(industry, lead, regionalCountry, classifyLead(lead, savedSearchEvidence(industry, lead), regionalCountry, intent));
+}
+
+export async function assessSavedIndustryLeadWithDomainEvidence(
+  industry: SavedIndustry, lead: LeadInput, regionalCountry = lead.country, intent?: InquiryIntent | null, domainAdvice?: DomainEvidenceResolver,
+) {
+  const result = await classifyLeadWithDomainEvidence(lead, savedSearchEvidence(industry, lead), regionalCountry, intent, domainAdvice);
+  return projectIndustryHandoff(industry, lead, regionalCountry, result);
 }

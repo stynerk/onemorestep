@@ -52,6 +52,8 @@ export const thirdPartyDomains = [
   "zoominfo.com", "healthgrades.com", "wixsite.com", "blogspot.com", "wordpress.com",
 ];
 
+export const reservedDomains = ["example", "example.com", "example.net", "example.org", "test", "invalid", "localhost"];
+
 export const freeEmailDomains = [
   "gmail.com", "googlemail.com", "naver.com", "daum.net", "hanmail.net", "yahoo.com", "outlook.com",
   "hotmail.com", "live.com", "icloud.com", "proton.me", "protonmail.com", "qq.com", "163.com",

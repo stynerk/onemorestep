@@ -102,17 +102,24 @@ test("offline Flowline assessment reports verdict and handoff against the indepe
     globalThis.fetch = originalFetch;
   });
 
-  const state = createIndustryState(industry.demo);
-  const actual = [];
-  for (const [id, , , , , , authorVerdict, authorHandoff] of leadRows) {
+  const assess = async (id: string, reply: { country?: string; partnershipPurchase?: true } = {}) => {
     const response = await POST(new Request("https://public-demo.example.test/api/forwarding/assess", {
-      method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ industry: industry.demo.id, leadId: id }),
+      method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ industry: industry.demo.id, leadId: id, ...reply }),
     }));
     assert.equal(response.status, 200, id);
     assert.equal(response.headers.get("cache-control"), "no-store");
     const { leadId, assessment } = await response.json() as { leadId: string; assessment: Assessment };
     assert.equal(leadId, id);
     assert.equal(assessment.mode, "saved", id);
+    return assessment;
+  };
+
+  const state = createIndustryState(industry.demo);
+  const stored = new Map<string, Assessment>();
+  const actual = [];
+  for (const [id, , , , , , authorVerdict, authorHandoff] of leadRows) {
+    const assessment = await assess(id);
+    stored.set(id, assessment);
     assert.equal(assessment.details?.sourceKind, "cache", id);
     assert.deepEqual(new Set(assessment.sources), new Set(industry.evidence[id]?.sources.map(({ url }) => url)), id);
     const expectedVerdict = authorVerdict.split("(")[0];
@@ -122,6 +129,18 @@ test("offline Flowline assessment reports verdict and handoff against the indepe
       id, expectedVerdict, expectedHandoff: authorHandoff, verdict, handoff, reason: assessment.reason,
       domain: assessment.details?.domain, memoIntent: assessment.details?.memoIntent, evidence: assessment.details?.externalStatus,
     });
+  }
+  for (const [id, verdict, reply] of [
+    ["I05", "country-check", { country: "독일" }],
+    ["I06", "partnership-check", { partnershipPurchase: true }],
+  ] as const) {
+    const before = stored.get(id);
+    assert.equal(before?.verdict, verdict, id);
+    assert.equal(before.details?.domainEvidence?.ownership, "belongs", id);
+    const after = await assess(id, reply);
+    assert.equal(after.verdict, "valid", id);
+    assert.equal(handoffLabel(after.handoff, state), "파트너: Rhein Digital GmbH", id);
+    assert.deepEqual(after.details?.domainEvidence, before.details.domainEvidence, id);
   }
   assert.equal(actual.length, 10);
   assert.equal(upstreamCalls, 0);

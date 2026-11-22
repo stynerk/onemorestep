@@ -38,6 +38,17 @@ const isSource = (value: unknown): value is string => {
   if (!isText(value, 2000)) return false;
   try { const url = new URL(value); return ["http:", "https:"].includes(url.protocol) && !url.username && !url.password; } catch { return false; }
 };
+function isDomainEvidence(value: unknown, sources: unknown) {
+  if (!isObject(value) || !exactly(value, ["ownership", "quote", "url", "location"])
+    || !member(value.ownership, ["belongs", "not_belongs", "unknown"]) || !Array.isArray(sources)) return false;
+  const citation = (proof: Record<string, unknown>) =>
+    isText(proof.quote, 300) && Boolean(proof.quote.trim()) && isSource(proof.url) && sources.includes(proof.url);
+  if (!citation(value)) return false;
+  const location = value.location;
+  return location === null || (value.ownership === "belongs" && isObject(location) && exactly(location, ["country", "quote", "url"])
+    && typeof location.country === "string" && Object.hasOwn(locales, location.country) && citation(location));
+}
+
 function isHandoff(value: unknown, verdict: unknown, state: ForwardingState) {
   if (!isObject(value)) return false;
   switch (value.kind) {
@@ -69,6 +80,10 @@ function isAssessment(value: unknown, state: ForwardingState): value is Assessme
     if (Object.hasOwn(details, "memoSource")) {
       if (details.memoSource !== "liner" || !isText(details.memoQuote, 200) || !details.memoQuote.trim()) return false;
       detailFields.push("memoSource");
+    }
+    if (Object.hasOwn(details, "domainEvidence")) {
+      if (!isDomainEvidence(details.domainEvidence, value.sources)) return false;
+      detailFields.push("domainEvidence");
     }
     if (!exactly(details, detailFields) || !member(details.domain, DOMAIN_CHECKS) || !member(details.memoIntent, MEMO_INTENTS)
       || !member(details.externalStatus, EXTERNAL_STATUSES) || !member(details.sourceKind, SOURCE_KINDS)
