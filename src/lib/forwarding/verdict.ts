@@ -1,8 +1,9 @@
 import type { Source } from "../liner-search";
 import { handoffForAssessment } from "./handoff";
+import { validateInquiryIntent } from "./intent-router";
 import { freeEmailDomains, institutionProfiles, locales, thirdPartyDomains } from "./institution-policy";
 import { forwardingPolicy } from "./policy";
-import type { Assessment, AssessmentDetails, LeadInput, MemoIntent, Verdict, WorkflowState } from "./types";
+import type { Assessment, AssessmentDetails, InquiryIntent, LeadInput, MemoIntent, Verdict, WorkflowState } from "./types";
 
 type SearchEvidence = {
   sources: Source[];
@@ -215,7 +216,9 @@ function domainEvidence(institution: string, emailDomain: string | undefined, of
   return [otherInstitution || lookalike ? "suspicious" : "unverified", []];
 }
 
-export function classifyLead(lead: LeadInput, evidence: SearchEvidence, regionalCountry = lead.country): { assessment: Assessment; workflow: WorkflowState } {
+export function classifyLead(
+  lead: LeadInput, evidence: SearchEvidence, regionalCountry = lead.country, inquiryIntent?: InquiryIntent | null,
+): { assessment: Assessment; workflow: WorkflowState } {
   const liveEvidence = evidence.kind === "liner" || evidence.kind === "cache" || evidence.kind === "mixed";
   const completeLiveEvidence = liveEvidence && evidence.status === "complete";
   const emailDomain = /^[^\s@]+@([a-z0-9]+(?:[.-][a-z0-9]+)+)$/i.exec(lead.email.trim())?.[1].toLowerCase();
@@ -251,8 +254,6 @@ export function classifyLead(lead: LeadInput, evidence: SearchEvidence, regional
   const inferredOfficial = directOfficial.length > 0 ? directOfficial : supplementalOfficial;
   const official = inferredOfficial.length > 0 ? inferredOfficial : configuredOfficial;
   const domain = inferredOfficial.length > 0 ? "matched" : suspectPublicMismatch ? "suspicious" : configuredDomain;
-  const intent = memoMatch(lead.memo);
-  const memoIntent = intent?.[0] ?? "unknown";
   const textCountries = findCountries(official, names, completeLiveEvidence && domain === "matched");
   const domainCountries = completeLiveEvidence && textCountries.length === 0
     && official.length > 0 && domain === "matched" ? countriesFromDomains(official, verifiedAlias) : [];
@@ -260,54 +261,68 @@ export function classifyLead(lead: LeadInput, evidence: SearchEvidence, regional
   const domainReason = domainCountries.length === 1 ? " 기관 소재지는 확인된 기관 도메인의 국가 코드를 근거로 추정했어요." : "";
   const industryText = official.map(({ title, description }) => title + " " + description).join(" ");
   const industry = industryRules.find(([, pattern]) => pattern.test(industryText))?.[0] ?? null;
-  const result = (verdict: Verdict, reason: string) => ({
-    assessment: {
-      verdict, reason,
-      handoff: handoffForAssessment(lead, verdict, memoIntent, regionalCountry),
-      sources: [...new Set([...official.map(({ url }) => url), ...aliasSources, ...matching.map(({ url }) => url), ...evidence.sources.map(({ url }) => url)])],
-      searchedAt: evidence.searchedAt,
-      mode: evidence.kind === "liner" || evidence.kind === "mixed" ? "live" as const : "saved" as const,
-      details: { domain, countries, industry, memoIntent, memoQuote: intent?.[1] ?? null,
-        externalStatus: evidence.status, sourceKind: evidence.kind },
-    },
-    workflow: verdict === "country-check" || verdict === "partnership-check" ? "reply-pending" as const : "decision-pending" as const,
-  });
+  const ruleMatch = memoMatch(lead.memo);
+  const ruleIntent = ruleMatch?.[0] ?? "unknown";
+  const ruleSpam = completeLiveEvidence && spamPromotion.test(lead.memo);
+  const decide = (memoIntent: MemoIntent, memoQuote: string | null, memoSource?: "liner") => {
+    const result = (verdict: Verdict, reason: string) => ({
+      assessment: {
+        verdict, reason,
+        handoff: handoffForAssessment(lead, verdict, memoIntent, regionalCountry),
+        sources: [...new Set([...official.map(({ url }) => url), ...aliasSources, ...matching.map(({ url }) => url), ...evidence.sources.map(({ url }) => url)])],
+        searchedAt: evidence.searchedAt,
+        mode: evidence.kind === "liner" || evidence.kind === "mixed" ? "live" as const : "saved" as const,
+        details: { domain, countries, industry, memoIntent, memoQuote, ...(memoSource ? { memoSource } : {}),
+          externalStatus: evidence.status, sourceKind: evidence.kind },
+      },
+      workflow: verdict === "country-check" || verdict === "partnership-check" ? "reply-pending" as const : "decision-pending" as const,
+    });
 
-  if (memoIntent === "job") return result("invalid", "채용 문의로 확인됐어요.");
-  if (!lead.institution.trim() || /^(?:individual|none|n\/?a|개인|없음)$/iu.test(lead.institution.trim())) {
-    return result("invalid", "확인 가능한 소속 기관이 없습니다.");
-  }
-  if (memoIntent === "sales") return result("invalid", "제품 구매 문의 대신 영업 제안으로 확인됐어요.");
-  if (memoIntent === "student") return result("invalid", "과제나 논문 자료 요청으로 확인됐어요.");
-  if (completeLiveEvidence && spamPromotion.test(lead.memo)) return result("invalid", "스팸성 홍보 문의로 확인됐어요.");
-  if (evidence.status === "complete" && matching.length === 0 && !completeLiveEvidence) return result("invalid", "공개 정보에서 기관을 찾지 못함");
-  if (evidence.status === "failed") {
-    const warning = domain === "suspicious" ? " 이메일 도메인의 사칭 의심도 확인해 주세요." : "";
-    return result("ambiguous", "외부 확인 실패, 다시 시도" + warning);
-  }
-  if (domain === "suspicious") {
-    if (suspectPublicMismatch) return result("ambiguous", "공개 출처에서 기관을 확인했지만 이메일 도메인이 달라 사칭 여부를 확인해야 해요.");
-    return result("ambiguous", "이메일이 공식 도메인과 다른 닮은꼴 또는 타기관 도메인이어서 사칭 의심으로 분류했어요.");
-  }
-  if (completeLiveEvidence && domains.length === 0 && reservedEmail) {
-    return result("invalid", "예시용 또는 테스트 이메일 주소로 기관 소속을 확인할 수 없어요.");
-  }
-  if (completeLiveEvidence && matching.length === 0 && official.length === 0) {
-    // A completed search can miss a real institution, even when a buyer uses a plausible work address.
-    return memoIntent === "buying" && institutionalEmailDomain
-      ? result("ambiguous", "공개 검색에서 기관을 확인하지 못해 구매 문의와 소속을 다시 확인해야 해요.")
-      : result("invalid", "공개 정보에서 기관을 찾지 못함");
-  }
-  if (evidence.status === "saved-unavailable") return result("ambiguous", "저장된 기관 근거가 없어 확인이 필요해요.");
-  if (official.length === 0) return result("ambiguous", "기관 공식 페이지를 확인하지 못했어요.");
-  if (domain === "free-email") return result("ambiguous", "무료 이메일로는 기관 소속을 확인하기 어려워요.");
-  if (domain === "unverified") return result("ambiguous", "이메일 도메인과 기관의 관계를 확인하지 못했어요.");
-  if (liveEvidence && countries.length !== 1 && memoIntent === "partnership") {
-    return result("partnership-check", "제휴 제안의 자세한 내용과 기관 소재지를 확인해야 해요.");
-  }
-  if (countries.length !== 1) return result("ambiguous", "기관 소재지를 한 나라로 확인하지 못했어요.");
-  if (countries[0] !== lead.country) return result("country-check", "기관 소재지가 리드 국가와 달라 회신으로 확인이 필요해요." + domainReason);
-  if (memoIntent === "partnership") return result("partnership-check", "제휴 제안의 자세한 내용을 확인해야 해요." + domainReason);
-  if (memoIntent === "buying") return result("valid", "소속 기관과 이메일 도메인이 확인됐고 제품 구매·검토 의향이 있어요." + domainReason);
-  return result("ambiguous", "문의 의도를 전화로 확인해야 해요.");
+    if (memoIntent === "job") return result("invalid", "채용 문의로 확인됐어요.");
+    if (!lead.institution.trim() || /^(?:individual|none|n\/?a|개인|없음)$/iu.test(lead.institution.trim())) {
+      return result("invalid", "확인 가능한 소속 기관이 없습니다.");
+    }
+    if (memoIntent === "sales") return result("invalid", "제품 구매 문의 대신 영업 제안으로 확인됐어요.");
+    if (memoIntent === "student") return result("invalid", "과제나 논문 자료 요청으로 확인됐어요.");
+    if (memoIntent === "spam" || ruleSpam) return result("invalid", "스팸성 홍보 문의로 확인됐어요.");
+    if (evidence.status === "complete" && matching.length === 0 && !completeLiveEvidence) return result("invalid", "공개 정보에서 기관을 찾지 못함");
+    if (evidence.status === "failed") {
+      const warning = domain === "suspicious" ? " 이메일 도메인의 사칭 의심도 확인해 주세요." : "";
+      return result("ambiguous", "외부 확인 실패, 다시 시도" + warning);
+    }
+    if (domain === "suspicious") {
+      if (suspectPublicMismatch) return result("ambiguous", "공개 출처에서 기관을 확인했지만 이메일 도메인이 달라 사칭 여부를 확인해야 해요.");
+      return result("ambiguous", "이메일이 공식 도메인과 다른 닮은꼴 또는 타기관 도메인이어서 사칭 의심으로 분류했어요.");
+    }
+    if (completeLiveEvidence && domains.length === 0 && reservedEmail) {
+      return result("invalid", "예시용 또는 테스트 이메일 주소로 기관 소속을 확인할 수 없어요.");
+    }
+    if (completeLiveEvidence && matching.length === 0 && official.length === 0) {
+      // A completed search can miss a real institution, even when a buyer uses a plausible work address.
+      return memoIntent === "buying" && institutionalEmailDomain
+        ? result("ambiguous", "공개 검색에서 기관을 확인하지 못해 구매 문의와 소속을 다시 확인해야 해요.")
+        : result("invalid", "공개 정보에서 기관을 찾지 못함");
+    }
+    if (evidence.status === "saved-unavailable") return result("ambiguous", "저장된 기관 근거가 없어 확인이 필요해요.");
+    if (official.length === 0) return result("ambiguous", "기관 공식 페이지를 확인하지 못했어요.");
+    if (domain === "free-email") return result("ambiguous", "무료 이메일로는 기관 소속을 확인하기 어려워요.");
+    if (domain === "unverified") return result("ambiguous", "이메일 도메인과 기관의 관계를 확인하지 못했어요.");
+    if (liveEvidence && countries.length !== 1 && memoIntent === "partnership") {
+      return result("partnership-check", "제휴 제안의 자세한 내용과 기관 소재지를 확인해야 해요.");
+    }
+    if (countries.length !== 1) return result("ambiguous", "기관 소재지를 한 나라로 확인하지 못했어요.");
+    if (countries[0] !== lead.country) return result("country-check", "기관 소재지가 리드 국가와 달라 회신으로 확인이 필요해요." + domainReason);
+    if (memoIntent === "partnership") return result("partnership-check", "제휴 제안의 자세한 내용을 확인해야 해요." + domainReason);
+    if (memoIntent === "buying") return result("valid", "소속 기관과 이메일 도메인이 확인됐고 제품 구매·검토 의향이 있어요." + domainReason);
+    return result("ambiguous", "문의 의도를 전화로 확인해야 해요.");
+  };
+
+  const baseline = decide(ruleIntent, ruleMatch?.[1] ?? null);
+  const advice = validateInquiryIntent(inquiryIntent, lead.memo);
+  if (!advice || advice.intent === "unknown") return baseline;
+  if (advice.intent !== ruleIntent && (baseline.assessment.verdict !== "ambiguous" || domain === "suspicious")) return baseline;
+
+  const advised = decide(advice.intent, advice.quote, "liner");
+  // A model judgment can clarify the memo, but cannot make a lead valid on its own.
+  return advised.assessment.verdict === "valid" && baseline.assessment.verdict !== "valid" ? baseline : advised;
 }

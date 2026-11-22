@@ -18,6 +18,7 @@ const percent = new Intl.NumberFormat("ko-KR", { style: "percent", maximumFracti
 const score = (value: number | null) => value === null ? "집계 중" : value.toFixed(2);
 const domainLabels = { matched: "기관 공식 이메일과 일치", "free-email": "무료 이메일", suspicious: "사칭 의심", unverified: "소유 관계 미확인" };
 const modeLabels = { liner: "실시간 검색", cache: "Liner 캐시", mixed: "실시간 및 캐시", curated: "저장된 결과", local: "시연 판정" };
+const memoLabels = { buying: "구매", partnership: "제휴", job: "채용", student: "학생 과제", sales: "영업 제안", spam: "스팸", unknown: "불명" };
 const outcomeLabels: Record<DealerOutcome, string> = { deal: "deal", "no-deal": "no deal", "in-progress": "진행 중", "no-response": "미응답" };
 const mailLabels: Record<MailKind, string> = { "dealer-summary": "딜러용 요약", "country-check": "국가 확인", "partnership-check": "제휴 확인", "manager-confirmation": "담당자 확인", operations: "운영 알림" };
 const statusLabels = { sent: "테스트 메일 발송 완료", failed: "발송 실패", unknown: "전송 불명", blocked: "수신자 검증으로 차단" };
@@ -213,7 +214,7 @@ export function DecisionCard({ lead, inbox }: { lead: LeadInput; inbox: InboxCon
         {fault && <button className="button button-light" disabled={disabled} onClick={() => void inbox.assess(lead)}>외부 확인 다시 시도</button>}
       </section>
       <section>
-        <h3>구매 의향 · {assessment.details?.memoIntent === "buying" ? "높음" : "불명"}</h3>
+        <h3>문의 의도 · {memoLabels[assessment.details?.memoIntent ?? "unknown"]}{assessment.details?.memoSource === "liner" && " · Liner"}</h3>
         <blockquote>{lead.memo}</blockquote>
         {assessment.details?.memoQuote && <p className="muted">판단 문구 “{assessment.details.memoQuote}”</p>}
       </section>

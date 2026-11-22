@@ -64,8 +64,13 @@ function isAssessment(value: unknown, state: ForwardingState): value is Assessme
   if (Object.hasOwn(value, "details")) {
     fields.push("details");
     const details = value.details;
-    if (!isObject(details) || !exactly(details, ["domain", "countries", "industry", "memoIntent", "memoQuote", "externalStatus", "sourceKind"])
-      || !member(details.domain, DOMAIN_CHECKS) || !member(details.memoIntent, MEMO_INTENTS)
+    if (!isObject(details)) return false;
+    const detailFields = ["domain", "countries", "industry", "memoIntent", "memoQuote", "externalStatus", "sourceKind"];
+    if (Object.hasOwn(details, "memoSource")) {
+      if (details.memoSource !== "liner" || !isText(details.memoQuote, 200) || !details.memoQuote.trim()) return false;
+      detailFields.push("memoSource");
+    }
+    if (!exactly(details, detailFields) || !member(details.domain, DOMAIN_CHECKS) || !member(details.memoIntent, MEMO_INTENTS)
       || !member(details.externalStatus, EXTERNAL_STATUSES) || !member(details.sourceKind, SOURCE_KINDS)
       || !Array.isArray(details.countries) || details.countries.length > 20 || !details.countries.every((country) => isText(country, 80))
       || !(details.industry === null || isText(details.industry, 80))

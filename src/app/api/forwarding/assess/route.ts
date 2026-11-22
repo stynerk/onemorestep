@@ -2,6 +2,8 @@ import { isPublicDemo, linerRuntimeSettings } from "../../../../lib/demo-mode";
 import { createAssessmentService } from "../../../../lib/forwarding/assessment-service";
 import { locales } from "../../../../lib/forwarding/institution-policy";
 import { assessSavedIndustryLead, getSavedIndustry } from "../../../../lib/forwarding/industry-demo.server";
+import { lookupSavedInquiryIntent, requestInquiryIntent } from "../../../../lib/forwarding/intent-router";
+import { savedInquiryIntents } from "../../../../lib/forwarding/saved-inquiry-intents";
 import { createInitialForwardingState } from "../../../../lib/forwarding/seed";
 
 export const runtime = "nodejs";
@@ -41,9 +43,14 @@ export async function POST(request: Request): Promise<Response> {
     return Response.json({ error: "회신 유형을 확인해 주세요." }, { status: 400, headers });
   }
   // The submitted reply note stays in browser storage. Only the confirmed intent changes.
-  const memo = "partnershipPurchase" in body ? "회신에서 구매 견적 요청을 확인함" : lead.memo;
+  const confirmedPurchase = "partnershipPurchase" in body;
+  const memo = confirmedPurchase ? "회신에서 구매 견적 요청을 확인함" : lead.memo;
   const input = { ...lead, country, memo };
-  const result = saved ? assessSavedIndustryLead(saved, input, lead.country)
-    : await service.assess(input, { ...linerRuntimeSettings(), regionalCountry: lead.country });
+  const runtime = linerRuntimeSettings();
+  // Use saved Router output only for the captured SaaS dataset. A confirmed reply already gives the intent.
+  const intent = confirmedPurchase ? null : saved ? lookupSavedInquiryIntent(memo, savedInquiryIntents)
+    : runtime.mode?.trim() === "live" && lead.institution.trim() ? requestInquiryIntent(memo, runtime) : null;
+  const result = saved ? assessSavedIndustryLead(saved, input, lead.country, await intent)
+    : await service.assess(input, { ...runtime, regionalCountry: lead.country, intent });
   return Response.json({ leadId: lead.id, ...result }, { headers });
 }
