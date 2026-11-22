@@ -2,11 +2,12 @@
 
 import { useState } from "react";
 import { industryHandoffForLead, isAvailableIndustry, medicom, type DemoIndustry, type DemoIndustryOption } from "../../lib/forwarding/industry-demo";
-import { inboxBucket, inboxOrder, verdictLabels } from "../../lib/forwarding/inbox";
+import { confirmedCountry, inboxBucket, inboxOrder, verdictLabels } from "../../lib/forwarding/inbox";
 import { forwardingPolicy } from "../../lib/forwarding/policy";
 import { reassignmentProposal } from "../../lib/forwarding/reassignment";
 import { VERDICTS, type LeadInput } from "../../lib/forwarding/types";
 import { DecisionCard } from "./decision-card";
+import { DirectionPanel } from "./direction-panel";
 import { handoffLabel } from "./handoff-label";
 import { useInbox } from "./inbox-controller";
 import { PublicDemoResults } from "./public-demo-results";
@@ -38,6 +39,7 @@ function IndustryInbox({ industry, publicDemo, liveAssessment, industries, choos
   const inbox = useInbox(publicDemo, liveAssessment, industry);
   const [filter, setFilter] = useState<Group | "all">("all");
   const [confirmReset, setConfirmReset] = useState(false);
+  const [showDirection, setShowDirection] = useState(false);
   const { state } = inbox;
   const unavailable = industries?.find((option) => !isAvailableIndustry(option));
   const overdue = new Set(inbox.ready
@@ -53,6 +55,12 @@ function IndustryInbox({ industry, publicDemo, liveAssessment, industries, choos
   const assessed = state.leads.length - groups.new.length;
   const canBulk = groups.invalid.some((lead) => state.leadStates[lead.id].workflow !== "disqualified");
   const busy = inbox.running || inbox.pending.length > 0 || Object.values(inbox.mail).some((item) => item.pending);
+  const directionRows = inbox.directionLeads.flatMap((lead) => {
+    const assessment = state.leadStates[lead.id].assessment;
+    const country = confirmedCountry(state, lead.id);
+    return assessment ? [{ lead: country ? { ...lead, country } : lead, assessment }] : [];
+  });
+  const directionIds = new Set(directionRows.map(({ lead }) => lead.id));
 
   function setGroup(group: Group | "all") {
     setFilter(group);
@@ -92,7 +100,7 @@ function IndustryInbox({ industry, publicDemo, liveAssessment, industries, choos
         <p>이 브라우저의 판정, 결정, 회신 기록을 지울까요?</p>
         <button type="button" className="button button-light" onClick={() => setConfirmReset(false)}>취소</button>
         <button type="button" className="button button-primary" disabled={busy} onClick={() => {
-          inbox.reset(); setFilter("all"); setConfirmReset(false);
+          inbox.reset(); setFilter("all"); setShowDirection(false); setConfirmReset(false);
         }}>초기화 확인</button>
       </div>}
       {inbox.responseNow > inbox.now && <div className="feedback">
@@ -103,6 +111,17 @@ function IndustryInbox({ industry, publicDemo, liveAssessment, industries, choos
       </div>}
       {inbox.error && <p className="feedback" role="alert">{inbox.error}</p>}
       {publicDemo && industry.id === "medicom" && <PublicDemoResults />}
+      {assessed > 0 && !inbox.running && <DirectionPanel rows={directionRows} expanded={showDirection}
+        onToggle={() => setShowDirection((shown) => !shown)} isPending={(id) => inbox.pending.includes(id)}
+        answeringDisabled={!inbox.ready} onAnswer={(lead, answer) => {
+          if (!inbox.answerDirection(lead, answer)) return;
+          setShowDirection(false);
+          window.requestAnimationFrame(() => {
+            const result = document.getElementById("direction-result");
+            result?.focus({ preventScroll: true });
+            result?.scrollIntoView({ block: "nearest" });
+          });
+        }} />}
       <div className="board">
         <aside className="sidebar" aria-label="판정 그룹">
           <div className="progress-block">
@@ -137,7 +156,9 @@ function IndustryInbox({ industry, publicDemo, liveAssessment, industries, choos
                       {overdue.has(lead.id) ? <span className="reassignment-label">재배정 제안</span>
                         : <span>{inbox.pending.includes(lead.id) ? "조사 중…" : status.workflow === "dealer-assigned" ? industry.dealer + " 배정" : rowState[status.workflow]}</span>}</span>
                     <strong title={lead.institution}>{lead.institution || "소속 미기재"}</strong>
-                    {handoff && <span className="lead-handoff">넘길 곳 · {handoffLabel(handoff, state.dealers, industry.dealer)}</span>}
+                    {handoff && <span className="lead-handoff">
+                      {directionIds.has(lead.id) ? "모르겠으면 넘길 곳" : "넘길 곳"} · {handoffLabel(handoff, state.dealers, industry.dealer)}
+                    </span>}
                     <span>{showReason ? status.assessment?.reason ?? "담당자 무효 처리" : lead.country + " · " + lead.product}</span>
                   </button>
                   {group === "invalid" && !status.dealerId && <button type="button" className="reopen"
@@ -147,8 +168,9 @@ function IndustryInbox({ industry, publicDemo, liveAssessment, industries, choos
             </ul> : <p className="empty-group">문의가 없습니다.</p>}
           </section>)}
         </div>
-        <div className="detail-column">
-          {selected ? <DecisionCard key={selected.id} lead={selected} inbox={inbox} /> :
+        <div className="detail-column" id="direction-result" tabIndex={-1}>
+          {selected ? <DecisionCard key={selected.id} lead={selected} inbox={inbox}
+            openDirection={directionIds.has(selected.id) && !inbox.running ? () => setShowDirection(true) : undefined} /> :
             <div className="empty-card"><span aria-hidden="true">✦</span><h2>문의를 선택해 주세요</h2><p>판정 근거와 결정 카드를 볼 수 있습니다.</p></div>}
         </div>
       </div>

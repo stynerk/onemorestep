@@ -1,4 +1,5 @@
 import type { DomainEvidenceAdvice } from "./domain-router";
+import type { DirectionChoice, DirectionKind, DirectionWording } from "./direction-questions";
 
 export const VERDICTS = ["valid", "ambiguous", "country-check", "partnership-check", "invalid"] as const;
 export type Verdict = (typeof VERDICTS)[number];
@@ -65,6 +66,14 @@ export type AssessmentHandoff =
   | { kind: "hr" }
   | { kind: "none" };
 
+export type DirectionAnswer = { kind: DirectionKind; choice: DirectionChoice; country?: string };
+export type DirectionConfirmation = DirectionAnswer & {
+  actor: string;
+  at: string;
+  note: string;
+  previous: boolean;
+};
+
 export interface Assessment {
   verdict: Verdict;
   reason: string;
@@ -72,6 +81,8 @@ export interface Assessment {
   searchedAt: string;
   mode: "live" | "saved";
   details?: AssessmentDetails;
+  directionQuestion?: DirectionWording;
+  directionConfirmation?: DirectionConfirmation;
   // Earlier version-1 browser events were written before the handoff field existed.
   handoff?: AssessmentHandoff;
 }

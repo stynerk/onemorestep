@@ -3,6 +3,7 @@ import { test } from "node:test";
 import { POST as assess } from "../src/app/api/forwarding/assess/route";
 import { POST as mail } from "../src/app/api/forwarding/mail/route";
 import { POST as research } from "../src/app/api/research/route";
+import demoAnswers from "../src/lib/forwarding/evaluation/ground-truth.json";
 import { getSavedIndustry } from "../src/lib/forwarding/industry-demo.server";
 
 test("public build and Vercel runtime both enforce stored assessment and block mail despite private settings", async (t) => {
@@ -48,6 +49,15 @@ test("public build and Vercel runtime both enforce stored assessment and block m
     assert.equal((await assess(post("/api/forwarding/assess", { leadId: "L03", industry: [] }))).status, 400);
     if (!getSavedIndustry("b2b-saas")) {
       assert.equal((await assess(post("/api/forwarding/assess", { leadId: "L03", industry: "b2b-saas" }))).status, 404);
+    }
+    for (const { leadId, verdict, handoff } of demoAnswers) {
+      const response = await assess(post("/api/forwarding/assess", { leadId }));
+      assert.equal(response.status, 200, leadId);
+      const { assessment: result } = await response.json();
+      assert.equal(result.verdict, verdict, leadId);
+      assert.deepEqual(result.handoff, handoff, leadId);
+      assert.equal(result.directionConfirmation, undefined, leadId);
+      if (verdict === "ambiguous") assert.ok(result.directionQuestion?.question && result.directionQuestion?.summary, leadId);
     }
 
     const researchResponse = await research(post("/api/research", { query: "공개 자료" }));

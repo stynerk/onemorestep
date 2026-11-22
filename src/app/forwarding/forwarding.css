@@ -31,6 +31,26 @@ body:has(.workspace) { background: #f5f6fb; color: #18213a; margin: 0; }
 .industry-control span { font-weight: 700; }
 .industry-control button[aria-pressed="true"] { background: #ece9ff; border-color: #a99fed; color: #392f88; }
 .industry-control p { color: #52607f; font-size: 12px; }
+.direction-panel { margin: 0 0 13px; padding: 10px 12px; background: #f1efff; border: 1px solid #dbd6fc; border-radius: 10px; }
+.direction-toggle { width: 100%; justify-content: space-between; gap: 10px; padding-inline: 4px; background: transparent; color: #332882; }
+.direction-toggle span:last-child { font-size: 12px; }
+.direction-panel section { padding: 10px 3px 3px; }
+.direction-panel h2 { color: #26294a; font-size: 17px; margin-bottom: 10px; }
+.direction-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 330px), 1fr)); align-items: start; gap: 10px; padding: 0; list-style: none; }
+.direction-lead { display: grid; gap: 10px; min-width: 0; padding: 12px; color: #25324e; background: #fff; border: 1px solid #dfdcef; border-radius: 8px; overflow-wrap: anywhere; }
+.direction-evidence { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: baseline; gap: 6px 10px; margin: 0; font-size: 12px; }
+.direction-evidence dt { color: #5b5b80; font-weight: 650; }
+.direction-evidence dd { margin: 0; }
+.direction-sources { display: flex; flex-wrap: wrap; gap: 2px 8px; padding: 0; list-style: none; }
+.direction-lead fieldset { display: grid; gap: 7px; min-width: 0; margin: 0; padding: 0; border: 0; }
+.direction-lead legend { width: 100%; margin: 0 0 7px; padding: 0; color: #332882; font-weight: 700; }
+.direction-choices { display: flex; flex-wrap: wrap; gap: 5px; }
+.direction-choice { display: inline-flex; align-items: center; gap: 5px; padding: 4px 7px; border: 1px solid #d8dbeb; border-radius: 6px; cursor: pointer; }
+.direction-choice:has(input:checked) { background: #f1efff; border-color: #9889e5; color: #332882; }
+.direction-choice input { margin: 0; accent-color: #5147c5; }
+.direction-country, .direction-note { display: grid; gap: 3px; font-size: 12px; }
+.direction-lead .button { justify-self: start; }
+.direction-confirmation { padding: 8px 10px; overflow-wrap: anywhere; background: #f1efff; border-radius: 7px; color: #3f357e; }
 .board { display: grid; grid-template-columns: 174px minmax(255px, 1fr) minmax(380px, 1.8fr); gap: 13px; align-items: start; }
 .sidebar, .inbox-column, .decision-card, .empty-card { background: #fff; border: 1px solid #e0e2ed; border-radius: 12px; }
 .sidebar { padding: 12px; }
