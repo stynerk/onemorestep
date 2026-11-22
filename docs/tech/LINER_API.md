@@ -19,7 +19,13 @@
 
 일반 텍스트 생성 API가 공식 **Router API**로 문서화돼 있음을 확인했다. Chat Completions의 엔드포인트는 `POST https://platform.liner.com/api/v1/chat/completions`이고, `model`·`messages`를 보낸다. 인증은 `Authorization: Bearer` 또는 `x-api-key`다. 문서의 모델 예시는 `liner-gpt-router`이며 기존 `liner-mark` 계열 안내도 있다. [Router API](https://liner.com/developers/docs/router-api), [Chat Completions 명세](https://liner.com/developers/docs/liner-model-api-chat-completions)
 
-이는 공식 문서의 존재 확인이다. 이 계정에서 Model API를 실제 호출하거나 모델 권한·생성 품질을 검증하지 않았다. 구형 `/developers/docs/model-api` 문서의 접근 실패는 API가 없다는 증거가 아니다. #29는 Search 근거와 의도 규칙·이유/메일 템플릿을 기본으로 유지하고 Model API는 별도 검증 후 선택한다.
+### 문의 의도 분류 (#78, 2026-11-22)
+
+- 0단계는 가상 메모 5건으로 확인했다. HTTP 200, 의도 정답, 메모 원문 인용이 각각 5/5였다. 응답은 1.27–1.71초였고 이 범위에서 권한·잔액 오류가 없었다.
+- 실시간 문의 판정은 메모만 `liner-gpt-router`로 보내고 엄격한 JSON 스키마를 지정한다. 허용 의도는 구매·제휴·채용·학생 과제·영업 제안·스팸·불명이다. 응답은 의도와 200자 이하의 연속 원문 인용 두 필드로 받는다. 최종 판정과 기관·도메인·국가 근거는 기존 규칙으로 계산하며, 모델 판단만으로 리드를 유효로 올리지 않는다.
+- 형식이 어긋나거나 인용이 메모에 없거나, 권한·잔액·한도·네트워크 오류나 8초 시간 초과가 발생하면 의도 규칙을 사용한다. 불명 의도도 규칙으로 넘긴다. Router 호출에는 재시도를 적용하지 않는다.
+- 기존 평가 70건과 Flowline 10건 중 메모가 있는 79건의 응답을 기록했다. 빈 메모 한 건은 호출하지 않았다. 새 블라인드 세트는 기록에 포함되지 않았다.
+- 공개 Flowline은 메모 지문이 일치하는 저장 응답 10건을 재생한다. 공개 의료기기는 의도 규칙을 사용하며, 두 업종 모두 공개 모드에서 새 Liner 호출과 메일 발송이 0회다.
 
 ## 실제 호출 검증
 
