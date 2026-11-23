@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useMemo, useSyncExternalStore } from "react";
 import { createBrowserForwardingStore, FORWARDING_STORAGE_KEY } from "../../lib/forwarding/store";
@@ -42,6 +42,7 @@ export function CampaignTracking({ campaigns, issuedCodes = [] }: {
   campaigns: readonly CampaignMetrics[];
   issuedCodes?: readonly { code: string; title: string }[];
 }) {
+  const largestCampaign = Math.max(1, ...campaigns.map(({ total }) => total));
   return <section className="marketing-card" aria-labelledby="campaign-tracking-title">
     <h2 id="campaign-tracking-title" className={styles.title}>캠페인 효과</h2>
     <p className={styles.summary}>문의함 판정 기록으로 집계합니다. 유입 리드의 판정이 끝나면 유효 비율과 효과가 표시됩니다.</p>
@@ -59,12 +60,21 @@ export function CampaignTracking({ campaigns, issuedCodes = [] }: {
           {campaigns.map((campaign) => <tr key={campaign.code}>
             <th scope="row">{campaign.code}</th>
             <td>{campaign.title}</td><td>{campaign.channelLabel}</td>
-            <td>{campaign.total}</td>
+            <td>
+              <span className={styles.volumeCell}>
+                <span>{campaign.total}</span>
+                <span className={styles.volumeTrack} aria-hidden="true">
+                  <span className={styles.volume} style={{ inlineSize: (100 * campaign.total / largestCampaign) + "%" }}>
+                    <span className={styles.validVolume} style={{ inlineSize: (campaign.total ? 100 * campaign.valid / campaign.total : 0) + "%" }} />
+                  </span>
+                </span>
+              </span>
+            </td>
             <td>{campaign.validRatio === null ? campaign.valid : campaign.valid + "/" + campaign.total + " (" + percent.format(campaign.validRatio) + ")"}</td>
             <td>{campaign.verdicts.ambiguous}</td><td>{campaign.verdicts["country-check"]}</td>
             <td>{campaign.verdicts["partnership-check"]}</td><td>{campaign.verdicts.invalid}</td><td>{campaign.pending}</td>
             <td>{campaign.dealerCount}</td>
-            <td><strong className={campaign.effect === "효과 낮음" ? styles.low : undefined}>{campaign.effect}</strong></td>
+            <td><strong className={campaign.effect === "효과 낮음" ? styles.low : campaign.effect === "효과 높음" ? styles.high : undefined}>{campaign.effect}</strong></td>
           </tr>)}
           {issuedCodes.map(({ code, title }) => <tr key={code}>
             <th scope="row">{code}</th><td>{title}</td><td>—</td>

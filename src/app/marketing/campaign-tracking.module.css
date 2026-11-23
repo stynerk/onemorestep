@@ -1,40 +1,77 @@
-﻿.title {
-  margin: 0;
-  font-size: 18px;
+.title {
+  margin: 13px 16px 0;
+  font-size: var(--type-18);
 }
+
 .summary {
-  margin: 6px 0 12px;
-  color: #555e79;
+  margin: 6px 16px 12px;
+  color: var(--secondary-ink);
 }
+
 .scroller {
   overflow-x: auto;
 }
+
 .scroller:focus-visible {
-  outline: 2px solid #4e3bc4;
+  outline: 2px solid var(--dispatch);
   outline-offset: 2px;
 }
+
 .table {
   border-collapse: collapse;
   width: 100%;
-  font-size: 13px;
+  font-size: var(--type-13);
   font-variant-numeric: tabular-nums;
 }
+
 .table th,
 .table td {
-  border-bottom: 1px solid #e8eaf3;
+  border-bottom: 1px solid var(--rule);
   padding: 9px 8px;
   text-align: left;
 }
+
 .table thead {
-  background: #f3f2fa;
+  border-top: 1px solid var(--rule);
+  background: var(--dispatch-soft);
 }
+
 .table th,
 .table td:not(:nth-child(2)) {
   white-space: nowrap;
 }
+
 .table tr:last-child > * {
   border-bottom: 0;
 }
+
+.volumeCell {
+  display: grid;
+  grid-template-columns: 2ch minmax(0, 1fr);
+  align-items: center;
+  min-width: 84px;
+  gap: 5px;
+}
+
+.volumeTrack,
+.volume,
+.validVolume {
+  display: block;
+  block-size: 8px;
+}
+
+.volume {
+  background: var(--rule);
+}
+
+.validVolume {
+  background: var(--verdict-valid);
+}
+
 .low {
-  color: #8a3d00;
+  color: var(--verdict-risk);
+}
+
+.high {
+  color: var(--verdict-valid);
 }

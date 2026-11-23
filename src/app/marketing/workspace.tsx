@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import Link from "next/link";
 import { useEffect, useRef, useState, useSyncExternalStore, type FormEvent } from "react";
@@ -234,21 +234,36 @@ export function MarketingWorkspace({ publicDemo }: { publicDemo: boolean }) {
             <div className="marketing-deadline-summary" aria-label="마감 상태">
               <span>마감 임박 {imminent}건</span><span>마감 초과 {overdue}건</span>
             </div>
+            <div className="marketing-list-heading" aria-hidden="true">
+              <span>순위</span><span>요청</span><span>지역</span><span>마감</span><span>점수</span>
+            </div>
             <ol className="marketing-list" aria-labelledby="marketing-priority" role="list">
               {state.order.map((id, index) => {
                 const request = requests.get(id);
                 if (!request) return null;
                 const warning = warnings.get(id);
                 return <li key={id}>
-                  <button type="button" className="marketing-request" aria-pressed={id === selected.id} onClick={() => chooseRequest(id)}>
+                  <button type="button" className="marketing-request" aria-pressed={id === selected.id}
+                    aria-label={(index + 1) + "위 " + id + " · " + request.region + (request.repeats.length ? " · 반복 요청" : "")
+                      + (warning ? " · " + warning : "") + " " + request.title + " AI " + request.score + "점"}
+                    onClick={() => chooseRequest(id)}>
                     <span className="marketing-rank">{index + 1}위</span>
                     <span className="marketing-request-text">
-                      <span className="muted">{id} · {request.region}{request.repeats.length > 0 ? " · 반복 요청" : ""}
-                        {warning && <span className="marketing-deadline-warning"> · {warning}</span>}
-                      </span>
+                      <span className="muted">{id}{request.repeats.length > 0 ? " · 반복 요청" : ""}</span>
                       <strong>{request.title}</strong>
                     </span>
-                    <span className="marketing-score">AI {request.score}점</span>
+                    <span className="marketing-request-region">{request.region}</span>
+                    <span className="marketing-request-deadline">
+                      <span aria-hidden="true">{request.deadlineDays === null ? "—" : request.deadlineDays === 0 ? "오늘"
+                        : "D" + (request.deadlineDays < 0 ? "+" : "−") + Math.abs(request.deadlineDays)}</span>
+                      {warning && <span className="marketing-deadline-warning">{warning}</span>}
+                    </span>
+                    <span className="marketing-score">
+                      AI {request.score}점
+                      <span className="marketing-score-track" aria-hidden="true">
+                        <span style={{ inlineSize: request.score + "%" }} />
+                      </span>
+                    </span>
                   </button>
                 </li>;
               })}
