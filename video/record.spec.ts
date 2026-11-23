@@ -38,8 +38,11 @@ const overlay = () => {
 async function say(page: Page, text: string, ms: number, tag: Tag = null) {
   await page.evaluate(([t, g]) => (window as unknown as { __setSub: (a: string, b: string | null) => void }).__setSub(t, g), [text, tag] as const)
     .catch(() => {});
-  await page.waitForTimeout(ms);
+  await page.waitForTimeout(Math.round(ms * PACE));
 }
+
+// 전체 길이를 5분 안에 맞추기 위한 자막 표시 시간 배율(마케팅 2차 장면 추가로 줄임).
+const PACE = 0.85;
 
 async function step(name: string, run: () => Promise<unknown>) {
   try { await run(); } catch (error) { console.log("[녹화 단계 실패] " + name + ": " + String(error).split("\n")[0]); }
@@ -244,7 +247,63 @@ test("미리내 데모 영상", async ({ page }) => {
     await page.waitForTimeout(800);
   });
   await say(page, "채널별 초안은 Liner가 쓰고 근거 링크를 붙이며, 의료기기에서 문제가 될 표현은 경고합니다.\n게시는 마케팅 담당자가 승인한 뒤에만 합니다.", 7000, "ok");
-  await say(page, "AI가 준비하고 사람은 승인하는 방식은\n다른 판매망과 다른 업무로 넓힐 수 있습니다.", 5000);
+
+  // 마케팅 2차(#107, PR #110): 접수 → 처리 → 캠페인 코드 → 유입 리드 품질로 효과
+  await step("요청 접수", async () => {
+    await page.evaluate(() => window.scrollTo({ top: 0, behavior: "smooth" }));
+    await page.getByRole("button", { name: "요청 접수", exact: true }).click();
+    const form = page.locator(".marketing-intake-form");
+    await focus(form, false);
+    for (const label of ["요청자", "요청 유형", "상품"]) await form.getByLabel(label, { exact: true }).selectOption({ index: 1 });
+    await form.locator("input[type=date]").fill("2026-11-28");
+    await form.getByLabel("딜 규모", { exact: true }).selectOption({ index: 2 });
+    await form.locator("textarea").fill("미국 병원 그룹 교체 건, 비교 자료 요청");
+    await form.getByLabel("연결 리드", { exact: true }).selectOption("L03");
+    await page.waitForTimeout(800);
+    await focus(form.locator(".marketing-field-source").first());
+  });
+  await say(page, "본사 세일즈가 요청을 넣으며 리드를 연결하면,\n지역과 딜 단계가 문의함 기록에서 자동으로 채워집니다.", 6000, "ok");
+  await step("접수하기", async () => {
+    await page.getByRole("button", { name: "접수하기", exact: true }).click();
+    await page.waitForTimeout(1000);
+  });
+  await step("M01 처리 흐름", async () => {
+    await page.getByRole("button", { name: /M01/ }).first().click();
+    await page.waitForTimeout(600);
+    const flow = page.locator("section").filter({ has: page.getByRole("heading", { name: "처리 흐름" }) }).first();
+    await focus(flow, false);
+    const assignee = flow.locator("select").first();
+    if (await assignee.isVisible().catch(() => false)) await assignee.selectOption({ index: 1 });
+    await flow.getByRole("button", { name: "진행", exact: true }).click();
+    await page.waitForTimeout(500);
+    await flow.getByRole("button", { name: "검토", exact: true }).click();
+    await page.waitForTimeout(500);
+    await page.getByRole("button", { name: "LinkedIn 초안 보기" }).first().click();
+    await page.waitForTimeout(1000);
+    const confirm = page.getByLabel(/표현과 근거를 확인했습니다/);
+    if (await confirm.isVisible().catch(() => false)) await confirm.check();
+    await page.getByRole("button", { name: "초안 승인", exact: true }).click();
+    await page.waitForTimeout(600);
+    await flow.getByRole("button", { name: "완료", exact: true }).click();
+    await page.waitForTimeout(800);
+    await focus(flow.getByText(/캠페인 코드/));
+  });
+  await say(page, "마케팅은 요청을 진행 → 검토 → 완료로 처리하고, 완료하면 캠페인 코드가 발급됩니다.\n이 코드로 들어온 리드를 추적합니다.", 6500, "ok");
+  await step("캠페인 효과", async () => {
+    await page.getByRole("link", { name: "캠페인 효과 보기" }).click();
+    await page.waitForTimeout(800);
+    await focus(page.getByRole("table", { name: "캠페인 효과" }));
+  });
+  await say(page, "효과는 캠페인으로 들어온 실제 리드를 미리내가 판정한 결과로 잽니다.\nInstagram은 6건을 모았지만 유효 0건, LinkedIn은 5건 중 3건이 유효입니다.", 7500, "warn");
+  await step("M07 채널", async () => {
+    await page.getByRole("button", { name: /M07/ }).first().click();
+    await page.waitForTimeout(600);
+    const instagram = page.getByLabel("Instagram 사용", { exact: true });
+    await focus(instagram.locator("xpath=ancestor::li[1]"));
+    if (await instagram.isChecked().catch(() => false)) await instagram.uncheck();
+  });
+  await say(page, "다음 요청의 채널 옆에 지난 효과가 보이고, 실무자가 효과 낮은 채널을 끕니다.\n마케팅의 목표는 양이 아니라 세일즈를 위한 양질의 리드입니다.", 7000, "ok");
+  await say(page, "AI가 준비하고 사람은 승인하는 방식은\n다른 판매망과 다른 업무로 넓힐 수 있습니다.", 4500);
   await say(page, "미리내였습니다.", 3500);
   await say(page, "", 500);
 });
