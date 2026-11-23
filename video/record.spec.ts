@@ -46,6 +46,7 @@ async function step(name: string, run: () => Promise<unknown>) {
 }
 
 async function focus(target: Locator, highlight = true) {
+  await target.waitFor({ state: "attached", timeout: 8000 });
   await target.evaluate((el, mark) => {
     el.scrollIntoView({ behavior: "smooth", block: "center" });
     if (mark) {
@@ -58,6 +59,9 @@ async function focus(target: Locator, highlight = true) {
   await target.page().waitForTimeout(700);
 }
 
+const leadRow = (page: Page, id: string) => page.locator(".lead").filter({
+  has: page.locator(".lead-meta > span:first-child").filter({ hasText: new RegExp("^" + id + "$") }),
+}).first();
 const leadButton = (page: Page, id: string) => page.getByRole("button", { name: new RegExp("^" + id + " ") }).first();
 const card = (page: Page) => page.getByRole("article").first();
 const directionRow = (page: Page, id: string) => page.locator(".direction-lead").filter({
@@ -92,7 +96,7 @@ test("미리내 데모 영상", async ({ page }) => {
   await say(page, "딜러망으로 파는 제조사의 세일즈 담당자는\n들어오는 문의마다 전화를 걸어 진짜 고객인지 확인합니다.", 6500);
   await say(page, "그런데 문의의 대부분은 스팸, 영업 제안, 학생 과제입니다.", 5000);
   await say(page, "웹 문의에 1시간 안에 답하는 기업은 37%뿐이라는 조사도 있습니다.\n(출처: Harvard Business Review, 2011)", 6500);
-  await step("장면 1 L06", async () => focus(page.locator(".lead").filter({ hasText: /\bL06\b/ }).first()));
+  await step("장면 1 L06", async () => focus(leadRow(page, "L06")));
   await say(page, "소음을 처리하는 동안, 진짜 고객은 이렇게 목록 아래에서 기다립니다.", 6500, "warn");
 
   // 장면 2 — 판정, 무효 일괄, 애매 질문
@@ -100,7 +104,7 @@ test("미리내 데모 영상", async ({ page }) => {
   await step("판정 시작", async () => page.getByRole("button", { name: "판정 시작", exact: true }).click());
   await say(page, "미리내는 먼저 판정합니다.", 3000);
   await step("판정 완료", async () => expect(page.getByRole("button", { name: "다시 판정", exact: true })).toBeEnabled({ timeout: 30_000 }));
-  await step("유효 L06", async () => focus(page.locator(".lead").filter({ hasText: /\bL06\b/ }).first()));
+  await step("유효 L06", async () => focus(leadRow(page, "L06")));
   await say(page, "유효 8 · 애매 6 · 국가 확인 3 · 제휴 확인 2 · 무효 11.\n묻혀 있던 싱가포르 병원의 입찰 문의가 유효 맨 위로 올라왔습니다.", 7000, "ok");
   await step("무효 필터", async () => page.getByRole("navigation", { name: "문의함 필터" }).getByRole("button", { name: /^무효\s+11$/ }).click());
   await say(page, "무효 리드는 이유(소속 없음, 기관을 찾지 못함, 영업·학생·구직)와 함께 한 번에 처리합니다.\n채용 문의는 인사팀으로 넘깁니다.", 6000, "warn");

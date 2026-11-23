@@ -18,5 +18,7 @@ export default defineConfig({
     deviceScaleFactor: 1,
     video: { mode: "on", size: { width: 1440, height: 900 } },
     launchOptions: { slowMo: 250 },
+    actionTimeout: 8000,
+    navigationTimeout: 30_000,
   },
 });
