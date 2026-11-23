@@ -23,7 +23,7 @@
   padding: 17px 20px 6px;
 }
 
-.dispatchHead :global(.verdict) {
+.slip .dispatchHead :global(.verdict) {
   flex: none;
   padding: 3px 7px;
   border: 1px solid var(--slip-accent);

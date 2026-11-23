@@ -38,7 +38,7 @@
 .marketing-reasons dd { margin: 4px 0 0; color: var(--secondary-ink); font-size: var(--type-13); overflow-wrap: anywhere; }
 .marketing-rank-form { display: grid; grid-template-columns: minmax(80px, auto) minmax(0, 1fr) auto; align-items: end; gap: 8px; }
 .marketing-rank-form label, .marketing-edit label { display: grid; gap: 4px; color: var(--secondary-ink); font-size: var(--type-13); font-weight: var(--weight-semibold); }
-.marketing-rank-form input, .marketing-rank-form select, .marketing-edit input, .marketing-edit textarea { width: 100%; min-height: 35px; border: 1px solid var(--rule); border-radius: 3px; padding: 6px 8px; background: var(--slip); color: var(--ink); font: inherit; }
+.marketing-rank-form input, .marketing-rank-form select, .marketing-edit input, .marketing-edit textarea { width: 100%; min-height: 35px; border: 1px solid var(--field-border); border-radius: 3px; padding: 6px 8px; background: var(--slip); color: var(--ink); font: inherit; }
 .marketing-channels { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 6px; }
 .marketing-channels li { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 6px; min-width: 0; padding: 6px; border: 1px solid var(--rule); border-radius: 3px; }
 .marketing-channel-switch, .marketing-confirm-evidence { display: inline-flex; align-items: center; gap: 5px; font-weight: var(--weight-semibold); cursor: pointer; color: var(--ink); }
@@ -63,7 +63,7 @@
 }
 .marketing-intake-form input, .marketing-intake-form select, .marketing-intake-form textarea,
 .marketing-workflow-actions input, .marketing-workflow-actions select, .marketing-requester-choice select {
-  width: 100%; min-height: 35px; border: 1px solid var(--rule); border-radius: 3px; padding: 6px 8px;
+  width: 100%; min-height: 35px; border: 1px solid var(--field-border); border-radius: 3px; padding: 6px 8px;
   background: var(--slip); color: var(--ink); font: inherit;
 }
 .marketing-intake-form select:disabled { background: var(--paper); color: var(--ink); opacity: 1; }

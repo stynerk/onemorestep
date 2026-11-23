@@ -135,7 +135,7 @@ body:has(.workspace) { background: var(--paper); color: var(--ink); margin: 0; }
 .decision-buttons { display: flex !important; flex-wrap: wrap; }
 .reply-form { display: grid; gap: 6px; }
 .reply-form button, .card-body section > .button { justify-self: start; }
-.workspace select, .workspace textarea { min-width: 0; color: var(--ink); background: var(--slip); border: 1px solid var(--rule); padding: 5px 7px; border-radius: 6px; }
+.workspace select, .workspace textarea { min-width: 0; color: var(--ink); background: var(--slip); border: 1px solid var(--field-border); padding: 5px 7px; border-radius: 6px; }
 .workspace textarea { width: 100%; resize: vertical; }
 .inline-form { justify-content: flex-start; margin-top: 5px; flex-wrap: wrap; }
 .inline-form .button { min-height: 27px; font-size: var(--type-13) !important; }
