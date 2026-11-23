@@ -228,7 +228,21 @@ test("미리내 데모 영상", async ({ page }) => {
     }
     await focus(page.getByRole("button", { name: /마케팅 협조 요청/ }));
   });
-  await say(page, "같은 원칙, AI가 준비하고 사람은 승인하는 방식은\n다른 판매망과 다른 업무로 넓힐 수 있습니다.", 6500);
+  // 장면 7 끝 — 마케팅 협조 요청(#102, PR #104의 10초 동선)
+  await step("마케팅 협조 요청 열기", async () => {
+    await page.getByRole("button", { name: /마케팅 협조 요청/ }).first().click();
+    await page.waitForTimeout(1200);
+    await focus(page.getByText("86", { exact: false }).first(), false);
+  });
+  await say(page, "같은 원칙을 마케팅 협조 요청에도 적용했습니다.\n본사 세일즈 요청 8건을 딜 규모·마감·지역 기준으로 점수를 매기고 이유를 보입니다.", 6000, "ok");
+  await step("LinkedIn 초안", async () => {
+    await page.getByRole("button", { name: /LinkedIn 초안 보기/ }).first().click();
+    await page.waitForTimeout(1000);
+    await page.mouse.wheel(0, 600);
+    await page.waitForTimeout(800);
+  });
+  await say(page, "채널별 초안은 Liner가 쓰고 근거 링크를 붙이며, 의료기기에서 문제가 될 표현은 경고합니다.\n게시는 마케팅 담당자가 승인한 뒤에만 합니다.", 7000, "ok");
+  await say(page, "AI가 준비하고 사람은 승인하는 방식은\n다른 판매망과 다른 업무로 넓힐 수 있습니다.", 5000);
   await say(page, "미리내였습니다.", 3500);
   await say(page, "", 500);
 });
