@@ -13,6 +13,7 @@ import type { Assessment, DealerDelivery, DealerOutcome, DirectionConfirmation a
 import { demoAcquisitionForLead } from "../../lib/marketing/campaign-policy";
 import { handoffLabel } from "./handoff-label";
 import type { InboxController } from "./inbox-controller";
+import styles from "./dispatch-slip.module.css";
 
 const date = new Intl.DateTimeFormat("ko-KR", { timeZone: forwardingPolicy.responseTimeZone, dateStyle: "medium", timeStyle: "short" });
 const time = (value: string) => date.format(new Date(value));
@@ -39,28 +40,57 @@ function confirmationsFor(events: ForwardingEvent[], leadId: string) {
 function Evidence({ assessment, historicalCount, confirmedDomain }: { assessment: Assessment; historicalCount: number; confirmedDomain: boolean }) {
   const detail = assessment.details;
   const domainEvidence = detail?.domainEvidence;
-  return <div className="evidence">
-    <div><h3>소속 기관 확인</h3>
-      <p>{detail?.industry ?? "업종 확인 전"} · {detail?.countries.join(", ") || "소재지 확인 전"}</p>
-      <p className="muted">{time(assessment.searchedAt)}</p>
-      {assessment.sources.length > 0 && <ul className="source-list">
-        {assessment.sources.map((url) => <li key={url}><a href={url} target="_blank" rel="noopener noreferrer">{new URL(url).hostname}</a></li>)}
-      </ul>}
+  const searchSource = detail && ["liner", "cache", "mixed"].includes(detail.sourceKind);
+  const institutionMark = detail?.externalStatus === "failed" ? "failed"
+    : detail?.industry && detail.countries.length > 0 && assessment.sources.length > 0 ? "confirmed" : "caution";
+  const domainMark = confirmedDomain || detail?.domain === "matched" ? "confirmed"
+    : detail?.domain === "suspicious" ? "failed" : "caution";
+  return <div className={"evidence " + styles.evidence}>
+    <div className={styles.evidenceRow}>
+      <EvidenceMark state={institutionMark} />
+      <div><h3>소속 기관 확인</h3>
+        <p>{detail?.industry ?? "업종 확인 전"} · {detail?.countries.join(", ") || "소재지 확인 전"}</p>
+      </div>
+      <div className={styles.evidenceSource}>
+        {assessment.sources.length > 0 && <ul className="source-list">
+          {assessment.sources.map((url) => <li key={url}><a href={url} target="_blank" rel="noopener noreferrer">{new URL(url).hostname}</a></li>)}
+        </ul>}
+        <time className="muted" dateTime={assessment.searchedAt}>{time(assessment.searchedAt)}</time>
+        {searchSource && <span>Liner 검색</span>}
+      </div>
     </div>
-    <div><h3>이메일 도메인</h3><p>{confirmedDomain ? "담당자가 기관 소속 확인" : detail ? domainLabels[detail.domain] : "확인 전"}</p>
-      {domainEvidence && <div className="domain-evidence">
+    <div className={styles.evidenceRow}>
+      <EvidenceMark state={domainMark} />
+      <div><h3>이메일 도메인</h3><p>{confirmedDomain ? "담당자가 기관 소속 확인" : detail ? domainLabels[detail.domain] : "확인 전"}</p></div>
+      <div className={styles.evidenceSource}>
+        {domainEvidence ? <a href={domainEvidence.url} target="_blank" rel="noopener noreferrer">도메인 근거 출처</a>
+          : confirmedDomain ? <span>담당자 확인 근거</span>
+            : searchSource && assessment.sources.length > 0 ? <span>Liner 검색</span> : null}
+        {domainEvidence && <span>Liner 모델</span>}
+      </div>
+      {domainEvidence && <details className={"domain-evidence " + styles.domainDetails}>
+        <summary>도메인 판단 근거</summary>
         <p><strong>Liner 도메인 판단 · {ownershipLabels[domainEvidence.ownership]}</strong></p>
         <blockquote>{domainEvidence.quote}</blockquote>
-        <a href={domainEvidence.url} target="_blank" rel="noopener noreferrer">도메인 근거 출처</a>
         {domainEvidence.location && <>
           <p><strong>소재지 근거 · {domainEvidence.location.country}</strong></p>
           <blockquote>{domainEvidence.location.quote}</blockquote>
           <a href={domainEvidence.location.url} target="_blank" rel="noopener noreferrer">소재지 근거 출처</a>
         </>}
-      </div>}
+      </details>}
     </div>
-    <div><h3>자사 기록</h3><p>같은 기관의 전달 이력 {historicalCount}건</p></div>
+    <div className={styles.evidenceRow}>
+      <EvidenceMark state={historicalCount > 0 ? "confirmed" : "caution"} />
+      <div><h3>자사 기록</h3><p>같은 기관의 전달 이력 {historicalCount}건</p></div>
+      <div className={styles.evidenceSource}><span>전달 기록</span></div>
+    </div>
   </div>;
+}
+
+function EvidenceMark({ state }: { state: "confirmed" | "caution" | "failed" }) {
+  return <span className={styles.mark} data-evidence-state={state} aria-hidden="true">
+    {state === "confirmed" ? "✓" : state === "caution" ? "!" : "×"}
+  </span>;
 }
 
 function History({ record, saveOutcome, disabled, dealerLabel, days }: {
@@ -212,8 +242,7 @@ export function DecisionCard({ lead, inbox, openDirection }: {
     assessment?.verdict === "partnership-check" ? "제휴 내용 확인이 필요해요." :
     assessment?.verdict === "invalid" ? "무효 처리 사유를 확인하세요." : "전화로 문의 내용을 확인하세요.";
 
-  return <article className="decision-card" aria-labelledby="card-heading">
-    <div className="card-head">
+  const leadIdentity = <div className={"card-head " + styles.identity}>
       <div className="card-meta"><span>{lead.id}</span><span>{country}</span><span>{lead.product}</span></div>
       <h2 id="card-heading" title={lead.institution}>{lead.institution || "소속 미기재"}</h2>
       <p className="contact">{lead.name} · {maskEmail(lead.email)} · {maskPhone(lead.phone)}</p>
@@ -226,44 +255,24 @@ export function DecisionCard({ lead, inbox, openDirection }: {
         {fault && <span className="badge warning">외부 확인 실패</span>}
         {status.workflow === "disqualified" && <span className="badge neutral">무효 처리 완료</span>}
       </div>}
-    </div>
+    </div>;
+
+  return <article className={"decision-card " + styles.slip} aria-labelledby="card-heading"
+    data-assessment={assessment?.verdict} data-risk={assessment?.details?.domain === "suspicious" ? "true" : undefined}>
+    {assessment && <header className={styles.dispatchHead}>
+      {handoff && <dl className={"handoff-summary " + styles.recipient}>
+        <dt>{openDirection ? "모르겠으면 넘길 곳" : <>
+          <span aria-hidden="true">받는 곳</span><span className={styles.screenReaderOnly}>넘길 곳</span>
+        </>}</dt>
+        <dd>{handoffLabel(handoff, state.dealers, dealerLabel)}</dd>
+      </dl>}
+      <span className={"verdict " + assessment.verdict}>{verdictLabels[assessment.verdict]}</span>
+    </header>}
+    {!assessment && leadIdentity}
     {!assessment ? <div className="card-body"><h3>문의 메모</h3><blockquote>{lead.memo}</blockquote>
       <button className="button button-primary" disabled={disabled} onClick={() => void inbox.assess(lead)}>{disabled ? "확인 중…" : "이 문의 판정"}</button>
-    </div> : <div className="card-body">
+    </div> : <div className={"card-body " + styles.body}>
       {proposal && <ReassignmentCard proposal={proposal} dealerLabel={dealerLabel} days={days} disabled={disabled} approve={() => inbox.approveReassignment(lead, proposal)} />}
-      <section className="recommendation">
-        <p className="section-kicker">미리내 추천</p>
-        <h3>{recommendationText}</h3>
-        <p>{assessment.reason}</p>
-        {openDirection && <a href="#direction-questions" onClick={openDirection}>질문에 답하기</a>}
-        {handoff && <dl className="handoff-summary">
-          <dt>{openDirection ? "모르겠으면 넘길 곳" : "넘길 곳"}</dt><dd>{handoffLabel(handoff, state.dealers, dealerLabel)}</dd>
-        </dl>}
-      </section>
-      <section>
-        <div className="section-heading"><h3>판정 근거</h3><span className={"verdict " + assessment.verdict}>{verdictLabels[assessment.verdict]}</span></div>
-        <Evidence assessment={assessment} historicalCount={historicalCount} confirmedDomain={confirmedDomain} />
-        {confirmations.map((confirmation) => <DirectionConfirmation key={confirmation.kind} confirmation={confirmation} />)}
-        {reference > 0 && <p className="muted">과거 거래 관계 {reference}건</p>}
-        {fault && <button className="button button-light" disabled={disabled} onClick={() => void inbox.assess(lead)}>외부 확인 다시 시도</button>}
-      </section>
-      <section>
-        <h3>문의 의도 · {memoLabels[assessment.details?.memoIntent ?? "unknown"]}{assessment.details?.memoSource === "liner" && " · Liner"}</h3>
-        <blockquote>{lead.memo}</blockquote>
-        {assessment.details?.memoQuote && <p className="muted">판단 문구 “{assessment.details.memoQuote}”</p>}
-      </section>
-      {ranked.length > 0 && <section><h3>추천 {dealerLabel}</h3>
-        <History record={ranked[0]} dealerLabel={dealerLabel} days={days} saveOutcome={inbox.saveOutcome} disabled={disabled} />
-        {ranked[1] && <details className="runner-up"><summary>2순위 · {ranked[1].dealer.name} · {score(ranked[1].score)}</summary>
-          <History record={ranked[1]} dealerLabel={dealerLabel} days={days} saveOutcome={inbox.saveOutcome} disabled={disabled} />
-        </details>}
-      </section>}
-      {assessment.verdict === "valid" && <details className="preview"><summary>{dealerLabel} 요약 미리보기</summary>
-        <pre>{renderForwardingMail("dealer-summary", { ...lead, country }, dealerLabel).text}</pre>
-      </details>}
-      {savedReply?.type === "reply" && <section><h3>회신 기록</h3><p>{savedReply.text} · {time(savedReply.at)}</p></section>}
-      {replyKind && canDecide && <ReplyForm key={replyKind} dealerLabel={dealerLabel} formKey={lead.id + "-" + replyKind} kind={replyKind} options={replyOptions}
-          disabled={disabled} submit={(kind, note, selection) => void inbox.saveReply(lead, kind, note, selection)} />}
       {canDecide && assessment.verdict !== "invalid" && <section className="decision-buttons" aria-label="결정">
         {dealer && <button type="button" className="button button-primary" disabled={disabled}
           onClick={() => inbox.decide(lead, "approve", dealer.id, "추천 " + dealerLabel + " 승인")}>승인</button>}
@@ -286,6 +295,38 @@ export function DecisionCard({ lead, inbox, openDirection }: {
         <p className="muted" id="change-reason-hint">{dealerLabel}를 변경하려면 이유를 입력해 주세요.</p>
         <button type="submit" className="button button-primary" disabled={disabled || !dealerId || !reason.trim()}>{dealerLabel} 변경 기록</button>
       </form>}
+      <section className={styles.evidenceSection}>
+        <div className={styles.recommendation}>
+          <h3>{recommendationText}</h3>
+          <p>{assessment.reason}</p>
+          {openDirection && <a href="#direction-questions" onClick={openDirection}>질문에 답하기</a>}
+        </div>
+        <h3>판정 근거</h3>
+        <Evidence assessment={assessment} historicalCount={historicalCount} confirmedDomain={confirmedDomain} />
+        {confirmations.map((confirmation) => <DirectionConfirmation key={confirmation.kind} confirmation={confirmation} />)}
+        {reference > 0 && <p className="muted">과거 거래 관계 {reference}건</p>}
+        {fault && <button className="button button-light" disabled={disabled} onClick={() => void inbox.assess(lead)}>외부 확인 다시 시도</button>}
+      </section>
+      {leadIdentity}
+      {replyKind && canDecide && <ReplyForm key={replyKind} dealerLabel={dealerLabel} formKey={lead.id + "-" + replyKind} kind={replyKind} options={replyOptions}
+          disabled={disabled} submit={(kind, note, selection) => void inbox.saveReply(lead, kind, note, selection)} />}
+      <details className={styles.disclosure}>
+        <summary>문의 의도 · {memoLabels[assessment.details?.memoIntent ?? "unknown"]}{assessment.details?.memoSource === "liner" && <>
+          <span className={styles.screenReaderOnly}> · Liner</span><span className={styles.evidenceTag} aria-hidden="true">Liner 모델</span>
+        </>}</summary>
+        <blockquote>{lead.memo}</blockquote>
+        {assessment.details?.memoQuote && <p className="muted">판단 문구 “{assessment.details.memoQuote}”</p>}
+      </details>
+      {ranked.length > 0 && <section><h3>추천 {dealerLabel}</h3>
+        <History record={ranked[0]} dealerLabel={dealerLabel} days={days} saveOutcome={inbox.saveOutcome} disabled={disabled} />
+        {ranked[1] && <details className="runner-up"><summary>2순위 · {ranked[1].dealer.name} · {score(ranked[1].score)}</summary>
+          <History record={ranked[1]} dealerLabel={dealerLabel} days={days} saveOutcome={inbox.saveOutcome} disabled={disabled} />
+        </details>}
+      </section>}
+      {assessment.verdict === "valid" && <details className={"preview " + styles.disclosure}><summary>{dealerLabel} 요약 미리보기</summary>
+        <pre>{renderForwardingMail("dealer-summary", { ...lead, country }, dealerLabel).text}</pre>
+      </details>}
+      {savedReply?.type === "reply" && <details className={styles.disclosure}><summary>회신 기록</summary><p>{savedReply.text} · {time(savedReply.at)}</p></details>}
       {(latestDecision || latestReassignment) && <section>
         <h3>결정 기록</h3>
         {latestDecision?.type === "decision" && <p>{latestDecision.reason} · {time(latestDecision.at)}</p>}
