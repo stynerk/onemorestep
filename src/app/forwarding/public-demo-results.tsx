@@ -1,3 +1,4 @@
+import Link from "next/link";
 import styles from "./public-demo-results.module.css";
 
 const blindEvaluationSource = "https://github.com/stynerk/onemorestep/blob/main/docs/qa/BLIND_EVALUATION_2026-11-23.md";
@@ -73,9 +74,7 @@ export function PublicDemoResults() {
             ))}
           </ul>
         </div>
-        <button className={styles.future} type="button" disabled>
-          마케팅 협조 요청 · 다음 버전
-        </button>
+        <Link className={styles.marketingLink} href="/marketing">마케팅 협조 요청</Link>
       </div>
     </details>
   );

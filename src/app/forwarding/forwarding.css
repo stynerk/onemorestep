@@ -6,6 +6,8 @@ body:has(.workspace) { background: #f5f6fb; color: #18213a; margin: 0; }
 .workspace button:disabled { cursor: default; opacity: .5; }
 .workspace :focus-visible { outline: 3px solid #7873e6; outline-offset: 2px; }
 .workspace a { color: #3e39a2; overflow-wrap: anywhere; }
+.workspace .masthead-link { color: #f1f0ff; text-decoration: none; }
+.workspace .masthead-link:hover { background: #393763; }
 .workspace h1, .workspace h2, .workspace h3, .workspace p, .workspace ul, .workspace blockquote { margin: 0; }
 .workspace h1 { color: #161a37; font-size: 34px; line-height: 1.15; letter-spacing: -.045em; font-weight: 760; }
 .workspace h2 { line-height: 1.25; }
@@ -149,4 +151,9 @@ body:has(.workspace) { background: #f5f6fb; color: #18213a; margin: 0; }
   .group-nav { grid-template-columns: repeat(3, 1fr); }
   .masthead { padding-inline: 12px; }
   .demo-disclosure { font-size: 10px; }
+}
+@media (max-width: 440px) {
+  .masthead { height: auto; min-height: 70px; padding-block: 10px; }
+  .masthead-actions { justify-content: end; flex-wrap: wrap; gap: 5px; }
+  .masthead-actions .demo-disclosure { flex-basis: 100%; text-align: right; }
 }
