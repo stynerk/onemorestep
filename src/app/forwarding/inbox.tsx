@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 import { industryHandoffForLead, isAvailableIndustry, medicom, type DemoIndustry, type DemoIndustryOption } from "../../lib/forwarding/industry-demo";
 import { confirmedCountry, inboxBucket, inboxOrder, verdictLabels } from "../../lib/forwarding/inbox";
@@ -11,6 +12,7 @@ import { DirectionPanel } from "./direction-panel";
 import { handoffLabel } from "./handoff-label";
 import { useInbox } from "./inbox-controller";
 import { PublicDemoResults } from "./public-demo-results";
+import { resetMarketingDemo } from "../marketing/storage";
 
 const sections = [...VERDICTS, "new"] as const;
 type Group = (typeof sections)[number];
@@ -76,6 +78,7 @@ function IndustryInbox({ industry, publicDemo, liveAssessment, industries, choos
       </div></div>
       <div className="masthead-actions">
         <span className="demo-disclosure">가상 리드, 공개 기관 정보만</span>
+        <nav aria-label="업무 메뉴"><Link className="button button-reset masthead-link" href="/marketing">마케팅 협조 요청</Link></nav>
         <button type="button" className="button button-reset" disabled={busy} onClick={() => setConfirmReset(true)}>시연 초기화</button>
       </div>
     </header>
@@ -97,10 +100,10 @@ function IndustryInbox({ industry, publicDemo, liveAssessment, industries, choos
           : industry.id !== "medicom" && <p>같은 판정 엔진에 업종별 리드, {industry.dealer} 표와 정책을 적용합니다.</p>}
       </div>}
       {confirmReset && <div className="feedback confirm" role="status">
-        <p>이 브라우저의 판정, 결정, 회신 기록을 지울까요?</p>
+        <p>이 브라우저의 판정, 결정, 회신과 마케팅 기록을 지울까요?</p>
         <button type="button" className="button button-light" onClick={() => setConfirmReset(false)}>취소</button>
         <button type="button" className="button button-primary" disabled={busy} onClick={() => {
-          inbox.reset(); setFilter("all"); setShowDirection(false); setConfirmReset(false);
+          inbox.reset(); resetMarketingDemo(); setFilter("all"); setShowDirection(false); setConfirmReset(false);
         }}>초기화 확인</button>
       </div>}
       {inbox.responseNow > inbox.now && <div className="feedback">

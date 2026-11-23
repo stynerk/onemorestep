@@ -268,6 +268,6 @@ test("공개 정답 대조 패널에 최종 측정과 오판 사례를 표시한
   await expect(cases.filter({ hasText: "E02" })).toContainText("개선 후 애매");
   await expect(cases.filter({ hasText: "E58" })).toContainText("정답 유효 → 판정 무효");
   await expect(cases.filter({ hasText: "E58" })).toContainText("개선 후 유효");
-  await expect(panel.getByRole("button", { name: /마케팅 협조 요청/u })).toBeDisabled();
+  await expect(panel.getByRole("link", { name: "마케팅 협조 요청" })).toHaveAttribute("href", "/marketing");
   await page.screenshot({ path: testInfo.outputPath("public-final-evaluation.png") });
 });

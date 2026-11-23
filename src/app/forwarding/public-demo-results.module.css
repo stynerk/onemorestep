@@ -81,12 +81,12 @@
   font-weight: 650;
 }
 
-.future {
+.marketingLink {
   justify-self: start;
   padding: 6px 9px;
   border: 1px solid #d8dbeb;
   border-radius: 7px;
-  background: #f1f2f7;
+  background: #eeedfd;
   color: #444d68;
 }
 
