@@ -10,6 +10,7 @@ import { renderForwardingMail } from "../../lib/forwarding/mail-template";
 import { forwardingPolicy } from "../../lib/forwarding/policy";
 import { currentDelivery, openAssignment, reassignmentProposal, type ReassignmentProposal } from "../../lib/forwarding/reassignment";
 import type { Assessment, DealerDelivery, DealerOutcome, DirectionConfirmation as Confirmation, ForwardingEvent, LeadInput, MailKind, ReplyKind } from "../../lib/forwarding/types";
+import { demoAcquisitionForLead } from "../../lib/marketing/campaign-policy";
 import { handoffLabel } from "./handoff-label";
 import type { InboxController } from "./inbox-controller";
 
@@ -162,6 +163,7 @@ export function DecisionCard({ lead, inbox, openDirection }: {
   const [dealerId, setDealerId] = useState("");
   const [reason, setReason] = useState("");
   const { state, dealerLabel } = inbox;
+  const acquisition = demoAcquisitionForLead(lead.id);
   const days = state.policy?.aggregationDays ?? forwardingPolicy.aggregationDays;
   const status = state.leadStates[lead.id];
   const assessment = status.assessment;
@@ -215,6 +217,7 @@ export function DecisionCard({ lead, inbox, openDirection }: {
       <div className="card-meta"><span>{lead.id}</span><span>{country}</span><span>{lead.product}</span></div>
       <h2 id="card-heading" title={lead.institution}>{lead.institution || "소속 미기재"}</h2>
       <p className="contact">{lead.name} · {maskEmail(lead.email)} · {maskPhone(lead.phone)}</p>
+      {acquisition && <p className="muted">유입: {acquisition.label}</p>}
       <p className="muted">접수 {time(lead.receivedAt)}{inbox.ready && " · " + Math.max(0, Math.floor((inbox.now - Date.parse(lead.receivedAt)) / 3600000)) + "시간 경과"}</p>
       {assessment && <div className="badges">
         <span className="badge">{inbox.publicDemo && assessment.mode === "saved" ? "저장된 결과" :
