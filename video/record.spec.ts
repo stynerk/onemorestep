@@ -226,17 +226,19 @@ test("미리내 데모 영상", async ({ page }) => {
     if (!(await panel.evaluate((el) => (el as HTMLDetailsElement).open).catch(() => false))) {
       await page.getByText("판정 정답 대조", { exact: true }).click();
     }
-    await focus(page.getByRole("button", { name: /마케팅 협조 요청/ }));
+    await focus(page.getByRole("link", { name: "마케팅 협조 요청" }).last());
   });
   // 장면 7 끝 — 마케팅 협조 요청(#102, PR #104의 10초 동선)
   await step("마케팅 협조 요청 열기", async () => {
-    await page.getByRole("button", { name: /마케팅 협조 요청/ }).first().click();
-    await page.waitForTimeout(1200);
+    await page.getByRole("link", { name: "마케팅 협조 요청" }).last().click();
+    await page.waitForURL(/\/marketing/, { timeout: 15_000 });
+    await page.evaluate(overlay);
+    await page.waitForTimeout(1500);
     await focus(page.getByText("86", { exact: false }).first(), false);
   });
   await say(page, "같은 원칙을 마케팅 협조 요청에도 적용했습니다.\n본사 세일즈 요청 8건을 딜 규모·마감·지역 기준으로 점수를 매기고 이유를 보입니다.", 6000, "ok");
   await step("LinkedIn 초안", async () => {
-    await page.getByRole("button", { name: /LinkedIn 초안 보기/ }).first().click();
+    await page.getByRole("button", { name: "LinkedIn 초안 보기" }).first().click();
     await page.waitForTimeout(1000);
     await page.mouse.wheel(0, 600);
     await page.waitForTimeout(800);
