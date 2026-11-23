@@ -1,18 +1,64 @@
-:root { color-scheme: light; }
+@font-face {
+  font-family: "IBM Plex Sans KR";
+  src: url("/fonts/ibm-plex-sans-kr/IBMPlexSansKR-Regular.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "IBM Plex Sans KR";
+  src: url("/fonts/ibm-plex-sans-kr/IBMPlexSansKR-SemiBold.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+}
+
+:root {
+  color-scheme: light;
+  --paper: #f4f6f5;
+  --ink: #1a2a33;
+  --rule: #cdd5d9;
+  --field-border: #6d7b83;
+  --slip: #fff;
+  --dispatch: #1d4e7a;
+  --verdict-valid: #2e7d4f;
+  --verdict-ambiguous: #b7791f;
+  --verdict-check: #2f65a8;
+  --verdict-invalid: #6b7780;
+  --verdict-risk: #b3392f;
+  --secondary-ink: #4a5b64;
+  --verdict-ambiguous-ink: #744a12;
+  --verdict-invalid-ink: #4a5b64;
+  --dispatch-soft: color-mix(in srgb, var(--dispatch) 8%, var(--paper));
+  --dispatch-hover: color-mix(in srgb, var(--dispatch) 80%, var(--ink));
+  --valid-soft: color-mix(in srgb, var(--verdict-valid) 9%, var(--slip));
+  --ambiguous-soft: color-mix(in srgb, var(--verdict-ambiguous) 11%, var(--slip));
+  --check-soft: color-mix(in srgb, var(--verdict-check) 9%, var(--slip));
+  --risk-soft: color-mix(in srgb, var(--verdict-risk) 8%, var(--slip));
+  --font-family: "IBM Plex Sans KR", "Malgun Gothic", "Apple SD Gothic Neo", "Segoe UI", system-ui, sans-serif;
+  --type-13: 13px;
+  --type-15: 15px;
+  --type-18: 18px;
+  --type-23: 23px;
+  --type-29: 29px;
+  --weight-regular: 400;
+  --weight-semibold: 600;
+}
 body { margin: 0; }
-.research-page { color: #18202e; font-family: system-ui, sans-serif; max-width: 680px; margin: 64px auto; padding: 24px; }
-.research-page h1 { font-size: 40px; margin: 8px 0; }
-.research-page h2 { font-size: 22px; }
+.research-page { color: var(--ink); font-family: var(--font-family); max-width: 680px; margin: 64px auto; padding: 24px; }
+.research-page h1 { font-size: var(--type-29); margin: 8px 0; }
+.research-page h2 { font-size: var(--type-23); }
 .research-page p { line-height: 1.65; }
-.research-page .eyebrow { font-size: 12px; letter-spacing: .08em; color: #58647c; }
-.research-page form, .research-page section { padding: 24px; background: white; border: 1px solid #dce1eb; border-radius: 12px; margin-top: 24px; }
+.research-page .eyebrow { font-size: var(--type-13); letter-spacing: .08em; color: var(--secondary-ink); }
+.research-page form, .research-page section { padding: 24px; background: var(--slip); border: 1px solid var(--rule); border-radius: 12px; margin-top: 24px; }
 .research-page label { display: block; font-weight: 600; margin-bottom: 12px; }
-.research-page textarea { box-sizing: border-box; width: 100%; min-height: 100px; padding: 12px; font: inherit; border: 1px solid #9da8bc; border-radius: 6px; resize: vertical; }
-.research-page button { background: #284c99; color: white; border: 0; border-radius: 6px; padding: 12px 20px; margin-top: 12px; font: inherit; cursor: pointer; }
+.research-page textarea { box-sizing: border-box; width: 100%; min-height: 100px; padding: 12px; font: inherit; border: 1px solid var(--rule); border-radius: 6px; resize: vertical; }
+.research-page button { background: var(--dispatch); color: var(--slip); border: 0; border-radius: 6px; padding: 12px 20px; margin-top: 12px; font: inherit; cursor: pointer; }
 .research-page button:disabled { opacity: .6; cursor: wait; }
-.research-page :focus-visible { outline: 3px solid #6589f3; outline-offset: 3px; }
+.research-page :focus-visible { outline: 3px solid var(--dispatch); outline-offset: 3px; }
 .research-page ul { padding-left: 20px; }
 .research-page li { margin: 20px 0; }
-.research-page a { color: #244996; overflow-wrap: anywhere; }
-.research-page .notice { background: #fff4da; padding: 12px; border-radius: 6px; }
+.research-page a { color: var(--dispatch); overflow-wrap: anywhere; }
+.research-page .notice { background: var(--ambiguous-soft); padding: 12px; border-radius: 6px; }
 @media (max-width: 600px) { .research-page { margin: 16px auto; padding: 16px; } .research-page form, .research-page section { padding: 16px; } }

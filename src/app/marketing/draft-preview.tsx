@@ -13,12 +13,13 @@ function safeSourceUrl(raw: string) {
   return null;
 }
 
-export function DraftPreview({ channel, record, editing, setEditing, saveDraft }: {
+export function DraftPreview({ channel, record, editing, setEditing, saveDraft, readOnly }: {
   channel: ChannelId;
   record: DraftRecord;
   editing: boolean;
   setEditing: (editing: boolean) => void;
   saveDraft: (update: Partial<DraftRecord>) => void;
+  readOnly?: boolean;
 }) {
   const [text, setText] = useState("");
   const [title, setTitle] = useState("");
@@ -96,7 +97,7 @@ export function DraftPreview({ channel, record, editing, setEditing, saveDraft }
     {warnings.length > 0 && <ul className="marketing-warnings" aria-label="의료기기 표현 경고">
       {warnings.map(warning => <li key={warning}><strong>의료기기 표현 경고</strong> · {warning}</li>)}
     </ul>}
-    {!editing && <>
+    {!editing && !readOnly && <>
       {needsReview && status !== "승인됨" && <label className="marketing-confirm-evidence">
         <input type="checkbox" checked={confirmed} onChange={event => setConfirmed(event.target.checked)} /> 표현과 근거를 확인했습니다
       </label>}

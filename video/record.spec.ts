@@ -7,6 +7,16 @@ type Tag = "ok" | "warn" | null;
 
 const overlay = () => {
   const w = window as unknown as Record<string, unknown>;
+  // 녹화 서버는 개발 모드라 Next.js 개발 표시(N)가 뜬다. 공개 빌드에는 없으므로 영상에서 숨긴다.
+  const hideDevIndicator = () => {
+    if (document.getElementById("__hide-next-dev")) return;
+    const style = document.createElement("style");
+    style.id = "__hide-next-dev";
+    style.textContent = "nextjs-portal{display:none!important}";
+    (document.head ?? document.documentElement).appendChild(style);
+  };
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", hideDevIndicator);
+  else hideDevIndicator();
   w.__setSub = (text: string, tag: string | null) => {
     let box = document.getElementById("__sub");
     if (!box) {
@@ -139,7 +149,7 @@ test("미리내 데모 영상", async ({ page }) => {
   // 장면 3 — Liner 근거, 사칭 의심
   await step("L01", async () => open(page, "L01"));
   await step("L01 기관 확인", async () => focus(card(page).getByRole("heading", { name: "소속 기관 확인" })));
-  await say(page, "판정의 근거는 Liner 검색입니다. 소속 기관이 실제로 있는지, 어느 나라에 있는지,\n공식 도메인이 무엇인지 확인하고 링크와 검색 시각을 붙입니다.", 8000, "ok");
+  await say(page, "실시간 모드에서는 Liner 검색으로 소속 기관이 실제로 있는지, 어느 나라에 있는지,\n공식 도메인이 무엇인지 확인하고 링크와 시각을 붙입니다. 공개 시연은 공식 기관 페이지에서 발췌한 자료를 씁니다.", 8000, "ok");
   await step("L01 도메인", async () => focus(card(page).getByRole("heading", { name: "이메일 도메인" })));
   await say(page, "리드의 이메일 도메인을 공식 도메인과 대조합니다.\n문의 의도와 도메인 소유는 Liner 모델(Router)이 읽고 원문 인용으로 근거를 붙입니다.", 8000, "ok");
   await step("L29", async () => { await open(page, "L29"); await focus(card(page).getByText(/사칭 의심/).first()); });
