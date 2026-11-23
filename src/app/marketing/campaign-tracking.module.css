@@ -1,0 +1,40 @@
+﻿.title {
+  margin: 0;
+  font-size: 18px;
+}
+.summary {
+  margin: 6px 0 12px;
+  color: #555e79;
+}
+.scroller {
+  overflow-x: auto;
+}
+.scroller:focus-visible {
+  outline: 2px solid #4e3bc4;
+  outline-offset: 2px;
+}
+.table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+.table th,
+.table td {
+  border-bottom: 1px solid #e8eaf3;
+  padding: 9px 8px;
+  text-align: left;
+}
+.table thead {
+  background: #f3f2fa;
+}
+.table th,
+.table td:not(:nth-child(2)) {
+  white-space: nowrap;
+}
+.table tr:last-child > * {
+  border-bottom: 0;
+}
+.low {
+  color: #8a3d00;
+}
