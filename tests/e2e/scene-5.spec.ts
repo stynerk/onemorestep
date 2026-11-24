@@ -25,7 +25,7 @@ test("S5-01 승인 대기 카드의 머리, 마스킹과 추천 이유", async (
   await page.screenshot({ path: testInfo.outputPath("scene-5-decision.png"), fullPage: true });
 });
 
-test("S5-02 저장된 유효 판정에 기관 링크와 검색 시각, 도메인 대조와 자사 기록을 표시", async ({ page }, testInfo) => {
+test("S5-02 저장된 유효 선별에 기관 링크와 검색 시각, 도메인 대조와 자사 기록을 표시", async ({ page }, testInfo) => {
   await mockMail(page, testInfo);
   const card = await assessLead(page, "L01");
 
@@ -225,7 +225,7 @@ test("S5-12 · S5-13 공개 빌드는 브라우저에 배정만 저장하고 메
   await page.screenshot({ path: testInfo.outputPath("scene-5-public-approval.png"), fullPage: true });
 });
 
-test("공개 정답 대조 패널에 최종 측정과 오판 사례를 표시한다", async ({ page }, testInfo) => {
+test("공개 화면은 정답 대조 없이 업종 선택과 마케팅 진입을 제공한다", async ({ page }) => {
   await page.goto(publicBaseUrl);
   const industries = page.getByRole("group", { name: "시연 업종" });
   const medicom = industries.getByRole("button", { name: "의료기기(Medicom)", exact: true });
@@ -237,37 +237,8 @@ test("공개 정답 대조 패널에 최종 측정과 오판 사례를 표시한
     await expect(saas).toBeDisabled();
     await expect(industries.getByText("B2B SaaS 시연 데이터 준비 중", { exact: true })).toBeVisible();
   }
-  await page.getByText("판정 정답 대조", { exact: true }).click();
-  const panel = page.locator("details").filter({ has: page.getByText("판정 정답 대조", { exact: true }) });
-  await expect(panel.getByText(/공개 문의함은 저장된 근거/u)).toBeVisible();
-  const blind = panel.getByRole("region", { name: "새 블라인드 평가 30건" });
-  await expect(blind.getByText("17/30", { exact: true })).toBeVisible();
-  await expect(blind.getByText("21/30", { exact: true })).toBeVisible();
-  await expect(blind.getByText(/유효 → 무효 0건, 거짓 유효 0건/u)).toBeVisible();
-  await expect(blind.getByRole("link", { name: "새 블라인드 평가 보고서" })).toHaveAttribute(
-    "href", /\/docs\/qa\/BLIND_EVALUATION_2026-11-23\.md$/u,
-  );
-  for (const score of ["30/30", "28/30", "33/70", "47/70"]) {
-    await expect(panel.getByText(score, { exact: true })).toBeVisible();
-  }
-  await expect(panel.getByText("원본 정답 기준 23/70 (32.9%)")).toBeVisible();
-  await expect(panel.getByText("넘길 곳 38/67")).toBeVisible();
-  await expect(panel.getByText("1차 개선 45/70 (64.3%)")).toBeVisible();
-  await expect(panel.getByText("넘길 곳 46/67 → 48/67")).toBeVisible();
-  await expect(panel.getByText(/개선 전 27\/30/u)).toBeVisible();
-  await expect(panel.getByText(/개선 전·블라인드/u)).toBeVisible();
-  await expect(panel.getByText(/2차 개선·평가 결과를 본 뒤/u)).toBeVisible();
-  await expect(panel.getByText("유효 오탐 0건 · 유효 → 무효 0건")).toBeVisible();
-  await expect(panel.getByText(/23:43:06~23:47:32 KST/u)).toBeVisible();
-  await expect(panel.getByRole("link", { name: "최종 평가 기록" })).toHaveAttribute(
-    "href", /\/docs\/qa\/FINAL_EVALUATION_2026-11-20\.md$/u,
-  );
-  const cases = panel.getByRole("listitem");
-  await expect(cases).toHaveCount(2);
-  await expect(cases.filter({ hasText: "E02" })).toContainText("정답 유효 → 판정 애매");
-  await expect(cases.filter({ hasText: "E02" })).toContainText("개선 후 애매");
-  await expect(cases.filter({ hasText: "E58" })).toContainText("정답 유효 → 판정 무효");
-  await expect(cases.filter({ hasText: "E58" })).toContainText("개선 후 유효");
-  await expect(panel.getByRole("link", { name: "마케팅 협조 요청" })).toHaveAttribute("href", "/marketing");
-  await page.screenshot({ path: testInfo.outputPath("public-final-evaluation.png") });
+  await expect(page.getByText(/정답 대조/u)).toHaveCount(0);
+  const marketingEntry = page.getByRole("navigation", { name: "업무 메뉴" })
+    .getByRole("link", { name: "마케팅 협조 요청", exact: true });
+  await expect(marketingEntry).toHaveAttribute("href", "/marketing");
 });

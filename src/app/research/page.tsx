@@ -1,5 +1,6 @@
 "use client";
 
+import { DemoLogoutButton } from "../demo-session";
 import { useState, type FormEvent } from "react";
 import type { ResearchResult } from "../../lib/research";
 
@@ -37,8 +38,9 @@ export default function Home() {
 
   return (
     <main className="research-page">
-      <p className="eyebrow">ONEMORESTEP · 개발 세팅 확인</p>
-      <h1>미리내</h1>
+      <p className="eyebrow">개발 세팅 확인</p>
+      <h1>One More Step</h1>
+      <DemoLogoutButton />
       <p>조사할 내용을 입력하고 출처를 확인해 보세요.</p>
       <form onSubmit={submit}>
         <label htmlFor="query">조사할 내용</label>

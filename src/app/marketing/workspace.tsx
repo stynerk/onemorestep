@@ -1,5 +1,6 @@
 "use client";
 
+import { DemoLogoutButton } from "../demo-session";
 import Link from "next/link";
 import { useEffect, useRef, useState, useSyncExternalStore, type FormEvent } from "react";
 import { marketingDraftTemplate, type MarketingDraft } from "../../lib/marketing/draft";
@@ -11,7 +12,7 @@ import {
   type DraftRecord,
 } from "./storage";
 import { DraftPreview } from "./draft-preview";
-import { CampaignTracking, useCampaignTracking } from "./campaign-tracking";
+import { CampaignTracking, campaignEffectLabel, useCampaignTracking } from "./campaign-tracking";
 import { RequestIntake } from "./request-intake";
 import { RequesterView, RequestWorkflow } from "./request-workflow";
 
@@ -195,11 +196,12 @@ export function MarketingWorkspace({ publicDemo }: { publicDemo: boolean }) {
     <header className="masthead">
       <div className="brand">
         <span className="brand-icon" aria-hidden="true">✦</span>
-        <div><p className="brand-name">미리내</p><p className="brand-company">MEDICOM</p></div>
+        <div><p className="brand-name">One More Step</p><p className="brand-company">MEDICOM</p></div>
       </div>
       <nav className="masthead-actions" aria-label="업무 메뉴">
         <Link className="button button-reset masthead-link" href="/">문의함</Link>
         <button className="button button-reset" type="button" onClick={() => setConfirmReset(true)}>시연 초기화</button>
+        <DemoLogoutButton className="button button-reset" />
       </nav>
     </header>
 
@@ -343,7 +345,7 @@ export function MarketingWorkspace({ publicDemo }: { publicDemo: boolean }) {
                     {pending === key ? "준비 중…" : "초안 보기"}
                   </button>
                   {effect && <span className={effect.effect === "효과 낮음" ? "marketing-channel-effect marketing-deadline-warning" : "marketing-channel-effect"}>
-                    {effect.effect}{effect.validRatio !== null && " · 유효 " + effect.valid + "/" + effect.total}
+                    {campaignEffectLabel(effect.effect)}{effect.validRatio !== null && " · 유효 " + effect.valid + "/" + effect.total}
                   </span>}
                 </li>;
               })}

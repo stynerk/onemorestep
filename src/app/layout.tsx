@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
+import { DemoSessionGate } from "./demo-session";
 import "./globals.css";
+import "./demo-session.css";
 
 export const metadata: Metadata = {
-  title: "미리내 · 문의함",
-  description: "공개 기관 정보로 문의를 판정하고 딜러 결정을 돕는 미리내 문의함",
+  title: "One More Step",
+  description: "세일즈보다 한발 앞에서 리드를 선별하고 넘길 곳을 준비합니다.",
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="ko"><body>{children}</body></html>;
+  return <html lang="ko"><body><DemoSessionGate>{children}</DemoSessionGate></body></html>;
 }

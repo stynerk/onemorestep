@@ -25,12 +25,12 @@ function card(page: Page) {
 }
 
 function runButton(page: Page) {
-  return page.getByRole("button", { name: "판정 시작", exact: true });
+  return page.getByRole("button", { name: "선별 시작", exact: true });
 }
 
 async function runAssessment(page: Page) {
   await runButton(page).click();
-  await expect(page.getByRole("button", { name: "다시 판정", exact: true })).toBeEnabled({ timeout: 20000 });
+  await expect(page.getByRole("button", { name: "다시 선별", exact: true })).toBeEnabled({ timeout: 20000 });
 }
 
 async function events(page: Page): Promise<ForwardingEvent[]> {
@@ -53,16 +53,16 @@ test.beforeEach(async ({ page }) => {
   }));
 });
 
-test("S2-01 초기 문의함에서 30건 모두 미판정이며 L06이 맨 아래다", async ({ page }) => {
+test("S2-01 초기 문의함에서 30건 모두 미선별이며 L06이 맨 아래다", async ({ page }) => {
   await page.goto("/");
-  const unassessed = group(page, "미판정");
-  await expect(unassessed.getByRole("heading")).toHaveText("미판정 30");
+  const unassessed = group(page, "미선별");
+  await expect(unassessed.getByRole("heading")).toHaveText("미선별 30");
   await expect(unassessed.getByRole("listitem")).toHaveCount(30);
   await expect(unassessed.locator(".lead-meta > span:first-child").last()).toHaveText("L06");
   await expect(runButton(page)).toBeEnabled();
 });
 
-test("S2-02 한 번 클릭하면 리드당 POST 한 건을 보내고 판정 중에는 버튼을 잠근다", async ({ page }) => {
+test("S2-02 한 번 클릭하면 리드당 POST 한 건을 보내고 선별 중에는 버튼을 잠근다", async ({ page }) => {
   const gate = Promise.withResolvers<void>();
   const requests: string[] = [];
   await page.route(assessUrl, async (route) => {
@@ -76,12 +76,12 @@ test("S2-02 한 번 클릭하면 리드당 POST 한 건을 보내고 판정 중�
   await page.goto("/");
   try {
     await runButton(page).click();
-    await expect(page.getByRole("button", { name: "판정 중…", exact: true })).toBeDisabled();
+    await expect(page.getByRole("button", { name: "선별 중…", exact: true })).toBeDisabled();
     await expect.poll(() => requests.includes("L01")).toBe(true);
   } finally {
     gate.resolve();
   }
-  await expect(page.getByRole("button", { name: "다시 판정", exact: true })).toBeEnabled({ timeout: 20000 });
+  await expect(page.getByRole("button", { name: "다시 선별", exact: true })).toBeEnabled({ timeout: 20000 });
   expect(requests.sort()).toEqual(Array.from({ length: 30 }, (_, index) =>
     "L" + String(index + 1).padStart(2, "0")));
 });
@@ -200,7 +200,7 @@ test("S2-08 응답이 8초 넘게 없으면 그 리드만 외부 확인 실패�
     await expect.poll(async () => (await events(page)).some((event) =>
       event.type === "assessed" && event.leadId === "L01" && event.assessment.details?.externalStatus === "failed"),
     { timeout: 10000, message: "응답하지 않는 L01은 8초 제한 뒤 실패로 기록된다" }).toBe(true);
-    await expect(page.getByRole("button", { name: "다시 판정", exact: true })).toBeEnabled({ timeout: 30000 });
+    await expect(page.getByRole("button", { name: "다시 선별", exact: true })).toBeEnabled({ timeout: 30000 });
     const completed = (await events(page)).filter((event) => event.type === "assessed");
     expect(completed).toHaveLength(30);
     expect(completed.filter((event) => event.assessment.details?.externalStatus === "failed").map(({ leadId }) => leadId))
@@ -213,7 +213,7 @@ test("S2-08 응답이 8초 넘게 없으면 그 리드만 외부 확인 실패�
   }
 });
 
-test("S2-09 판정 도중 새로고침하면 완료 건만 남고 중복 기록이 없다", async ({ page }) => {
+test("S2-09 선별 도중 새로고침하면 완료 건만 남고 중복 기록이 없다", async ({ page }) => {
   const gate = Promise.withResolvers<void>();
   await page.route(assessUrl, async (route) => {
     const { leadId } = route.request().postDataJSON() as { leadId: string };
@@ -226,10 +226,10 @@ test("S2-09 판정 도중 새로고침하면 완료 건만 남고 중복 기록�
     await runButton(page).click();
     await expect.poll(async () => (await events(page)).filter((event) => event.type === "assessed").map(({ leadId }) => leadId))
       .toEqual(["L01"]);
-    await expect(page.getByRole("button", { name: "판정 중…", exact: true })).toBeDisabled();
+    await expect(page.getByRole("button", { name: "선별 중…", exact: true })).toBeDisabled();
     await page.reload({ waitUntil: "domcontentloaded" });
     await expect(runButton(page)).toBeEnabled();
-    await expect(group(page, "미판정").getByRole("listitem")).toHaveCount(29);
+    await expect(group(page, "미선별").getByRole("listitem")).toHaveCount(29);
     await expect(group(page, "유효").getByRole("listitem").filter({ hasText: /\bL01\b/u })).toHaveCount(1);
     expect((await events(page)).filter((event) => event.type === "assessed").map(({ leadId }) => leadId)).toEqual(["L01"]);
   } finally {

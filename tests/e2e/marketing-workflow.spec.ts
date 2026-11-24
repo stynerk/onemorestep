@@ -3,15 +3,15 @@ import { expect, test } from "@playwright/test";
 const demo = "http://127.0.0.1:3150";
 test.describe.configure({ timeout: 90_000 });
 
-test("문의함 판정 뒤 유입 경로의 효과가 채널 선택에 반영된다", async ({ page }) => {
+test("문의함 선별 뒤 유입 경로의 효과가 채널 선택에 반영된다", async ({ page }) => {
   await page.goto(demo + "/marketing", { waitUntil: "domcontentloaded" });
   const campaigns = page.getByRole("region", { name: "캠페인 효과" });
-  await expect(campaigns.getByRole("row", { name: /\bC1\b/u })).toContainText("판정 전");
-  await expect(campaigns.getByRole("row", { name: /\bC2\b/u })).toContainText("판정 전");
+  await expect(campaigns.getByRole("row", { name: /\bC1\b/u })).toContainText("선별 전");
+  await expect(campaigns.getByRole("row", { name: /\bC2\b/u })).toContainText("선별 전");
 
   await page.getByRole("link", { name: "문의함", exact: true }).click();
-  await page.getByRole("button", { name: "판정 시작", exact: true }).click();
-  await expect(page.getByRole("button", { name: "다시 판정", exact: true })).toBeEnabled({ timeout: 30_000 });
+  await page.getByRole("button", { name: "선별 시작", exact: true }).click();
+  await expect(page.getByRole("button", { name: "다시 선별", exact: true })).toBeEnabled({ timeout: 30_000 });
   await page.locator(".lead").getByRole("button", { name: /^L06\b/u }).click();
   await expect(page.locator(".decision-card")).toContainText(/유입:\s*C1 LinkedIn/u);
 
@@ -40,8 +40,8 @@ test("문의함 판정 뒤 유입 경로의 효과가 채널 선택에 반영된
 test("연결 리드로 요청을 접수하고 초안을 승인해야 캠페인을 완료할 수 있다", async ({ page }) => {
   await page.clock.setFixedTime(new Date("2026-11-24T03:00:00Z"));
   await page.goto(demo);
-  await page.getByRole("button", { name: "판정 시작", exact: true }).click();
-  await expect(page.getByRole("button", { name: "다시 판정", exact: true })).toBeEnabled({ timeout: 30_000 });
+  await page.getByRole("button", { name: "선별 시작", exact: true }).click();
+  await expect(page.getByRole("button", { name: "다시 선별", exact: true })).toBeEnabled({ timeout: 30_000 });
   await page.getByRole("navigation", { name: "업무 메뉴" })
     .getByRole("link", { name: "마케팅 협조 요청", exact: true }).click();
   await page.getByRole("button", { name: "요청 접수", exact: true }).click();

@@ -3,6 +3,7 @@
 import { useMemo, useSyncExternalStore } from "react";
 import { createBrowserForwardingStore, FORWARDING_STORAGE_KEY } from "../../lib/forwarding/store";
 import { createIndustryState } from "../../lib/forwarding/industry-demo";
+import type { CampaignEffect } from "../../lib/marketing/campaign-policy";
 import type { ChannelId } from "../../lib/marketing/policy";
 import { marketingCampaignMetrics, marketingLeadOptions, type CampaignMetrics } from "../../lib/marketing/tracking";
 import styles from "./campaign-tracking.module.css";
@@ -36,6 +37,8 @@ export function useCampaignTracking() {
   }, [snapshot]);
 }
 
+export const campaignEffectLabel = (effect: CampaignEffect) => effect === "판정 전" ? "선별 전" : effect;
+
 const percent = new Intl.NumberFormat("ko-KR", { style: "percent", maximumFractionDigits: 0 });
 
 export function CampaignTracking({ campaigns, issuedCodes = [] }: {
@@ -45,14 +48,14 @@ export function CampaignTracking({ campaigns, issuedCodes = [] }: {
   const largestCampaign = Math.max(1, ...campaigns.map(({ total }) => total));
   return <section className="marketing-card" aria-labelledby="campaign-tracking-title">
     <h2 id="campaign-tracking-title" className={styles.title}>캠페인 효과</h2>
-    <p className={styles.summary}>문의함 판정 기록으로 집계합니다. 유입 리드의 판정이 끝나면 유효 비율과 효과가 표시됩니다.</p>
+    <p className={styles.summary}>문의함 선별 기록으로 집계합니다. 유입 리드의 선별이 끝나면 유효 비율과 효과가 표시됩니다.</p>
     <div className={styles.scroller} tabIndex={0} role="region" aria-label="캠페인 효과 표 스크롤">
       <table className={styles.table} aria-label="캠페인 효과">
         <thead>
           <tr>
             <th scope="col">코드</th><th scope="col">캠페인</th><th scope="col">채널</th><th scope="col">유입</th>
             <th scope="col">유효 (비율)</th><th scope="col">애매</th><th scope="col">국가 확인</th>
-            <th scope="col">제휴 확인</th><th scope="col">무효</th><th scope="col">미판정</th>
+            <th scope="col">제휴 확인</th><th scope="col">무효</th><th scope="col">미선별</th>
             <th scope="col">딜러 배정</th><th scope="col">효과</th>
           </tr>
         </thead>
@@ -74,7 +77,7 @@ export function CampaignTracking({ campaigns, issuedCodes = [] }: {
             <td>{campaign.verdicts.ambiguous}</td><td>{campaign.verdicts["country-check"]}</td>
             <td>{campaign.verdicts["partnership-check"]}</td><td>{campaign.verdicts.invalid}</td><td>{campaign.pending}</td>
             <td>{campaign.dealerCount}</td>
-            <td><strong className={campaign.effect === "효과 낮음" ? styles.low : campaign.effect === "효과 높음" ? styles.high : undefined}>{campaign.effect}</strong></td>
+            <td><strong className={campaign.effect === "효과 낮음" ? styles.low : campaign.effect === "효과 높음" ? styles.high : undefined}>{campaignEffectLabel(campaign.effect)}</strong></td>
           </tr>)}
           {issuedCodes.map(({ code, title }) => <tr key={code}>
             <th scope="row">{code}</th><td>{title}</td><td>—</td>
