@@ -6,6 +6,7 @@ import { createIndustryState } from "../../lib/forwarding/industry-demo";
 import type { CampaignEffect } from "../../lib/marketing/campaign-policy";
 import type { ChannelId } from "../../lib/marketing/policy";
 import { marketingCampaignMetrics, marketingLeadOptions, type CampaignMetrics } from "../../lib/marketing/tracking";
+import { MEDICOM_INBOX_CHANGED } from "../forwarding/inbox-controller";
 import styles from "./campaign-tracking.module.css";
 
 function readSavedInbox() {
@@ -18,9 +19,12 @@ function subscribeToInbox(listener: () => void) {
   }
   window.addEventListener("storage", onStorage);
   window.addEventListener("focus", listener);
+  // Native storage events only notify other tabs.
+  window.addEventListener(MEDICOM_INBOX_CHANGED, listener);
   return () => {
     window.removeEventListener("storage", onStorage);
     window.removeEventListener("focus", listener);
+    window.removeEventListener(MEDICOM_INBOX_CHANGED, listener);
   };
 }
 
