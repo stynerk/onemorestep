@@ -303,14 +303,15 @@ export function useInbox(publicDemo: boolean, liveAssessment: boolean, industry:
   }
 
   function reset() {
-    if (!store.current || batchRunning.current || assessing.current.size || mailing.current.size) return;
+    if (!store.current || batchRunning.current || assessing.current.size || mailing.current.size) return false;
     const result = store.current.reset();
-    if (!apply(result)) return;
+    if (!apply(result)) return false;
     setError("");
     setSelected(null);
     setMail({});
     setSimulatedNow(null);
     setReady(true);
+    return true;
   }
 
   return { state, ready, publicDemo, dealerLabel: industry.dealer, now, responseNow, simulatedNow, clearSimulation: () => setSimulatedNow(null),

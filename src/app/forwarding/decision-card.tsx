@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { industryHandoffForLead } from "../../lib/forwarding/industry-demo";
 import { dealerScore, recommendDealer, type DealerScore } from "../../lib/forwarding/dealers";
 import { directionChoiceLabel } from "../../lib/forwarding/direction-questions";
@@ -200,8 +201,8 @@ function ReassignmentCard({ proposal, approve, disabled, dealerLabel, days }: {
   </section>;
 }
 
-export function DecisionCard({ lead, inbox, openDirection }: {
-  lead: LeadInput; inbox: InboxController; openDirection?: () => void;
+export function DecisionCard({ lead, inbox, directionHref }: {
+  lead: LeadInput; inbox: InboxController; directionHref?: string;
 }) {
   const [changeDealer, setChangeDealer] = useState(false);
   const [dealerId, setDealerId] = useState("");
@@ -245,7 +246,7 @@ export function DecisionCard({ lead, inbox, openDirection }: {
   const runMail = inbox.mailFor(lead);
   const stale = assessment && hasStaleEvidence(assessment, inbox.now);
   const fault = assessment?.details?.externalStatus === "failed";
-  const recommendationText = openDirection ? "담당자에게 진행 방향을 물어요." :
+  const recommendationText = directionHref ? "담당자에게 진행 방향을 물어요." :
     assigned ? assigned.name + "에 배정했습니다." : dealer ? dealer.name + "에 넘기세요." :
     recommendation?.route === "manager-direct" ? recommendation.manager.name + "에게 넘기세요." :
     recommendation?.route === "manager-confirmation" ? recommendation.manager.name + "의 " + dealerLabel + " 확인이 필요해요." :
@@ -275,7 +276,7 @@ export function DecisionCard({ lead, inbox, openDirection }: {
     data-assessment={assessment?.verdict} data-risk={assessment?.details?.domain === "suspicious" ? "true" : undefined}>
     {assessment && <header className={styles.dispatchHead}>
       {handoff && <dl className={"handoff-summary " + styles.recipient}>
-        <dt>{openDirection ? "모르겠으면 넘길 곳" : <>
+        <dt>{directionHref ? "모르겠으면 넘길 곳" : <>
           <span aria-hidden="true">받는 곳</span><span className={styles.screenReaderOnly}>넘길 곳</span>
         </>}</dt>
         <dd>{handoffLabel(handoff, state.dealers, dealerLabel)}</dd>
@@ -313,7 +314,7 @@ export function DecisionCard({ lead, inbox, openDirection }: {
         <div className={styles.recommendation}>
           <h3>{recommendationText}</h3>
           <p>{assessment.reason}</p>
-          {openDirection && <a href="#direction-questions" onClick={openDirection}>질문에 답하기</a>}
+          {directionHref && <Link href={directionHref}>질문에 답하기</Link>}
         </div>
         <h3>선별 근거</h3>
         <Evidence assessment={assessment} historicalCount={historicalCount}

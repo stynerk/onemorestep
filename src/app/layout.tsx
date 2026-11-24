@@ -1,7 +1,13 @@
 import type { Metadata } from "next";
+import { isPublicDemo, linerRuntimeSettings } from "../lib/demo-mode";
+import { demoIndustries } from "../lib/forwarding/industry-demo.server";
+import { AppWorkspace } from "./app-workspace";
 import { DemoSessionGate } from "./demo-session";
 import "./globals.css";
 import "./demo-session.css";
+
+// The shared workspace keeps the deployment runtime's settings from login onward.
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "One More Step",
@@ -9,5 +15,12 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="ko"><body><DemoSessionGate>{children}</DemoSessionGate></body></html>;
+  const publicDemo = isPublicDemo();
+  const liner = linerRuntimeSettings();
+  const liveAssessment = liner.mode?.trim() === "live" && Boolean(liner.apiKey?.trim());
+  return <html lang="ko"><body><DemoSessionGate>
+    <AppWorkspace publicDemo={publicDemo} liveAssessment={liveAssessment} industries={publicDemo ? demoIndustries : []}>
+      {children}
+    </AppWorkspace>
+  </DemoSessionGate></body></html>;
 }
