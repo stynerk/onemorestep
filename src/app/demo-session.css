@@ -1,0 +1,104 @@
+.demo-login {
+  display: grid;
+  min-height: 100dvh;
+  box-sizing: border-box;
+  padding: 24px 16px;
+  place-items: center;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-family);
+  font-size: var(--type-15);
+  line-height: 1.5;
+}
+
+.demo-login-panel {
+  box-sizing: border-box;
+  width: min(100%, 448px);
+  padding: clamp(20px, 5vw, 36px);
+  border: 1px solid var(--rule);
+  background: var(--slip);
+}
+
+.demo-login h1 {
+  margin: 0;
+  font-size: var(--type-29);
+  font-weight: var(--weight-semibold);
+  line-height: 1.2;
+}
+
+.demo-login-intro { margin: 8px 0 24px; color: var(--secondary-ink); }
+
+.demo-login-notice {
+  margin: 0 0 20px;
+  padding: 10px 12px;
+  background: var(--dispatch-soft);
+  border-inline-start: 4px solid var(--dispatch);
+}
+
+.demo-login-form { display: grid; gap: 6px; }
+.demo-login-form label { font-weight: var(--weight-semibold); }
+.demo-login-form label:not(:first-child) { margin-top: 8px; }
+
+.demo-login input,
+.demo-login button {
+  box-sizing: border-box;
+  min-height: 42px;
+  border-radius: 3px;
+  font: inherit;
+}
+
+.demo-login input {
+  min-width: 0;
+  width: 100%;
+  padding: 7px 10px;
+  background: var(--slip);
+  border: 1px solid var(--field-border);
+  color: var(--ink);
+}
+
+.demo-login button { cursor: pointer; }
+
+.demo-login .demo-login-submit {
+  width: 100%;
+  margin-top: 12px;
+  padding: 8px 12px;
+  border: 1px solid var(--dispatch);
+  background: var(--dispatch);
+  color: var(--slip);
+  font-weight: var(--weight-semibold);
+}
+
+.demo-login-error { margin: 6px 0 0; color: var(--verdict-risk); }
+
+.demo-login-help {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin-top: 16px;
+  color: var(--secondary-ink);
+}
+
+.demo-login-help button {
+  padding: 4px;
+  border: 0;
+  background: transparent;
+  color: var(--dispatch);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.demo-login :focus-visible { outline: 3px solid var(--dispatch); outline-offset: 2px; }
+
+.demo-login-dialog {
+  box-sizing: border-box;
+  width: min(calc(100% - 32px), 400px);
+  padding: 24px;
+  border: 1px solid var(--rule);
+  background: var(--slip);
+  color: var(--ink);
+}
+
+.demo-login-dialog::backdrop { background: #1a2a3370; }
+.demo-login-dialog h2 { margin: 0; font-size: var(--type-18); font-weight: var(--weight-semibold); }
+.demo-login-dialog p { margin: 12px 0; }
