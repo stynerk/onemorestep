@@ -37,7 +37,19 @@ function confirmationsFor(events: ForwardingEvent[], leadId: string) {
   return [...confirmations.values()].reverse();
 }
 
-function Evidence({ assessment, historicalCount, confirmedDomain }: { assessment: Assessment; historicalCount: number; confirmedDomain: boolean }) {
+function institutionSourceLinks(sources: string[]) {
+  const seenHosts = new Set<string>();
+  return [...new Set(sources)].map((href) => {
+    const { hostname, pathname, search, hash } = new URL(href);
+    const label = seenHosts.has(hostname) ? pathname + search + hash : hostname;
+    seenHosts.add(hostname);
+    return { href, label };
+  });
+}
+
+function Evidence({ assessment, historicalCount, priorRelationshipCount, confirmedDomain }: {
+  assessment: Assessment; historicalCount: number; priorRelationshipCount: number; confirmedDomain: boolean;
+}) {
   const detail = assessment.details;
   const domainEvidence = detail?.domainEvidence;
   const searchSource = detail && ["liner", "cache", "mixed"].includes(detail.sourceKind);
@@ -53,7 +65,8 @@ function Evidence({ assessment, historicalCount, confirmedDomain }: { assessment
       </div>
       <div className={styles.evidenceSource}>
         {assessment.sources.length > 0 && <ul className="source-list">
-          {assessment.sources.map((url) => <li key={url}><a href={url} target="_blank" rel="noopener noreferrer">{new URL(url).hostname}</a></li>)}
+          {institutionSourceLinks(assessment.sources).map(({ href, label }) =>
+            <li key={href}><a href={href} title={href} target="_blank" rel="noopener noreferrer">{label}</a></li>)}
         </ul>}
         <time className="muted" dateTime={assessment.searchedAt}>{time(assessment.searchedAt)}</time>
         {searchSource && <span>Liner 검색</span>}
@@ -81,7 +94,8 @@ function Evidence({ assessment, historicalCount, confirmedDomain }: { assessment
     </div>
     <div className={styles.evidenceRow}>
       <EvidenceMark state={historicalCount > 0 ? "confirmed" : "caution"} />
-      <div><h3>자사 기록</h3><p>같은 기관의 전달 이력 {historicalCount}건</p></div>
+      <div><h3>자사 기록</h3><p>같은 기관의 전달 이력 {historicalCount}건</p>
+        {priorRelationshipCount > 0 && <p className="muted">과거 거래 관계 {priorRelationshipCount}건</p>}</div>
       <div className={styles.evidenceSource}><span>전달 기록</span></div>
     </div>
   </div>;
@@ -220,7 +234,7 @@ export function DecisionCard({ lead, inbox, openDirection }: {
     ? state.deliveries.find((row) => row.id === latestReassignment.previousDeliveryId) : undefined;
   const previousDealer = state.dealers.find((entry) => entry.id === previousDelivery?.dealerId);
   const previousScore = previousDealer && dealerScore(state, lead, previousDealer);
-  const reference = state.priorRelationships.filter((row) => row.institution === lead.institution).length;
+  const priorRelationshipCount = state.priorRelationships.filter((row) => row.institution === lead.institution).length;
   const historicalCount = state.deliveries.filter((row) => row.institution === lead.institution).length;
   const replyKind = assessment?.verdict === "country-check" ? "country" : assessment?.verdict === "partnership-check" ? "partnership" :
     recommendation?.route === "manager-confirmation" && !waitingDealer ? "manager-confirmation" : null;
@@ -302,9 +316,9 @@ export function DecisionCard({ lead, inbox, openDirection }: {
           {openDirection && <a href="#direction-questions" onClick={openDirection}>질문에 답하기</a>}
         </div>
         <h3>판정 근거</h3>
-        <Evidence assessment={assessment} historicalCount={historicalCount} confirmedDomain={confirmedDomain} />
+        <Evidence assessment={assessment} historicalCount={historicalCount}
+          priorRelationshipCount={priorRelationshipCount} confirmedDomain={confirmedDomain} />
         {confirmations.map((confirmation) => <DirectionConfirmation key={confirmation.kind} confirmation={confirmation} />)}
-        {reference > 0 && <p className="muted">과거 거래 관계 {reference}건</p>}
         {fault && <button className="button button-light" disabled={disabled} onClick={() => void inbox.assess(lead)}>외부 확인 다시 시도</button>}
       </section>
       {leadIdentity}
