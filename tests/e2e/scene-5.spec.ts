@@ -201,11 +201,12 @@ test("S5-11 L06 담당자 확인 전 승인 불가, 확인 메일 한 건", asyn
 });
 
 test("S5-12 · S5-13 공개 빌드는 브라우저에 배정만 저장하고 메일 API 자체도 403 차단", async ({ page }, testInfo) => {
+  test.setTimeout(90_000);
   const browserMailRequests: string[] = [];
   page.on("request", (request) => {
     if (new URL(request.url()).pathname === mailPath) browserMailRequests.push(request.method());
   });
-  const card = await assessLead(page, "L01", publicBaseUrl);
+  const card = await assessLead(page, "L01", publicBaseUrl + "/inbox");
   await expect(page.getByText("저장된 결과로 보는 시연 버전 · 메일 발송 없음")).toBeVisible();
   await card.getByRole("button", { name: "승인", exact: true }).click();
 
@@ -226,7 +227,7 @@ test("S5-12 · S5-13 공개 빌드는 브라우저에 배정만 저장하고 메
 });
 
 test("공개 화면은 정답 대조 없이 업종 선택과 마케팅 진입을 제공한다", async ({ page }) => {
-  await page.goto(publicBaseUrl);
+  await page.goto(publicBaseUrl + "/inbox", { waitUntil: "domcontentloaded" });
   const industries = page.getByRole("group", { name: "시연 업종" });
   const medicom = industries.getByRole("button", { name: "의료기기(Medicom)", exact: true });
   const saas = industries.getByRole("button", { name: "B2B SaaS", exact: true });
@@ -239,6 +240,6 @@ test("공개 화면은 정답 대조 없이 업종 선택과 마케팅 진입을
   }
   await expect(page.getByText(/정답 대조/u)).toHaveCount(0);
   const marketingEntry = page.getByRole("navigation", { name: "업무 메뉴" })
-    .getByRole("link", { name: "마케팅 협조 요청", exact: true });
+    .getByRole("link", { name: "마케팅 요청", exact: true });
   await expect(marketingEntry).toHaveAttribute("href", "/marketing");
 });

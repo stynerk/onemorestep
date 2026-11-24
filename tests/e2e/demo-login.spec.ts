@@ -3,6 +3,7 @@ import { assessLead, leadRow, storedEvents } from "./scene-5-helper";
 
 const publicBaseUrl = "http://127.0.0.1:3150";
 const loginUrl = publicBaseUrl + "/login";
+const inboxUrl = publicBaseUrl + "/inbox";
 const demoId = "medicom";
 const demoPassword = "\u0031\u0032\u0033\u0034\u0021";
 
@@ -15,30 +16,30 @@ async function submitLogin(page: Page, password = demoPassword) {
 }
 
 test("공개 시연의 직접 진입, 로그인 유지와 로그아웃 이후 선별 기록을 확인한다", async ({ page }) => {
-  test.setTimeout(90_000);
+  test.setTimeout(120_000);
   await page.goto(publicBaseUrl);
   await expect(page).toHaveURL(loginUrl);
   await expect(page.getByRole("heading", { name: "One More Step", exact: true })).toBeVisible();
   await expect(page.getByRole("heading", { name: "문의함", exact: true })).toHaveCount(0);
 
-  for (const path of ["/marketing", "/research"]) {
+  for (const path of ["/inbox", "/inbox/status", "/inbox/feedback", "/marketing", "/marketing/campaigns", "/research"]) {
     await page.goto(publicBaseUrl + path);
     await expect(page).toHaveURL(loginUrl);
     await expect(page.getByRole("button", { name: "로그인", exact: true })).toBeVisible();
   }
 
   await submitLogin(page);
-  await expect(page).toHaveURL(publicBaseUrl + "/");
+  await expect(page).toHaveURL(inboxUrl);
   await expect(page.getByRole("heading", { name: "문의함", exact: true })).toBeVisible();
-  await assessLead(page, "L01", publicBaseUrl);
+  await assessLead(page, "L01", inboxUrl);
   await expect.poll(() => storedEvents(page, "L01", "assessed")).toEqual([
     expect.objectContaining({ assessment: expect.objectContaining({ verdict: "valid", mode: "saved" }) }),
   ]);
 
   await page.reload();
-  await expect(page).toHaveURL(publicBaseUrl + "/");
+  await expect(page).toHaveURL(inboxUrl);
   await expect(leadRow(page, "L01")).toContainText("유효");
-  await page.getByRole("link", { name: "마케팅 협조 요청", exact: true }).click();
+  await page.getByRole("link", { name: "마케팅 요청", exact: true }).click();
   await expect(page).toHaveURL(publicBaseUrl + "/marketing");
   await page.getByRole("button", { name: "로그아웃", exact: true }).click();
   await expect(page).toHaveURL(loginUrl);
@@ -46,7 +47,7 @@ test("공개 시연의 직접 진입, 로그인 유지와 로그아웃 이후 �
   await page.goto(publicBaseUrl + "/marketing");
   await expect(page).toHaveURL(loginUrl);
   await submitLogin(page);
-  await expect(page).toHaveURL(publicBaseUrl + "/");
+  await expect(page).toHaveURL(inboxUrl);
   await expect(leadRow(page, "L01")).toContainText("유효");
 });
 

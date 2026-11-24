@@ -60,7 +60,7 @@ const scenario = test.extend<{ mailRequests: ForwardingEvent[] }>({
 scenario.beforeEach(async ({ page, mailRequests }) => {
   expect(mailRequests).toHaveLength(0);
   await page.clock.setFixedTime(friday);
-  await page.goto("/");
+  await page.goto("/inbox", { waitUntil: "domcontentloaded" });
   await lead(page, "L03");
   await card(page).getByRole("button", { name: "이 문의 선별" }).click();
   await card(page).getByRole("button", { name: "승인", exact: true }).click();
@@ -75,6 +75,10 @@ scenario("S6-01 금요일 배정의 응답 기한은 월요일 한국 시각이�
 scenario("S6-02 기한 전에는 재배정 제안을 표시하지 않는다", async ({ page }) => {
   await expect(proposal(page)).toHaveCount(0);
   await expect(page.getByRole("button", { name: /^L03 재배정 제안/ })).toHaveCount(0);
+  await page.getByRole("link", { name: "선별 현황", exact: true }).click();
+  await expect(page).toHaveURL(/\/inbox\/status$/u, { timeout: 25_000 });
+  await expect(page.getByRole("link", { name: "딜러 응답 대기 1", exact: true })).toHaveAttribute("href", "/inbox?filter=dealer-waiting");
+  await expect(page.getByRole("link", { name: "재배정 제안 0", exact: true })).toBeVisible();
 });
 
 scenario("S6-03 기한 경과 시 기기 시각을 유지하고 다음 딜러를 제안한다", async ({ page }, testInfo) => {
@@ -86,6 +90,13 @@ scenario("S6-03 기한 경과 시 기기 시각을 유지하고 다음 딜러를
   await expect(proposal(page)).toContainText(/최근 90일 전달.*전환율.*미응답/);
   expect(await page.evaluate(() => Date.now())).toBe(originalClock);
   await page.screenshot({ path: testInfo.outputPath("scene-6-reassignment.png") });
+  await page.getByRole("link", { name: "선별 현황", exact: true }).click();
+  await expect(page).toHaveURL(/\/inbox\/status$/u, { timeout: 25_000 });
+  await expect(page.getByRole("link", { name: "딜러 응답 대기 0", exact: true })).toBeVisible();
+  await page.getByRole("link", { name: "재배정 제안 1", exact: true }).click();
+  await expect(page).toHaveURL(/\/inbox\?filter=reassignment$/u);
+  await expect(page.locator(".lead")).toHaveCount(1);
+  await expect(page.getByRole("button", { name: /^L03 재배정 제안/ })).toBeVisible();
 });
 
 scenario("S6-04 재배정은 V의 미응답과 U의 요약 메일 요청을 한 번 기록한다", async ({ page, mailRequests }) => {
