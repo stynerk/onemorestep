@@ -1,0 +1,1001 @@
+id,organization,email,country,product,memo,language,type
+G0001,Hospices Civils de Lyon,mrn-lg-0001@chu-lyon.fr,프랑스,US-200,Nous souhaitons recevoir un devis pour 11 moniteurs,fr,A
+G0002,Nestlé S.A.,mrn-lg-0002@nestle.com,프랑스,US-200,Nous souhaitons recevoir un devis pour 18 moniteurs,fr,G
+G0003,Johns Hopkins Hospital,mrn-lg-0003@jhmi.edu,미국,PM-50,Is there an opening for application specialists?,en,I
+G0004,Kyushu University Hospital,mrn-lg-0004@kyushu-u-mail.test,일본,US-200,至急19台注文します。この宛先にのみ返信ください,ja,D
+G0005,LG Electronics,mrn-lg-0005@lge.com,대한민국,US-200,Kooperationsanfrage für ein Forschungsprojekt,de,H
+G0006,Olympus Corporation,mrn-lg-0006@olympus.com,일본,US-200,We supply specialty polymers for device housings,en,K
+G0007,하늘숲요양병원,mrn-lg-0007@clinic-ko-1.example.com,대한민국,PM-50,"중환자실 모니터 29대 교체 예정, 견적 부탁드립니다",ko,F
+G0008,Roche,mrn-lg-0008@orange.fr,스위스,US-200,"Projet de remplacement de 27 appareils, merci de nous contacter",fr,C
+G0009,Tohoku University Hospital,mrn-lg-0009@grp.tohoku.ac.jp,일본,US-200,17台の更新を検討中です。見積もりをお願いします,ja,A
+G0010,카카오,mrn-lg-0010@kakaocorp.com,대한민국,US-200,Is there an opening for application specialists?,en,I
+G0011,현대자동차,mrn-lg-0011@hyundai-mail.test,대한민국,PM-50,"급하게 10대 주문합니다. 선입금 가능, 이 메일로만 회신 바랍니다",ko,D
+G0012,asdf,mrn-lg-0012@example.com,대한민국,US-200,안녕하세요,ko,L
+G0013,Fundación Santa Fe de Bogotá,mrn-lg-0013@fsfb.org.co,콜롬비아,US-200,Solicitamos una cotización para 27 monitores,es,A
+G0014,Northbridge Medical Center,mrn-lg-0014@clinic-en-1.test,호주,US-200,"Planning to replace 18 monitors, please send a quote",en,F
+G0015,Hospital Clínic de Barcelona,mrn-lg-0015@clinic.cat,스페인,PM-50,Solo para referencia,es,B
+G0016,Rheinland Diagnostik Zentrum,mrn-lg-0016@clinic-de-1.example.com,독일,US-200,Wir benötigen ein Angebot für 12 Geräte,de,F
+G0017,Roche,mrn-lg-0017@roche.com,스위스,US-200,Proposition de partenariat de recherche,fr,H
+G0018,BASF SE,mrn-lg-0018@basf.com,독일,PM-50,"Budget approved, requesting a demo",en,A
+G0019,McGill University Health Centre,mrn-lg-0019@muhc.mcgill.ca,캐나다,IS-3,Our dental department is considering 23 intraoral scanners. Please send a quote,en,A
+G0020,N/A,mrn-lg-0020@example.com,영국,PM-50,hi,en,L
+G0021,한국지능정보사회진흥원 (NIA),mrn-lg-0021@nia.or.kr,호주,US-200,내년 예산으로 22대 도입 검토 중입니다,ko,G
+G0022,한강여성의원,mrn-lg-0022@clinic-ko-2.example.com,대한민국,IS-3,치과에 구강 스캐너 24대 도입을 검토 중입니다. 견적 부탁드립니다,ko,F
+G0023,National University Hospital,mrn-lg-0023@gmail.com,싱가포르,PM-50,"Planning to replace 24 monitors, please send a quote",en,C
+G0024,The University of Tokyo Hospital,mrn-lg-0024@outlook.com,일본,US-200,"Budget approved, requesting a demo",en,C
+G0025,Hôpitaux Universitaires de Genève (HUG),mrn-lg-0025@hug-mail.test,스위스,US-200,"Commande urgente de 17 unités, paiement immédiat, répondez uniquement à cette adresse",fr,D
+G0026,Medtronic,mrn-lg-0026@medtronic.com,미국,PM-50,"Budget approved, requesting a demo",en,A
+G0027,CHUV (Centre hospitalier universitaire vaudois),mrn-lg-0027@chuv-mail.test,스위스,US-200,"Commande urgente de 22 unités, paiement immédiat, répondez uniquement à cette adresse",fr,D
+G0028,LG Electronics,mrn-lg-0028@lge.com,대한민국,PM-50,내년 예산으로 8대 도입 검토 중입니다,ko,A
+G0029,BASF SE,mrn-lg-0029@basf.com,독일,US-200,Wir bieten Ihnen unsere Logistiklösungen an,de,K
+G0030,Siemens AG,mrn-lg-0030@siemens.com,독일,PM-50,Wir benötigen ein Angebot für 6 Geräte,de,A
+G0031,아주대학교병원,mrn-lg-0031@aumc.ac.kr,대한민국,US-200,"중환자실 모니터 7대 교체 예정, 견적 부탁드립니다",ko,A
+G0032,St. Luke's International Hospital,mrn-lg-0032@gmail.com,일본,IS-3,Our dental department is considering 11 intraoral scanners. Please send a quote,en,C
+G0033,국립암센터,mrn-lg-0033@ncc.re.kr,대한민국,US-200,내년 예산으로 22대 도입 검토 중입니다,ko,A
+G0034,EMBL,mrn-lg-0034@embl.de,독일,US-200,price?,en,B
+G0035,Hospital Clínic de Barcelona,mrn-lg-0035@clinic.cat,인도,PM-50,Estamos evaluando la compra de 9 equipos,es,G
+G0036,현대자동차,mrn-lg-0036@hyundai.com,대한민국,US-200,내년 예산으로 24대 도입 검토 중입니다,ko,A
+G0037,카카오,mrn-lg-0037@naver.com,대한민국,US-200,내년 예산으로 21대 도입 검토 중입니다,ko,C
+G0038,Hospices Civils de Lyon,mrn-lg-0038@chu-lyon.fr,프랑스,US-200,Nous souhaitons recevoir un devis pour 13 moniteurs,fr,A
+G0039,Fundación Santa Fe de Bogotá,mrn-lg-0039@fsfb.org.co,콜롬비아,US-200,Solo para referencia,es,B
+G0040,EMBL,mrn-lg-0040@embl.de,독일,IS-3,歯科で口腔内スキャナー16台の導入を検討中です。見積もりをお願いします,ja,A
+G0041,Hôpitaux Universitaires de Genève (HUG),mrn-lg-0041@hug.ch,스위스,PM-50,Nous souhaitons recevoir un devis pour 27 moniteurs,fr,A
+G0042,St. Luke's International Hospital,mrn-lg-0042@luke.ac.jp,일본,US-200,20台の更新を検討中です。見積もりをお願いします,ja,A
+G0043,Fundación Santa Fe de Bogotá,mrn-lg-0043@fsfb.org.co,콜롬비아,US-200,"Estoy haciendo mi tesis, necesito información",es,J
+G0044,Hôpital des Trois Rivières,mrn-lg-0044@clinic-fr-3.example.com,프랑스,PM-50,Nous souhaitons recevoir un devis pour 23 moniteurs,fr,F
+G0045,McGill University Health Centre,mrn-lg-0045@muhc.mcgill.ca,캐나다,US-200,For reference only,en,B
+G0046,강남세브란스병원,mrn-lg-0046@yuhs.ac,대한민국,PM-50,자료만 받아 볼게요,ko,B
+G0047,,mrn-lg-0047@example.com,스페인,US-200,hola,es,L
+G0048,Fraunhofer-Gesellschaft,mrn-lg-0048@fraunhofer.de,스위스,IS-3,Unsere Zahnklinik benötigt ein Angebot für 13 Intraoralscanner,de,G
+G0049,Olympus Corporation,mrn-lg-0049@olympus.com,일본,US-200,共同研究のご提案です,ja,H
+G0050,포항공과대학교 (POSTECH),mrn-lg-0050@postech.ac.kr,대한민국,US-200,플랫폼 연동 협업을 제안드립니다,ko,H
+G0051,강남세브란스병원,mrn-lg-0051@naver.com,대한민국,PM-50,"중환자실 모니터 24대 교체 예정, 견적 부탁드립니다",ko,C
+G0052,Hospital Clínic de Barcelona,mrn-lg-0052@clinic.cat,스페인,IS-3,Nuestro servicio dental solicita una cotización para 15 escáneres intraorales,es,A
+G0053,ETH Zürich,mrn-lg-0053@gmail.com,스위스,PM-50,"Planning to replace 30 monitors, please send a quote",en,C
+G0054,National University Hospital,mrn-lg-0054@nuhs.edu.sg,싱가포르,PM-50,Need specs for my class project,en,J
+G0055,EMBL,mrn-lg-0055@embl.de,독일,PM-50,Is there an opening for application specialists?,en,I
+G0056,Houston Methodist,mrn-lg-0056@houstonmethodist.org,미국,US-200,Need specs for my class project,en,J
+G0057,Robert Bosch GmbH,mrn-lg-0057@de.bosch.com,독일,PM-50,Wir benötigen ein Angebot für 3 Geräte,de,A
+G0058,Hospices Civils de Lyon,mrn-lg-0058@gmail.com,프랑스,US-200,"Planning to replace 30 monitors, please send a quote",en,C
+G0059,KAIST,mrn-lg-0059@med.uni-heidelberg.de,대한민국,PM-50,20대 송장을 오늘 이 메일로 보내 주세요. 당일 결제하겠습니다,ko,E
+G0060,Great Ormond Street Hospital,mrn-lg-0060@gosh.nhs.uk,영국,PM-50,For reference only,en,B
+G0061,Centre Médical Saint-Aubin,mrn-lg-0061@clinic-fr-2.test,프랑스,PM-50,Nous souhaitons recevoir un devis pour 8 moniteurs,fr,F
+G0062,Novartis,mrn-lg-0062@novartis.com,스위스,PM-50,"Budget approved, requesting a demo",en,A
+G0063,한림대학교의료원,mrn-lg-0063@hallym.or.kr,대한민국,IS-3,치과에 구강 스캐너 28대 도입을 검토 중입니다. 견적 부탁드립니다,ko,A
+G0064,Hospices Civils de Lyon,mrn-lg-0064@chu-lyon.fr,독일,PM-50,"Projet de remplacement de 11 appareils, merci de nous contacter",fr,G
+G0065,The University of Tokyo Hospital,mrn-lg-0065@h.u-tokyo.ac.jp,일본,US-200,20台の更新を検討中です。見積もりをお願いします,ja,A
+G0066,CHU de Bordeaux,mrn-lg-0066@chu-bordeaux.fr,프랑스,PM-50,"Planning to replace 15 monitors, please send a quote",en,A
+G0067,전남대학교병원,mrn-lg-0067@cnuh.com,대한민국,PM-50,"중환자실 모니터 23대 교체 예정, 견적 부탁드립니다",ko,A
+G0068,포항공과대학교 (POSTECH),mrn-lg-0068@postech.ac.kr,대한민국,PM-50,"Planning to replace 22 monitors, please send a quote",en,A
+G0069,青空の丘総合病院,mrn-lg-0069@clinic-ja-2.test,일본,PM-50,27台の更新を検討中です。見積もりをお願いします,ja,F
+G0070,카카오,mrn-lg-0070@kakaocorp.com,대한민국,US-200,기업 금융 서비스를 소개드리고 싶습니다,ko,K
+G0071,ETH Zürich,mrn-lg-0071@hk.ethz.ch,스위스,US-200,Nous souhaitons recevoir un devis pour 11 moniteurs,fr,A
+G0072,The University of Tokyo,mrn-lg-0072@u-tokyo.ac.jp,일본,PM-50,11台の更新を検討中です。見積もりをお願いします,ja,A
+G0073,RIKEN,mrn-lg-0073@riken-mail.test,일본,US-200,至急22台注文します。この宛先にのみ返信ください,ja,D
+G0074,The University of Tokyo,mrn-lg-0074@gmail.com,일본,PM-50,5台の更新を検討中です。見積もりをお願いします,ja,C
+G0075,Fundación Santa Fe de Bogotá,mrn-lg-0075@fsfb.org.co,콜롬비아,IS-3,Nuestro servicio dental solicita una cotización para 15 escáneres intraorales,es,A
+G0076,Hôpitaux Universitaires de Genève (HUG),mrn-lg-0076@gmail.com,스위스,IS-3,Notre service dentaire souhaite un devis pour 24 scanners intra-oraux,fr,C
+G0077,Fundación Santa Fe de Bogotá,mrn-lg-0077@gmail.com,콜롬비아,PM-50,Solicitamos una cotización para 15 monitores,es,C
+G0078,UCSF Health,mrn-lg-0078@ucsf.edu,미국,PM-50,Need specs for my class project,en,J
+G0079,University of Toronto,mrn-lg-0079@gmail.com,캐나다,PM-50,"Budget approved, requesting a demo",en,C
+G0080,Institut Pasteur,mrn-lg-0080@pasteur.fr,프랑스,PM-50,"Projet de remplacement de 17 appareils, merci de nous contacter",fr,A
+G0081,한국지능정보사회진흥원 (NIA),mrn-lg-0081@a-star.edu.sg,대한민국,US-200,16대 송장을 오늘 이 메일로 보내 주세요. 당일 결제하겠습니다,ko,E
+G0082,A*STAR,mrn-lg-0082@a-star.edu.sg,대한민국,US-200,"Budget approved, requesting a demo",en,G
+G0083,Hôpitaux Universitaires de Genève (HUG),mrn-lg-0083@orange.fr,스위스,PM-50,"Projet de remplacement de 28 appareils, merci de nous contacter",fr,C
+G0084,KAIST,mrn-lg-0084@kaist.ac.kr,대한민국,US-200,"Planning to replace 7 monitors, please send a quote",en,A
+G0085,카카오,mrn-lg-0085@kakaocorp.com,대한민국,US-200,"중환자실 모니터 10대 교체 예정, 견적 부탁드립니다",ko,A
+G0086,Centre Médical Saint-Aubin,mrn-lg-0086@clinic-fr-2.test,스위스,US-200,"Projet de remplacement de 13 appareils, merci de nous contacter",fr,F
+G0087,The University of Tokyo,mrn-lg-0087@u-tokyo.ac.jp,일본,US-200,15台の更新を検討中です。見積もりをお願いします,ja,A
+G0088,LG Electronics,mrn-lg-0088@lge.com,대한민국,US-200,Propuesta de colaboración en investigación,es,H
+G0089,Robert Bosch GmbH,mrn-lg-0089@gmail.com,독일,IS-3,Our dental department is considering 21 intraoral scanners. Please send a quote,en,C
+G0090,The Royal Children's Hospital Melbourne,mrn-lg-0090@rch.org.au,호주,US-200,"Planning to replace 7 monitors, please send a quote",en,A
+G0091,Roche,mrn-lg-0091@gmail.com,스위스,IS-3,Notre service dentaire souhaite un devis pour 4 scanners intra-oraux,fr,C
+G0092,Massachusetts Institute of Technology,mrn-lg-0092@orange.fr,미국,IS-3,Notre service dentaire souhaite un devis pour 27 scanners intra-oraux,fr,C
+G0093,연세대학교,mrn-lg-0093@yonsei.ac.kr,대한민국,IS-3,Our dental department is considering 5 intraoral scanners. Please send a quote,en,A
+G0094,카카오,mrn-lg-0094@kakaocorp.com,대한민국,PM-50,For reference only,en,B
+G0095,Toyota Motor Corporation,mrn-lg-0095@mail.toyota.co.jp,일본,PM-50,共同研究のご提案です,ja,H
+G0096,Fraunhofer-Gesellschaft,mrn-lg-0096@fraunhofer-mail.test,독일,PM-50,"Dringende Bestellung, bitte nur an diese Adresse antworten",de,D
+G0097,Cleveland Clinic,mrn-lg-0097@ccf.org,미국,PM-50,Nous souhaitons recevoir un devis pour 28 moniteurs,fr,A
+G0098,Mount Sinai Health System,mrn-lg-0098@mssm.edu,미국,US-200,"Budget approved, requesting a demo",en,A
+G0099,RIKEN,mrn-lg-0099@riken.jp,일본,PM-50,Exploring a joint research collaboration,en,H
+G0100,Gustave Roussy,mrn-lg-0100@gustaveroussy.fr,프랑스,US-200,"Je prépare mon mémoire de master, pourriez-vous m'envoyer de la documentation ?",fr,J
+G0101,Cambridge University Hospitals NHS Foundation Trust,mrn-lg-0101@nhs.net,일본,PM-50,"Budget approved, requesting a demo",en,G
+G0102,서울대학교병원,mrn-lg-0102@snuh-hospital.test,대한민국,PM-50,"급하게 17대 주문합니다. 선입금 가능, 이 메일로만 회신 바랍니다",ko,D
+G0103,ETH Zürich,mrn-lg-0103@hk.ethz.ch,스위스,US-200,"Planning to replace 30 monitors, please send a quote",en,A
+G0104,Hospices Civils de Lyon,mrn-lg-0104@chu-lyon.fr,프랑스,US-200,"Projet de remplacement de 23 appareils, merci de nous contacter",fr,A
+G0105,Kyushu University Hospital,mrn-lg-0105@outlook.com,일본,US-200,"Budget approved, requesting a demo",en,C
+G0106,서울대학교병원,mrn-lg-0106@snuh.org,캐나다,PM-50,"중환자실 모니터 15대 교체 예정, 견적 부탁드립니다",ko,G
+G0107,Fundación Santa Fe de Bogotá,mrn-lg-0107@gmail.com,콜롬비아,PM-50,Estamos evaluando la compra de 9 equipos,es,C
+G0108,University Health Network,mrn-lg-0108@uhn.ca,캐나다,PM-50,"Budget approved, requesting a demo",en,A
+G0109,Vinmec International Hospital,mrn-lg-0109@outlook.com,베트남,US-200,"Budget approved, requesting a demo",en,C
+G0110,강남세브란스병원,mrn-lg-0110@yuhs-mail.test,대한민국,US-200,"Urgent order of 20 units, wire transfer ready, reply to this address only",en,D
+G0111,N/A,mrn-lg-0111@example.com,독일,US-200,asdf,de,L
+G0112,Nestlé S.A.,mrn-lg-0112@nestle.com,스위스,PM-50,Je souhaite postuler à un poste commercial,fr,I
+G0113,Maple Valley Hospital,mrn-lg-0113@clinic-en-3.example.com,미국,US-200,"Planning to replace 3 monitors, please send a quote",en,F
+G0114,Siemens AG,mrn-lg-0114@siemens.com,독일,PM-50,"Budget approved, requesting a demo",en,A
+G0115,Roche,mrn-lg-0115@roche.com,스위스,IS-3,Our dental department is considering 30 intraoral scanners. Please send a quote,en,A
+G0116,NYU Langone Health,mrn-lg-0116@nyulangone.org,미국,IS-3,Unsere Zahnklinik benötigt ein Angebot für 11 Intraoralscanner,de,A
+G0117,Hospital Clínic de Barcelona,mrn-lg-0117@clinic.cat,스페인,US-200,Estamos evaluando la compra de 19 equipos,es,A
+G0118,Siemens Healthineers,mrn-lg-0118@siemens-healthineers.com,일본,US-200,"Budget approved, requesting a demo",en,G
+G0119,St. Luke's International Hospital,mrn-lg-0119@luke.ac.jp,캐나다,US-200,2台の更新を検討中です。見積もりをお願いします,ja,G
+G0120,연세대학교,mrn-lg-0120@yonsei.ac.kr,대한민국,PM-50,"중환자실 모니터 15대 교체 예정, 견적 부탁드립니다",ko,A
+G0121,Robert Bosch GmbH,mrn-lg-0121@mssm.edu,독일,PM-50,Bitte senden Sie die Rechnung für 10 Geräte an diese Adresse. Wir zahlen noch heute,de,E
+G0122,분당서울대학교병원,mrn-lg-0122@snubh.org,스페인,PM-50,내년 예산으로 5대 도입 검토 중입니다,ko,G
+G0123,한국지능정보사회진흥원 (NIA),mrn-lg-0123@nia.or.kr,베트남,PM-50,"Planning to replace 21 monitors, please send a quote",en,G
+G0124,BASF SE,mrn-lg-0124@basf.com,독일,PM-50,Wir benötigen ein Angebot für 10 Geräte,de,A
+G0125,Gustave Roussy,mrn-lg-0125@gmail.com,프랑스,PM-50,Nous souhaitons recevoir un devis pour 9 moniteurs,fr,C
+G0126,Universitätsklinikum Hamburg-Eppendorf,mrn-lg-0126@uke.de,일본,IS-3,Our dental department is considering 30 intraoral scanners. Please send a quote,en,G
+G0127,Hospital Clínic de Barcelona,mrn-lg-0127@clinic-procurement.test,스페인,US-200,"Pedido urgente de 30 unidades, pago por adelantado, responda solo a este correo",es,D
+G0128,青空の丘総合病院,mrn-lg-0128@clinic-ja-2.test,일본,US-200,9台の更新を検討中です。見積もりをお願いします,ja,F
+G0129,Kyoto University Hospital,mrn-lg-0129@kuhp.kyoto-u.ac.jp,캐나다,US-200,20台の更新を検討中です。見積もりをお願いします,ja,G
+G0130,Apollo Hospitals,mrn-lg-0130@apollohospitals.com,인도,US-200,Is there an opening for application specialists?,en,I
+G0131,한강여성의원,mrn-lg-0131@clinic-ko-2.test,대한민국,US-200,"중환자실 모니터 22대 교체 예정, 견적 부탁드립니다",ko,F
+G0132,Hospital Clínic de Barcelona,mrn-lg-0132@clinic-mail.test,스페인,US-200,"Pedido urgente de 29 unidades, pago por adelantado, responda solo a este correo",es,D
+G0133,Siemens Healthineers,mrn-lg-0133@siemens-healthineers.com,독일,US-200,Kooperationsanfrage für ein Forschungsprojekt,de,H
+G0134,하늘숲요양병원,mrn-lg-0134@clinic-ko-1.test,대한민국,US-200,내년 예산으로 22대 도입 검토 중입니다,ko,F
+G0135,Office for National Statistics,mrn-lg-0135@outlook.com,영국,US-200,"Planning to replace 3 monitors, please send a quote",en,C
+G0136,Siemens AG,mrn-lg-0136@gmx.de,독일,US-200,Wir benötigen ein Angebot für 22 Geräte,de,C
+G0137,서울대학교병원,mrn-lg-0137@snuh-procurement.test,대한민국,PM-50,"급하게 10대 주문합니다. 선입금 가능, 이 메일로만 회신 바랍니다",ko,D
+G0138,Institut Pasteur,mrn-lg-0138@pasteur.fr,프랑스,PM-50,Pour information seulement,fr,B
+G0139,asdf,mrn-lg-0139@example.com,대한민국,PM-50,안녕하세요,ko,L
+G0140,Hospices Civils de Lyon,mrn-lg-0140@chu-lyon.fr,프랑스,US-200,Nous souhaitons recevoir un devis pour 7 moniteurs,fr,A
+G0141,한림대학교의료원,mrn-lg-0141@hallym.or.kr,대한민국,IS-3,치과에 구강 스캐너 10대 도입을 검토 중입니다. 견적 부탁드립니다,ko,A
+G0142,카카오,mrn-lg-0142@kakaocorp.com,대한민국,PM-50,내년 예산으로 27대 도입 검토 중입니다,ko,A
+G0143,Institut Pasteur,mrn-lg-0143@pasteur.fr,프랑스,US-200,"Planning to replace 19 monitors, please send a quote",en,A
+G0144,Houston Methodist,mrn-lg-0144@houstonmethodist-hospital.test,미국,US-200,"Urgent order of 10 units, wire transfer ready, reply to this address only",en,D
+G0145,서울대학교병원,mrn-lg-0145@snuh.org,대한민국,US-200,"중환자실 모니터 15대 교체 예정, 견적 부탁드립니다",ko,A
+G0146,Siemens AG,mrn-lg-0146@siemens.com,독일,PM-50,Wir benötigen ein Angebot für 28 Geräte,de,A
+G0147,BASF SE,mrn-lg-0147@basf.com,독일,PM-50,Exploring a joint research collaboration,en,H
+G0148,Siemens Healthineers,mrn-lg-0148@siemens-healthineers-mail.test,독일,PM-50,"Urgent order of 22 units, wire transfer ready, reply to this address only",en,D
+G0149,Hospital Clínic de Barcelona,mrn-lg-0149@clinic.cat,스페인,US-200,Solo para referencia,es,B
+G0150,Maple Valley Hospital,mrn-lg-0150@clinic-en-3.example.com,영국,IS-3,Our dental department is considering 2 intraoral scanners. Please send a quote,en,F
+G0151,Charité – Universitätsmedizin Berlin,mrn-lg-0151@charite.de,일본,IS-3,Unsere Zahnklinik benötigt ein Angebot für 18 Intraoralscanner,de,G
+G0152,Guy's and St Thomas' NHS Foundation Trust,mrn-lg-0152@gstt.nhs.uk,영국,US-200,For reference only,en,B
+G0153,Siemens Healthineers,mrn-lg-0153@siemens-healthineers.com,독일,PM-50,We supply specialty polymers for device housings,en,K
+G0154,ETH Zürich,mrn-lg-0154@hk.ethz.ch,독일,US-200,"Projet de remplacement de 24 appareils, merci de nous contacter",fr,G
+G0155,Novartis,mrn-lg-0155@novartis.com,네덜란드,PM-50,"Planning to replace 12 monitors, please send a quote",en,G
+G0156,Fundación Santa Fe de Bogotá,mrn-lg-0156@fsfb.org.co,콜롬비아,PM-50,"Estoy haciendo mi tesis, necesito información",es,J
+G0157,Office for National Statistics,mrn-lg-0157@ons.gov.uk,영국,US-200,Wir benötigen ein Angebot für 23 Geräte,de,A
+G0158,Vinmec International Hospital,mrn-lg-0158@vinmec.com,베트남,US-200,Need specs for my class project,en,J
+G0159,Siemens AG,mrn-lg-0159@gmx.de,독일,US-200,Wir benötigen ein Angebot für 20 Geräte,de,C
+G0160,Charité – Universitätsmedizin Berlin,mrn-lg-0160@charite.de,독일,PM-50,Bewerbung als Vertriebsmitarbeiter,de,I
+G0161,현대자동차,mrn-lg-0161@hyundai.com,대한민국,PM-50,Pour information seulement,fr,B
+G0162,Hôpitaux Universitaires de Genève (HUG),mrn-lg-0162@hug.ch,스위스,US-200,"Projet de remplacement de 28 appareils, merci de nous contacter",fr,A
+G0163,Toyota Motor Corporation,mrn-lg-0163@mail.toyota.co.jp,일본,US-200,弊社サービスのご紹介です,ja,K
+G0164,한림대학교의료원,mrn-lg-0164@hallym.or.kr,대한민국,PM-50,営業職に応募したいです,ja,I
+G0165,BASF SE,mrn-lg-0165@basf.com,독일,US-200,Bewerbung als Vertriebsmitarbeiter,de,I
+G0166,Hospital San Rafael del Valle,mrn-lg-0166@clinic-es-2.example.com,스페인,IS-3,Nuestro servicio dental solicita una cotización para 17 escáneres intraorales,es,F
+G0167,Hôpitaux Universitaires de Genève (HUG),mrn-lg-0167@hug.ch,베트남,PM-50,Nous souhaitons recevoir un devis pour 17 moniteurs,fr,G
+G0168,CHU de Bordeaux,mrn-lg-0168@mit.edu,프랑스,US-200,Envoyez la facture pour 18 appareils à cette adresse. Nous réglerons aujourd’hui,fr,E
+G0169,"Hitachi, Ltd.",mrn-lg-0169@hitachi.com,일본,PM-50,Propuesta de colaboración en investigación,es,H
+G0170,Hospital San Rafael del Valle,mrn-lg-0170@clinic-es-2.example.com,콜롬비아,PM-50,Solicitamos una cotización para 3 monitores,es,F
+G0171,LG Electronics,mrn-lg-0171@lge-hospital.test,대한민국,PM-50,"급하게 22대 주문합니다. 선입금 가능, 이 메일로만 회신 바랍니다",ko,D
+G0172,연세대학교,mrn-lg-0172@yonsei.ac.kr,대한민국,IS-3,Notre service dentaire souhaite un devis pour 20 scanners intra-oraux,fr,A
+G0173,Nestlé S.A.,mrn-lg-0173@nestle.com,스위스,PM-50,Nous souhaitons recevoir un devis pour 3 moniteurs,fr,A
+G0174,LG Electronics,mrn-lg-0174@lge.com,대한민국,US-200,플랫폼 연동 협업을 제안드립니다,ko,H
+G0175,Individual,mrn-lg-0175@example.com,호주,US-200,"Get 10,000 verified leads for $99",en,L
+G0176,Philips,mrn-lg-0176@philips.com,네덜란드,PM-50,Exploring a joint research collaboration,en,H
+G0177,Hospital Clínic de Barcelona,mrn-lg-0177@clinic.cat,스페인,PM-50,Solicitamos una cotización para 28 monitores,es,A
+G0178,카카오,mrn-lg-0178@gmail.com,대한민국,PM-50,Estamos evaluando la compra de 17 equipos,es,C
+G0179,Medtronic,mrn-lg-0179@medtronic.com,미국,US-200,Nous souhaitons recevoir un devis pour 22 moniteurs,fr,A
+G0180,"Hitachi, Ltd.",mrn-lg-0180@hitachi.com,일본,US-200,20台の更新を検討中です。見積もりをお願いします,ja,A
+G0181,포항공과대학교 (POSTECH),mrn-lg-0181@postech.ac.kr,대한민국,PM-50,"Planning to replace 12 monitors, please send a quote",en,A
+G0182,현대자동차,mrn-lg-0182@hyundai.com,대한민국,IS-3,치과에 구강 스캐너 22대 도입을 검토 중입니다. 견적 부탁드립니다,ko,A
+G0183,,mrn-lg-0183@example.com,스페인,PM-50,hola,es,L
+G0184,Universitätsklinikum Hamburg-Eppendorf,mrn-lg-0184@uke.de,독일,IS-3,Unsere Zahnklinik benötigt ein Angebot für 29 Intraoralscanner,de,A
+G0185,하늘숲요양병원,mrn-lg-0185@clinic-ko-1.example.com,대한민국,PM-50,내년 예산으로 27대 도입 검토 중입니다,ko,F
+G0186,Fundación Santa Fe de Bogotá,mrn-lg-0186@fsfb.org.co,콜롬비아,PM-50,"Planning to replace 12 monitors, please send a quote",en,A
+G0187,Hospital Clínic de Barcelona,mrn-lg-0187@clinic-mail.test,스페인,US-200,"Pedido urgente de 6 unidades, pago por adelantado, responda solo a este correo",es,D
+G0188,Vinmec International Hospital,mrn-lg-0188@vinmec.com,베트남,PM-50,"Planning to replace 25 monitors, please send a quote",en,A
+G0189,Gustave Roussy,mrn-lg-0189@gustaveroussy.fr,프랑스,IS-3,Our dental department is considering 21 intraoral scanners. Please send a quote,en,A
+G0190,Fundación Santa Fe de Bogotá,mrn-lg-0190@hotmail.es,콜롬비아,PM-50,Estamos evaluando la compra de 13 equipos,es,C
+G0191,Hospital Clínic de Barcelona,mrn-lg-0191@clinic.cat,스페인,PM-50,Solicitamos una cotización para 25 monitores,es,A
+G0192,Houston Methodist,mrn-lg-0192@houstonmethodist.org,미국,US-200,"Budget approved, requesting a demo",en,A
+G0193,NYU Langone Health,mrn-lg-0193@outlook.com,미국,PM-50,"Budget approved, requesting a demo",en,C
+G0194,University of Oxford,mrn-lg-0194@gmail.com,영국,PM-50,"Planning to replace 22 monitors, please send a quote",en,C
+G0195,Individual,mrn-lg-0195@example.com,일본,PM-50,hola,es,L
+G0196,Northbridge Medical Center,mrn-lg-0196@clinic-en-1.example.com,캐나다,US-200,"Budget approved, requesting a demo",en,F
+G0197,Weizmann Institute of Science,mrn-lg-0197@weizmann.ac.il,이스라엘,PM-50,Kooperationsanfrage für ein Forschungsprojekt,de,H
+G0198,경북대학교병원,mrn-lg-0198@knuh.kr,네덜란드,US-200,"중환자실 모니터 17대 교체 예정, 견적 부탁드립니다",ko,G
+G0199,Guy's and St Thomas' NHS Foundation Trust,mrn-lg-0199@gstt.nhs.uk,영국,US-200,"Budget approved, requesting a demo",en,A
+G0200,Northbridge Medical Center,mrn-lg-0200@clinic-en-1.test,호주,IS-3,Our dental department is considering 21 intraoral scanners. Please send a quote,en,F
+G0201,St. Luke's International Hospital,mrn-lg-0201@luke.ac.jp,캐나다,PM-50,23台の更新を検討中です。見積もりをお願いします,ja,G
+G0202,Cleveland Clinic,mrn-lg-0202@outlook.com,미국,PM-50,"Planning to replace 11 monitors, please send a quote",en,C
+G0203,Gustave Roussy,mrn-lg-0203@gustaveroussy.fr,프랑스,US-200,For reference only,en,B
+G0204,Olympus Corporation,mrn-lg-0204@yahoo.co.jp,일본,IS-3,歯科で口腔内スキャナー14台の導入を検討中です。見積もりをお願いします,ja,C
+G0205,asdf,mrn-lg-0205@example.com,스페인,US-200,hola,es,L
+G0206,Hospital Clínic de Barcelona,mrn-lg-0206@clinic.cat,스페인,PM-50,Solicitamos una cotización para 5 monitores,es,A
+G0207,The Royal Melbourne Hospital,mrn-lg-0207@gmail.com,호주,US-200,"Budget approved, requesting a demo",en,C
+G0208,아주대학교병원,mrn-lg-0208@gmail.com,대한민국,PM-50,"Planning to replace 25 monitors, please send a quote",en,C
+G0209,Siemens AG,mrn-lg-0209@siemens.com,독일,PM-50,"Planning to replace 15 monitors, please send a quote",en,A
+G0210,아주대학교병원,mrn-lg-0210@aumc.ac.kr,대한민국,PM-50,내년 예산으로 20대 도입 검토 중입니다,ko,A
+G0211,Fundación Santa Fe de Bogotá,mrn-lg-0211@hotmail.es,콜롬비아,IS-3,Nuestro servicio dental solicita una cotización para 11 escáneres intraorales,es,C
+G0212,Hospital San Rafael del Valle,mrn-lg-0212@clinic-es-2.example.com,스페인,PM-50,Estamos evaluando la compra de 21 equipos,es,F
+G0213,Siemens Healthineers,mrn-lg-0213@siemens-healthineers.com,독일,PM-50,Wir bieten Ihnen unsere Logistiklösungen an,de,K
+G0214,Weizmann Institute of Science,mrn-lg-0214@weizmann.ac.il,이스라엘,PM-50,"Planning to replace 26 monitors, please send a quote",en,A
+G0215,Fundación Santa Fe de Bogotá,mrn-lg-0215@fsfb.org.co,콜롬비아,US-200,Quisiera postularme a un puesto de ventas,es,I
+G0216,Hospital Clínic de Barcelona,mrn-lg-0216@clinic.cat,스페인,US-200,Solicitamos una cotización para 26 monitores,es,A
+G0217,Northbridge Medical Center,mrn-lg-0217@clinic-en-1.test,싱가포르,US-200,"Budget approved, requesting a demo",en,F
+G0218,LG Electronics,mrn-lg-0218@lge.com,대한민국,US-200,"중환자실 모니터 24대 교체 예정, 견적 부탁드립니다",ko,A
+G0219,분당서울대학교병원,mrn-lg-0219@snubh.org,대한민국,PM-50,"Budget approved, requesting a demo",en,A
+G0220,St. Luke's International Hospital,mrn-lg-0220@gmail.com,일본,US-200,"Planning to replace 28 monitors, please send a quote",en,C
+G0221,Toyota Motor Corporation,mrn-lg-0221@mail.toyota.co.jp,일본,PM-50,弊社サービスのご紹介です,ja,K
+G0222,Charité – Universitätsmedizin Berlin,mrn-lg-0222@charite.de,독일,IS-3,Unsere Zahnklinik benötigt ein Angebot für 12 Intraoralscanner,de,A
+G0223,Philips,mrn-lg-0223@philips.com,네덜란드,US-200,"Planning to replace 17 monitors, please send a quote",en,A
+G0224,Philips,mrn-lg-0224@philips.com,스위스,PM-50,"Budget approved, requesting a demo",en,G
+G0225,Laboratoire Vernet Santé,mrn-lg-0225@clinic-fr-4.example.com,프랑스,US-200,Nous souhaitons recevoir un devis pour 24 moniteurs,fr,F
+G0226,Fundación Santa Fe de Bogotá,mrn-lg-0226@hotmail.es,콜롬비아,US-200,Solicitamos una cotización para 14 monitores,es,C
+G0227,Stanford Health Care,mrn-lg-0227@orange.fr,미국,PM-50,"Projet de remplacement de 6 appareils, merci de nous contacter",fr,C
+G0228,국립암센터,mrn-lg-0228@outlook.com,대한민국,US-200,"Budget approved, requesting a demo",en,C
+G0229,Hospital Clínic de Barcelona,mrn-lg-0229@clinic.cat,스페인,PM-50,Solo para referencia,es,B
+G0230,Clinique du Lac Bleu,mrn-lg-0230@clinic-fr-1.test,스위스,PM-50,"Projet de remplacement de 5 appareils, merci de nous contacter",fr,F
+G0231,Novartis,mrn-lg-0231@orange.fr,스위스,PM-50,"Projet de remplacement de 18 appareils, merci de nous contacter",fr,C
+G0232,Hôpital des Trois Rivières,mrn-lg-0232@clinic-fr-3.example.com,프랑스,PM-50,Nous souhaitons recevoir un devis pour 21 moniteurs,fr,F
+G0233,Rheinland Diagnostik Zentrum,mrn-lg-0233@clinic-de-1.test,독일,US-200,Wir benötigen ein Angebot für 18 Geräte,de,F
+G0234,A*STAR,mrn-lg-0234@a-star.edu.sg,영국,PM-50,"Budget approved, requesting a demo",en,G
+G0235,Toyota Motor Corporation,mrn-lg-0235@mail.toyota.co.jp,일본,US-200,Exploring a joint research collaboration,en,H
+G0236,Institut Pasteur,mrn-lg-0236@pasteur.fr,프랑스,PM-50,"Projet de remplacement de 20 appareils, merci de nous contacter",fr,A
+G0237,Hospices Civils de Lyon,mrn-lg-0237@chu-lyon.fr,프랑스,US-200,"Projet de remplacement de 27 appareils, merci de nous contacter",fr,A
+G0238,HSBC,mrn-lg-0238@hsbc.com,영국,US-200,"Budget approved, requesting a demo",en,A
+G0239,Kyoto University Hospital,mrn-lg-0239@outlook.com,일본,PM-50,"Planning to replace 8 monitors, please send a quote",en,C
+G0240,The University of Tokyo Hospital,mrn-lg-0240@h.u-tokyo.ac.jp,베트남,US-200,29台の更新を検討中です。見積もりをお願いします,ja,G
+G0241,St. Luke's International Hospital,mrn-lg-0241@gmail.com,일본,US-200,19台の更新を検討中です。見積もりをお願いします,ja,C
+G0242,RIKEN,mrn-lg-0242@riken.jp,일본,US-200,플랫폼 연동 협업을 제안드립니다,ko,H
+G0243,Siemens Healthineers,mrn-lg-0243@siemens-healthineers.com,영국,US-200,Wir benötigen ein Angebot für 19 Geräte,de,G
+G0244,Office for National Statistics,mrn-lg-0244@ons.gov.uk,영국,IS-3,Our dental department is considering 15 intraoral scanners. Please send a quote,en,A
+G0245,asdf,mrn-lg-0245@example.com,미국,PM-50,hi,en,L
+G0246,Johns Hopkins Hospital,mrn-lg-0246@jhmi.edu,미국,IS-3,Our dental department is considering 10 intraoral scanners. Please send a quote,en,A
+G0247,Heidelberg University Hospital,mrn-lg-0247@outlook.com,독일,PM-50,Wir benötigen ein Angebot für 26 Geräte,de,C
+G0248,Weizmann Institute of Science,mrn-lg-0248@weizmann.ac.il,이스라엘,PM-50,Nous souhaitons recevoir un devis pour 9 moniteurs,fr,A
+G0249,Hôpitaux Universitaires de Genève (HUG),mrn-lg-0249@hug-procurement.test,스위스,US-200,"Urgent order of 9 units, wire transfer ready, reply to this address only",en,D
+G0250,"Hitachi, Ltd.",mrn-lg-0250@weizmann.ac.il,일본,PM-50,16台の請求書を今日このメールに送ってください。本日中に支払います,ja,E
+G0251,포항공과대학교 (POSTECH),mrn-lg-0251@postech.ac.kr,대한민국,US-200,"Planning to replace 8 monitors, please send a quote",en,A
+G0252,국립암센터,mrn-lg-0252@ncc.re.kr,대한민국,IS-3,치과에 구강 스캐너 3대 도입을 검토 중입니다. 견적 부탁드립니다,ko,A
+G0253,Heidelberg University Hospital,mrn-lg-0253@outlook.com,독일,PM-50,Wir benötigen ein Angebot für 13 Geräte,de,C
+G0254,KAIST,mrn-lg-0254@gmail.com,대한민국,US-200,내년 예산으로 15대 도입 검토 중입니다,ko,C
+G0255,Toyota Motor Corporation,mrn-lg-0255@mail.toyota.co.jp,일본,US-200,9台の更新を検討中です。見積もりをお願いします,ja,A
+G0256,한림대학교의료원,mrn-lg-0256@hallym.or.kr,대한민국,US-200,내년 예산으로 29대 도입 검토 중입니다,ko,A
+G0257,Toyota Motor Corporation,mrn-lg-0257@mail.toyota.co.jp,일본,US-200,弊社サービスのご紹介です,ja,K
+G0258,Individual,mrn-lg-0258@example.com,독일,PM-50,asdf,de,L
+G0259,Nestlé S.A.,mrn-lg-0259@nestle.com,영국,PM-50,"Budget approved, requesting a demo",en,G
+G0260,연세대학교,mrn-lg-0260@yonsei-hospital.test,대한민국,PM-50,"급하게 30대 주문합니다. 선입금 가능, 이 메일로만 회신 바랍니다",ko,D
+G0261,강남세브란스병원,mrn-lg-0261@yuhs-hospital.test,대한민국,PM-50,"Urgent order of 21 units, wire transfer ready, reply to this address only",en,D
+G0262,CHUV (Centre hospitalier universitaire vaudois),mrn-lg-0262@chuv.ch,콜롬비아,PM-50,"Projet de remplacement de 18 appareils, merci de nous contacter",fr,G
+G0263,Guy's and St Thomas' NHS Foundation Trust,mrn-lg-0263@gstt.nhs.uk,영국,US-200,"Planning to replace 19 monitors, please send a quote",en,A
+G0264,CHU de Bordeaux,mrn-lg-0264@gmail.com,프랑스,PM-50,Nous souhaitons recevoir un devis pour 5 moniteurs,fr,C
+G0265,Hospital Israelita Albert Einstein,mrn-lg-0265@outlook.com,브라질,IS-3,Our dental department is considering 16 intraoral scanners. Please send a quote,en,C
+G0266,Hospital Israelita Albert Einstein,mrn-lg-0266@einstein.br,브라질,US-200,"Budget approved, requesting a demo",en,A
+G0267,Universitätsklinikum Hamburg-Eppendorf,mrn-lg-0267@uke.de,독일,US-200,"Planning to replace 2 monitors, please send a quote",en,A
+G0268,Charité – Universitätsmedizin Berlin,mrn-lg-0268@charite.de,독일,US-200,Ich schreibe meine Bachelorarbeit,de,J
+G0269,Individual,mrn-lg-0269@example.com,스위스,PM-50,Gagnez un iPhone !,fr,L
+G0270,The Royal Melbourne Hospital,mrn-lg-0270@mh.org.au,호주,PM-50,Estamos evaluando la compra de 13 equipos,es,A
+G0271,Northbridge Medical Center,mrn-lg-0271@clinic-en-1.example.com,캐나다,PM-50,"Budget approved, requesting a demo",en,F
+G0272,Hospital Clínic de Barcelona,mrn-lg-0272@hotmail.es,스페인,US-200,Solicitamos una cotización para 18 monitores,es,C
+G0273,CHU de Bordeaux,mrn-lg-0273@chu-bordeaux.fr,프랑스,PM-50,Je souhaite postuler à un poste commercial,fr,I
+G0274,Centre Médical Saint-Aubin,mrn-lg-0274@clinic-fr-2.example.com,프랑스,US-200,Nous souhaitons recevoir un devis pour 16 moniteurs,fr,F
+G0275,Hospital Clínic de Barcelona,mrn-lg-0275@clinic.cat,스페인,PM-50,"Estoy haciendo mi tesis, necesito información",es,J
+G0276,포항공과대학교 (POSTECH),mrn-lg-0276@postech.ac.kr,대한민국,US-200,플랫폼 연동 협업을 제안드립니다,ko,H
+G0277,하늘숲요양병원,mrn-lg-0277@clinic-ko-1.test,대한민국,PM-50,"중환자실 모니터 30대 교체 예정, 견적 부탁드립니다",ko,F
+G0278,카카오,mrn-lg-0278@kakaocorp.com,네덜란드,IS-3,치과에 구강 스캐너 12대 도입을 검토 중입니다. 견적 부탁드립니다,ko,G
+G0279,분당서울대학교병원,mrn-lg-0279@snubh.org,대한민국,US-200,"중환자실 모니터 14대 교체 예정, 견적 부탁드립니다",ko,A
+G0280,카카오,mrn-lg-0280@kakaocorp-hospital.test,대한민국,US-200,"급하게 17대 주문합니다. 선입금 가능, 이 메일로만 회신 바랍니다",ko,D
+G0281,Tohoku University Hospital,mrn-lg-0281@grp.tohoku.ac.jp,일본,US-200,17台の更新を検討中です。見積もりをお願いします,ja,A
+G0282,Universitätsklinikum Hamburg-Eppendorf,mrn-lg-0282@uke.de,독일,PM-50,내년 예산으로 25대 도입 검토 중입니다,ko,A
+G0283,N/A,mrn-lg-0283@example.com,스위스,PM-50,Gagnez un iPhone !,fr,L
+G0284,Siemens AG,mrn-lg-0284@outlook.com,독일,US-200,"Budget approved, requesting a demo",en,C
+G0285,asdf,mrn-lg-0285@example.com,스위스,PM-50,Gagnez un iPhone !,fr,L
+G0286,Max Planck Society,mrn-lg-0286@sgh.com.sg,독일,US-200,Send the invoice for 10 units to this address for same-day payment,en,E
+G0287,현대자동차,mrn-lg-0287@hyundai.com,대한민국,US-200,Le ofrecemos nuestros servicios de marketing,es,K
+G0288,Kyoto University Hospital,mrn-lg-0288@kuhp.kyoto-u.ac.jp,일본,PM-50,資料だけください,ja,B
+G0289,ETH Zürich,mrn-lg-0289@hk.ethz.ch,스위스,US-200,"Planning to replace 21 monitors, please send a quote",en,A
+G0290,EMBL,mrn-lg-0290@embl.de,독일,US-200,Nur zur Information,de,B
+G0291,Siemens AG,mrn-lg-0291@nestle.com,독일,US-200,Bitte senden Sie die Rechnung für 11 Geräte an diese Adresse. Wir zahlen noch heute,de,E
+G0292,Institut Pasteur,mrn-lg-0292@gmail.com,프랑스,IS-3,Notre service dentaire souhaite un devis pour 27 scanners intra-oraux,fr,C
+G0293,Novartis,mrn-lg-0293@novartis.com,스위스,PM-50,플랫폼 연동 협업을 제안드립니다,ko,H
+G0294,Medtronic,mrn-lg-0294@medtronic.com,미국,PM-50,Is there an opening for application specialists?,en,I
+G0295,Kyushu University Hospital,mrn-lg-0295@jimu.kyushu-u.ac.jp,일본,US-200,12台の更新を検討中です。見積もりをお願いします,ja,A
+G0296,포항공과대학교 (POSTECH),mrn-lg-0296@postech.ac.kr,대한민국,PM-50,참고용입니다,ko,B
+G0297,CHU de Bordeaux,mrn-lg-0297@chu-bordeaux.fr,프랑스,PM-50,"Budget approved, requesting a demo",en,A
+G0298,KAIST,mrn-lg-0298@kaist.ac.kr,대한민국,US-200,"중환자실 모니터 7대 교체 예정, 견적 부탁드립니다",ko,A
+G0299,Gustave Roussy,mrn-lg-0299@gustaveroussy.fr,프랑스,PM-50,Proposition de partenariat de recherche,fr,H
+G0300,Tohoku University Hospital,mrn-lg-0300@grp.tohoku.ac.jp,대한민국,PM-50,24台の更新を検討中です。見積もりをお願いします,ja,G
+G0301,"Hitachi, Ltd.",mrn-lg-0301@hitachi.com,일본,PM-50,24台の更新を検討中です。見積もりをお願いします,ja,A
+G0302,Kyoto University Hospital,mrn-lg-0302@kuhp-hospital.test,일본,PM-50,"Urgent order of 7 units, wire transfer ready, reply to this address only",en,D
+G0303,BASF SE,mrn-lg-0303@basf.com,독일,US-200,Wir benötigen ein Angebot für 25 Geräte,de,A
+G0304,Universitätsklinikum Hamburg-Eppendorf,mrn-lg-0304@uke.de,독일,PM-50,Ich schreibe meine Bachelorarbeit,de,J
+G0305,Cambridge University Hospitals NHS Foundation Trust,mrn-lg-0305@nhs.net,영국,US-200,"Planning to replace 3 monitors, please send a quote",en,A
+G0306,서울대학교병원,mrn-lg-0306@snuh.org,대한민국,PM-50,내년 예산으로 6대 도입 검토 중입니다,ko,A
+G0307,"Hitachi, Ltd.",mrn-lg-0307@hitachi.com,일본,PM-50,18台の更新を検討中です。見積もりをお願いします,ja,A
+G0308,Mount Sinai Health System,mrn-lg-0308@mssm.edu,미국,PM-50,"Budget approved, requesting a demo",en,A
+G0309,Gustave Roussy,mrn-lg-0309@gustaveroussy.fr,캐나다,PM-50,Wir benötigen ein Angebot für 22 Geräte,de,G
+G0310,Fundación Santa Fe de Bogotá,mrn-lg-0310@yuhs.ac,콜롬비아,PM-50,Envíe la factura por 17 equipos a esta dirección. Pagaremos hoy,es,E
+G0311,Massachusetts Institute of Technology,mrn-lg-0311@mit.edu,미국,US-200,"Planning to replace 15 monitors, please send a quote",en,A
+G0312,Johns Hopkins Hospital,mrn-lg-0312@jhmi-procurement.test,미국,US-200,"Urgent order of 10 units, wire transfer ready, reply to this address only",en,D
+G0313,서울대학교병원,mrn-lg-0313@snuh.org,대한민국,US-200,Nur zur Information,de,B
+G0314,국립암센터,mrn-lg-0314@ncc.re.kr,대한민국,PM-50,플랫폼 연동 협업을 제안드립니다,ko,H
+G0315,Apollo Hospitals,mrn-lg-0315@apollohospitals.com,인도,US-200,"Planning to replace 25 monitors, please send a quote",en,A
+G0316,카카오,mrn-lg-0316@kakaocorp.com,대한민국,US-200,기업 금융 서비스를 소개드리고 싶습니다,ko,K
+G0317,ETH Zürich,mrn-lg-0317@hk.ethz.ch,스위스,US-200,"Projet de remplacement de 25 appareils, merci de nous contacter",fr,A
+G0318,Hospital Clínic de Barcelona,mrn-lg-0318@gmail.com,스페인,PM-50,Estamos evaluando la compra de 18 equipos,es,C
+G0319,Universitätsklinikum Hamburg-Eppendorf,mrn-lg-0319@uke.de,스페인,US-200,Wir benötigen ein Angebot für 13 Geräte,de,G
+G0320,LG Electronics,mrn-lg-0320@lge.com,스페인,US-200,"중환자실 모니터 23대 교체 예정, 견적 부탁드립니다",ko,G
+G0321,University of Toronto,mrn-lg-0321@utoronto.ca,캐나다,US-200,"Budget approved, requesting a demo",en,A
+G0322,카카오,mrn-lg-0322@naver.com,대한민국,IS-3,치과에 구강 스캐너 10대 도입을 검토 중입니다. 견적 부탁드립니다,ko,C
+G0323,Pfizer,mrn-lg-0323@pfizer.com,미국,US-200,"Planning to replace 21 monitors, please send a quote",en,A
+G0324,Gustave Roussy,mrn-lg-0324@gustaveroussy.fr,영국,PM-50,"Budget approved, requesting a demo",en,G
+G0325,Fundación Santa Fe de Bogotá,mrn-lg-0325@fsfb.org.co,콜롬비아,PM-50,Solicitamos una cotización para 23 monitores,es,A
+G0326,Kyoto University Hospital,mrn-lg-0326@kuhp.kyoto-u.ac.jp,일본,US-200,22台の更新を検討中です。見積もりをお願いします,ja,A
+G0327,전남대학교병원,mrn-lg-0327@cnuh.com,대한민국,US-200,졸업 논문 자료 요청드립니다,ko,J
+G0328,University Health Network,mrn-lg-0328@uhn.ca,캐나다,US-200,졸업 논문 자료 요청드립니다,ko,J
+G0329,ETH Zürich,mrn-lg-0329@hk.ethz.ch,스위스,PM-50,"Budget approved, requesting a demo",en,A
+G0330,카카오,mrn-lg-0330@kakaocorp-hospital.test,대한민국,PM-50,"급하게 8대 주문합니다. 선입금 가능, 이 메일로만 회신 바랍니다",ko,D
+G0331,강남세브란스병원,mrn-lg-0331@naver.com,대한민국,US-200,"중환자실 모니터 14대 교체 예정, 견적 부탁드립니다",ko,C
+G0332,경북대학교병원,mrn-lg-0332@knuh.kr,대한민국,US-200,내년 예산으로 12대 도입 검토 중입니다,ko,A
+G0333,강남세브란스병원,mrn-lg-0333@yuhs.ac,대한민국,US-200,"Planning to replace 24 monitors, please send a quote",en,A
+G0334,Kyushu University Hospital,mrn-lg-0334@gmail.com,일본,PM-50,2台の更新を検討中です。見積もりをお願いします,ja,C
+G0335,Robert Bosch GmbH,mrn-lg-0335@de.bosch.com,독일,PM-50,Estamos evaluando la compra de 14 equipos,es,A
+G0336,서울대학교병원,mrn-lg-0336@gmail.com,대한민국,US-200,"Planning to replace 29 monitors, please send a quote",en,C
+G0337,Apollo Hospitals,mrn-lg-0337@apollohospitals.com,독일,PM-50,"Planning to replace 26 monitors, please send a quote",en,G
+G0338,Olympus Corporation,mrn-lg-0338@orange.fr,일본,PM-50,Nous souhaitons recevoir un devis pour 3 moniteurs,fr,C
+G0339,Siemens AG,mrn-lg-0339@siemens.com,독일,US-200,Nur zur Information,de,B
+G0340,Hôpitaux Universitaires de Genève (HUG),mrn-lg-0340@hug.ch,스위스,US-200,"Projet de remplacement de 26 appareils, merci de nous contacter",fr,A
+G0341,Bluewater Regional Hospital,mrn-lg-0341@clinic-en-2.example.com,미국,PM-50,"Planning to replace 14 monitors, please send a quote",en,F
+G0342,한국지능정보사회진흥원 (NIA),mrn-lg-0342@nia.or.kr,대한민국,PM-50,Please complete our official statistical survey on equipment procurement,en,H
+G0343,CHU de Bordeaux,mrn-lg-0343@chu-bordeaux.fr,프랑스,US-200,"Je prépare mon mémoire de master, pourriez-vous m'envoyer de la documentation ?",fr,J
+G0344,Apollo Hospitals,mrn-lg-0344@gmail.com,인도,US-200,"Budget approved, requesting a demo",en,C
+G0345,Maple Valley Hospital,mrn-lg-0345@clinic-en-3.test,캐나다,US-200,"Budget approved, requesting a demo",en,F
+G0346,BASF SE,mrn-lg-0346@basf.com,독일,PM-50,Wir benötigen ein Angebot für 16 Geräte,de,A
+G0347,さくら野中央病院,mrn-lg-0347@clinic-ja-1.test,일본,PM-50,16台の更新を検討中です。見積もりをお願いします,ja,F
+G0348,Nestlé S.A.,mrn-lg-0348@nestle.com,스페인,US-200,"Projet de remplacement de 24 appareils, merci de nous contacter",fr,G
+G0349,Northbridge Medical Center,mrn-lg-0349@clinic-en-1.test,호주,US-200,"Planning to replace 5 monitors, please send a quote",en,F
+G0350,Guy's and St Thomas' NHS Foundation Trust,mrn-lg-0350@gstt.nhs.uk,영국,PM-50,"Planning to replace 5 monitors, please send a quote",en,A
+G0351,Hospital Israelita Albert Einstein,mrn-lg-0351@gmail.com,브라질,IS-3,Our dental department is considering 21 intraoral scanners. Please send a quote,en,C
+G0352,Massachusetts Institute of Technology,mrn-lg-0352@mit.edu,미국,PM-50,"Planning to replace 9 monitors, please send a quote",en,A
+G0353,경북대학교병원,mrn-lg-0353@knuh.kr,네덜란드,PM-50,내년 예산으로 19대 도입 검토 중입니다,ko,G
+G0354,Kyoto University Hospital,mrn-lg-0354@kuhp.kyoto-u.ac.jp,일본,US-200,資料だけください,ja,B
+G0355,Individual,mrn-lg-0355@example.com,독일,US-200,"Get 10,000 verified leads for $99",en,L
+G0356,Individual,mrn-lg-0356@example.com,대한민국,PM-50,test,ko,L
+G0357,RIKEN,mrn-lg-0357@riken-hospital.test,일본,US-200,至急15台注文します。この宛先にのみ返信ください,ja,D
+G0358,Toyota Motor Corporation,mrn-lg-0358@mail.toyota.co.jp,일본,US-200,"Planning to replace 24 monitors, please send a quote",en,A
+G0359,ETH Zürich,mrn-lg-0359@hk.ethz.ch,스위스,IS-3,Our dental department is considering 2 intraoral scanners. Please send a quote,en,A
+G0360,Hôpital des Trois Rivières,mrn-lg-0360@clinic-fr-3.test,스위스,US-200,Nous souhaitons recevoir un devis pour 22 moniteurs,fr,F
+G0361,Gustave Roussy,mrn-lg-0361@gustaveroussy-mail.test,프랑스,US-200,"Commande urgente de 23 unités, paiement immédiat, répondez uniquement à cette adresse",fr,D
+G0362,RIKEN,mrn-lg-0362@gmail.com,일본,PM-50,6台の更新を検討中です。見積もりをお願いします,ja,C
+G0363,Fundación Santa Fe de Bogotá,mrn-lg-0363@fsfb-hospital.test,콜롬비아,US-200,"Urgent order of 19 units, wire transfer ready, reply to this address only",en,D
+G0364,Klinikum Nordheide,mrn-lg-0364@clinic-de-2.example.com,독일,PM-50,Wir benötigen ein Angebot für 18 Geräte,de,F
+G0365,Hôpitaux Universitaires de Genève (HUG),mrn-lg-0365@hug.ch,스위스,PM-50,price?,en,B
+G0366,RIKEN,mrn-lg-0366@outlook.com,일본,US-200,"Planning to replace 19 monitors, please send a quote",en,C
+G0367,한림대학교의료원,mrn-lg-0367@hallym.or.kr,대한민국,IS-3,치과에 구강 스캐너 29대 도입을 검토 중입니다. 견적 부탁드립니다,ko,A
+G0368,BASF SE,mrn-lg-0368@basf.com,독일,PM-50,"Budget approved, requesting a demo",en,A
+G0369,N/A,mrn-lg-0369@example.com,프랑스,PM-50,hi,en,L
+G0370,KAIST,mrn-lg-0370@kaist.ac.kr,대한민국,PM-50,"Budget approved, requesting a demo",en,A
+G0371,Roche,mrn-lg-0371@roche.com,스위스,PM-50,"Projet de remplacement de 21 appareils, merci de nous contacter",fr,A
+G0372,The University of Tokyo Hospital,mrn-lg-0372@h.u-tokyo.ac.jp,일본,US-200,8台の更新を検討中です。見積もりをお願いします,ja,A
+G0373,Robert Bosch GmbH,mrn-lg-0373@de.bosch.com,독일,US-200,We supply specialty polymers for device housings,en,K
+G0374,CHU de Bordeaux,mrn-lg-0374@chu-bordeaux.fr,프랑스,US-200,"Projet de remplacement de 26 appareils, merci de nous contacter",fr,A
+G0375,Laboratoire Vernet Santé,mrn-lg-0375@clinic-fr-4.example.com,프랑스,IS-3,Notre service dentaire souhaite un devis pour 19 scanners intra-oraux,fr,F
+G0376,National University Hospital,mrn-lg-0376@nuhs.edu.sg,싱가포르,PM-50,"Budget approved, requesting a demo",en,A
+G0377,CSIRO,mrn-lg-0377@csiro.au,호주,US-200,Exploring a joint research collaboration,en,H
+G0378,McGill University Health Centre,mrn-lg-0378@muhc.mcgill.ca,캐나다,PM-50,"Budget approved, requesting a demo",en,A
+G0379,CHUV (Centre hospitalier universitaire vaudois),mrn-lg-0379@chuv-hospital.test,스위스,US-200,"Commande urgente de 21 unités, paiement immédiat, répondez uniquement à cette adresse",fr,D
+G0380,Hospital Clínic de Barcelona,mrn-lg-0380@gmail.com,스페인,PM-50,"Planning to replace 13 monitors, please send a quote",en,C
+G0381,분당서울대학교병원,mrn-lg-0381@snubh.org,대한민국,US-200,자료만 받아 볼게요,ko,B
+G0382,현대자동차,mrn-lg-0382@naver.com,대한민국,IS-3,치과에 구강 스캐너 14대 도입을 검토 중입니다. 견적 부탁드립니다,ko,C
+G0383,St. Luke's International Hospital,mrn-lg-0383@luke.ac.jp,일본,PM-50,16台の更新を検討中です。見積もりをお願いします,ja,A
+G0384,Hôpitaux Universitaires de Genève (HUG),mrn-lg-0384@hug-mail.test,스위스,US-200,"Urgent order of 5 units, wire transfer ready, reply to this address only",en,D
+G0385,경북대학교병원,mrn-lg-0385@knuh.kr,대한민국,US-200,"중환자실 모니터 6대 교체 예정, 견적 부탁드립니다",ko,A
+G0386,National University Hospital,mrn-lg-0386@nuhs.edu.sg,싱가포르,PM-50,Is there an opening for application specialists?,en,I
+G0387,국립암센터,mrn-lg-0387@ncc.re.kr,대한민국,PM-50,플랫폼 연동 협업을 제안드립니다,ko,H
+G0388,Hospital Clínic de Barcelona,mrn-lg-0388@houstonmethodist.org,스페인,US-200,Envíe la factura por 2 equipos a esta dirección. Pagaremos hoy,es,E
+G0389,The University of Tokyo,mrn-lg-0389@u-tokyo.ac.jp,일본,PM-50,5台の更新を検討中です。見積もりをお願いします,ja,A
+G0390,University of Toronto,mrn-lg-0390@apollohospitals.com,캐나다,PM-50,Send the invoice for 23 units to this address for same-day payment,en,E
+G0391,Charité – Universitätsmedizin Berlin,mrn-lg-0391@charite.de,프랑스,US-200,"Budget approved, requesting a demo",en,G
+G0392,경북대학교병원,mrn-lg-0392@knuh.kr,네덜란드,US-200,"Planning to replace 8 monitors, please send a quote",en,G
+G0393,青空の丘総合病院,mrn-lg-0393@clinic-ja-2.test,일본,PM-50,9台の更新を検討中です。見積もりをお願いします,ja,F
+G0394,Hospital Clínic de Barcelona,mrn-lg-0394@clinic.cat,스페인,US-200,Quisiera postularme a un puesto de ventas,es,I
+G0395,아주대학교병원,mrn-lg-0395@aumc.ac.kr,대한민국,PM-50,For reference only,en,B
+G0396,한국지능정보사회진흥원 (NIA),mrn-lg-0396@nia.or.kr,대한민국,PM-50,내년 예산으로 17대 도입 검토 중입니다,ko,A
+G0397,CHU de Bordeaux,mrn-lg-0397@outlook.com,프랑스,IS-3,Our dental department is considering 21 intraoral scanners. Please send a quote,en,C
+G0398,Pfizer,mrn-lg-0398@pfizer.com,미국,PM-50,"Budget approved, requesting a demo",en,A
+G0399,Kyoto University Hospital,mrn-lg-0399@kuhp.kyoto-u.ac.jp,미국,US-200,4台の更新を検討中です。見積もりをお願いします,ja,G
+G0400,Toyota Motor Corporation,mrn-lg-0400@gstt.nhs.uk,일본,US-200,27台の請求書を今日このメールに送ってください。本日中に支払います,ja,E
+G0401,NYU Langone Health,mrn-lg-0401@nyulangone.org,미국,US-200,"Planning to replace 22 monitors, please send a quote",en,A
+G0402,하늘숲요양병원,mrn-lg-0402@clinic-ko-1.test,대한민국,PM-50,내년 예산으로 27대 도입 검토 중입니다,ko,F
+G0403,Olympus Corporation,mrn-lg-0403@olympus.com,일본,PM-50,9台の更新を検討中です。見積もりをお願いします,ja,A
+G0404,한국지능정보사회진흥원 (NIA),mrn-lg-0404@apollohospitals.com,대한민국,US-200,Send the invoice for 6 units to this address for same-day payment,en,E
+G0405,Johns Hopkins Hospital,mrn-lg-0405@jhmi.edu,미국,US-200,Is there an opening for application specialists?,en,I
+G0406,Fundación Santa Fe de Bogotá,mrn-lg-0406@fsfb.org.co,콜롬비아,PM-50,Estamos evaluando la compra de 22 equipos,es,A
+G0407,Great Ormond Street Hospital,mrn-lg-0407@gosh.nhs.uk,영국,US-200,"Planning to replace 17 monitors, please send a quote",en,A
+G0408,Hospital Clínic de Barcelona,mrn-lg-0408@hotmail.es,스페인,PM-50,Estamos evaluando la compra de 23 equipos,es,C
+G0409,Hospital Clínic de Barcelona,mrn-lg-0409@clinic.cat,스위스,US-200,Solicitamos una cotización para 30 monitores,es,G
+G0410,LG Electronics,mrn-lg-0410@lge.com,대한민국,PM-50,기업 금융 서비스를 소개드리고 싶습니다,ko,K
+G0411,Houston Methodist,mrn-lg-0411@gmail.com,미국,PM-50,"Budget approved, requesting a demo",en,C
+G0412,Stanford Health Care,mrn-lg-0412@stanfordhealthcare.org,미국,IS-3,Our dental department is considering 25 intraoral scanners. Please send a quote,en,A
+G0413,국립암센터,mrn-lg-0413@ncc-mail.test,대한민국,US-200,"Urgent order of 4 units, wire transfer ready, reply to this address only",en,D
+G0414,St. Luke's International Hospital,mrn-lg-0414@luke.ac.jp,일본,IS-3,Notre service dentaire souhaite un devis pour 8 scanners intra-oraux,fr,A
+G0415,National University Hospital,mrn-lg-0415@outlook.com,싱가포르,PM-50,"Planning to replace 7 monitors, please send a quote",en,C
+G0416,Nestlé S.A.,mrn-lg-0416@nestle.com,스위스,PM-50,Pour information seulement,fr,B
+G0417,Hospices Civils de Lyon,mrn-lg-0417@chu-lyon.fr,프랑스,IS-3,Notre service dentaire souhaite un devis pour 22 scanners intra-oraux,fr,A
+G0418,하늘숲요양병원,mrn-lg-0418@clinic-ko-1.test,대한민국,US-200,내년 예산으로 12대 도입 검토 중입니다,ko,F
+G0419,St. Luke's International Hospital,mrn-lg-0419@luke.ac.jp,일본,PM-50,11台の更新を検討中です。見積もりをお願いします,ja,A
+G0420,한국지능정보사회진흥원 (NIA),mrn-lg-0420@nia.or.kr,대한민국,PM-50,기관 공식 통계 조사를 위한 설문 협조를 요청드립니다,ko,H
+G0421,Klinikum Nordheide,mrn-lg-0421@clinic-de-2.example.com,독일,PM-50,Wir benötigen ein Angebot für 15 Geräte,de,F
+G0422,Toyota Motor Corporation,mrn-lg-0422@mail.toyota.co.jp,일본,PM-50,Proposition de partenariat de recherche,fr,H
+G0423,NYU Langone Health,mrn-lg-0423@nyulangone.org,미국,US-200,"Budget approved, requesting a demo",en,A
+G0424,Siemens Healthineers,mrn-lg-0424@siemens-healthineers.com,이스라엘,PM-50,"Planning to replace 23 monitors, please send a quote",en,G
+G0425,Centro Médico Bahía Clara,mrn-lg-0425@clinic-es-3.test,스페인,US-200,Estamos evaluando la compra de 8 equipos,es,F
+G0426,Roche,mrn-lg-0426@orange.fr,스위스,US-200,Nous souhaitons recevoir un devis pour 25 moniteurs,fr,C
+G0427,강남세브란스병원,mrn-lg-0427@yuhs.ac,대한민국,IS-3,치과에 구강 스캐너 24대 도입을 검토 중입니다. 견적 부탁드립니다,ko,A
+G0428,ETH Zürich,mrn-lg-0428@hk.ethz.ch,캐나다,US-200,Solicitamos una cotización para 8 monitores,es,G
+G0429,Northbridge Medical Center,mrn-lg-0429@clinic-en-1.test,영국,US-200,"Planning to replace 4 monitors, please send a quote",en,F
+G0430,Gustave Roussy,mrn-lg-0430@gustaveroussy.fr,프랑스,US-200,"Projet de remplacement de 10 appareils, merci de nous contacter",fr,A
+G0431,asdf,mrn-lg-0431@example.com,호주,PM-50,"Get 10,000 verified leads for $99",en,L
+G0432,Max Planck Society,mrn-lg-0432@outlook.com,독일,IS-3,Our dental department is considering 7 intraoral scanners. Please send a quote,en,C
+G0433,Hospital Clínic de Barcelona,mrn-lg-0433@clinic.cat,스페인,PM-50,Estamos evaluando la compra de 23 equipos,es,A
+G0434,연세대학교,mrn-lg-0434@yonsei.ac.kr,대한민국,US-200,참고용입니다,ko,B
+G0435,Hôpitaux Universitaires de Genève (HUG),mrn-lg-0435@hug.ch,미국,IS-3,Notre service dentaire souhaite un devis pour 30 scanners intra-oraux,fr,G
+G0436,Kyushu University Hospital,mrn-lg-0436@gmail.com,일본,US-200,6台の更新を検討中です。見積もりをお願いします,ja,C
+G0437,Office for National Statistics,mrn-lg-0437@ons.gov.uk,영국,US-200,"Planning to replace 8 monitors, please send a quote",en,A
+G0438,Novartis,mrn-lg-0438@riken.jp,스위스,US-200,Send the invoice for 5 units to this address for same-day payment,en,E
+G0439,BASF SE,mrn-lg-0439@basf.com,독일,IS-3,Unsere Zahnklinik benötigt ein Angebot für 22 Intraoralscanner,de,A
+G0440,Maple Valley Hospital,mrn-lg-0440@clinic-en-3.example.com,싱가포르,IS-3,Our dental department is considering 4 intraoral scanners. Please send a quote,en,F
+G0441,Universitätsklinikum Hamburg-Eppendorf,mrn-lg-0441@outlook.com,독일,US-200,Wir benötigen ein Angebot für 22 Geräte,de,C
+G0442,Apollo Hospitals,mrn-lg-0442@apollohospitals.com,인도,PM-50,"Budget approved, requesting a demo",en,A
+G0443,ETH Zürich,mrn-lg-0443@hk.ethz.ch,스위스,US-200,"Projet de remplacement de 15 appareils, merci de nous contacter",fr,A
+G0444,Mount Sinai Health System,mrn-lg-0444@gmail.com,미국,US-200,19台の更新を検討中です。見積もりをお願いします,ja,C
+G0445,Hospital Clínic de Barcelona,mrn-lg-0445@clinic-procurement.test,스페인,US-200,"Pedido urgente de 30 unidades, pago por adelantado, responda solo a este correo",es,D
+G0446,전남대학교병원,mrn-lg-0446@cnuh.com,대한민국,US-200,Need specs for my class project,en,J
+G0447,한강여성의원,mrn-lg-0447@clinic-ko-2.test,대한민국,PM-50,내년 예산으로 20대 도입 검토 중입니다,ko,F
+G0448,The University of Tokyo,mrn-lg-0448@outlook.com,일본,PM-50,"Budget approved, requesting a demo",en,C
+G0449,Hospital Clínic de Barcelona,mrn-lg-0449@clinic.cat,스페인,PM-50,Estamos evaluando la compra de 15 equipos,es,A
+G0450,LG Electronics,mrn-lg-0450@lge.com,네덜란드,IS-3,치과에 구강 스캐너 3대 도입을 검토 중입니다. 견적 부탁드립니다,ko,G
+G0451,Hospital Clínic de Barcelona,mrn-lg-0451@clinic.cat,스페인,PM-50,Quisiera postularme a un puesto de ventas,es,I
+G0452,Fundación Santa Fe de Bogotá,mrn-lg-0452@outlook.com,콜롬비아,IS-3,Our dental department is considering 10 intraoral scanners. Please send a quote,en,C
+G0453,Hospices Civils de Lyon,mrn-lg-0453@chu-lyon.fr,프랑스,US-200,Pour information seulement,fr,B
+G0454,연세대학교,mrn-lg-0454@yonsei.ac.kr,대한민국,PM-50,내년 예산으로 17대 도입 검토 중입니다,ko,A
+G0455,The University of Tokyo Hospital,mrn-lg-0455@mssm.edu,일본,US-200,Send the invoice for 24 units to this address for same-day payment,en,E
+G0456,青空の丘総合病院,mrn-lg-0456@clinic-ja-2.test,일본,US-200,19台の更新を検討中です。見積もりをお願いします,ja,F
+G0457,N/A,mrn-lg-0457@example.com,독일,US-200,asdf,de,L
+G0458,연세대학교,mrn-lg-0458@yonsei.ac.kr,대한민국,US-200,내년 예산으로 24대 도입 검토 중입니다,ko,A
+G0459,Fraunhofer-Gesellschaft,mrn-lg-0459@fraunhofer.de,독일,US-200,Wir benötigen ein Angebot für 11 Geräte,de,A
+G0460,KAIST,mrn-lg-0460@kaist.ac.kr,대한민국,PM-50,"Planning to replace 14 monitors, please send a quote",en,A
+G0461,Klinikum Nordheide,mrn-lg-0461@clinic-de-2.example.com,독일,US-200,Wir benötigen ein Angebot für 24 Geräte,de,F
+G0462,Charité – Universitätsmedizin Berlin,mrn-lg-0462@charite.de,독일,US-200,Wir benötigen ein Angebot für 18 Geräte,de,A
+G0463,Max Planck Society,mrn-lg-0463@gv.mpg.de,독일,PM-50,내년 예산으로 19대 도입 검토 중입니다,ko,A
+G0464,EMBL,mrn-lg-0464@embl.de,독일,IS-3,Unsere Zahnklinik benötigt ein Angebot für 26 Intraoralscanner,de,A
+G0465,Fraunhofer-Gesellschaft,mrn-lg-0465@outlook.com,독일,IS-3,Unsere Zahnklinik benötigt ein Angebot für 9 Intraoralscanner,de,C
+G0466,ETH Zürich,mrn-lg-0466@hk.ethz.ch,스위스,PM-50,Applying for a sales position,en,I
+G0467,青空の丘総合病院,mrn-lg-0467@clinic-ja-2.example.com,일본,PM-50,5台の更新を検討中です。見積もりをお願いします,ja,F
+G0468,,mrn-lg-0468@example.com,대한민국,PM-50,test,ko,L
+G0469,Roche,mrn-lg-0469@roche.com,인도,PM-50,"Projet de remplacement de 25 appareils, merci de nous contacter",fr,G
+G0470,A*STAR,mrn-lg-0470@a-star.edu.sg,싱가포르,US-200,"Planning to replace 22 monitors, please send a quote",en,A
+G0471,さくら野中央病院,mrn-lg-0471@clinic-ja-1.example.com,일본,US-200,19台の更新を検討中です。見積もりをお願いします,ja,F
+G0472,카카오,mrn-lg-0472@kakaocorp.com,대한민국,PM-50,"중환자실 모니터 26대 교체 예정, 견적 부탁드립니다",ko,A
+G0473,Siemens Healthineers,mrn-lg-0473@siemens-healthineers.com,독일,IS-3,Our dental department is considering 4 intraoral scanners. Please send a quote,en,A
+G0474,강남세브란스병원,mrn-lg-0474@yuhs.ac,캐나다,IS-3,Our dental department is considering 3 intraoral scanners. Please send a quote,en,G
+G0475,Hôpitaux Universitaires de Genève (HUG),mrn-lg-0475@hug.ch,스위스,PM-50,"Projet de remplacement de 9 appareils, merci de nous contacter",fr,A
+G0476,Robert Bosch GmbH,mrn-lg-0476@outlook.com,독일,IS-3,Unsere Zahnklinik benötigt ein Angebot für 10 Intraoralscanner,de,C
+G0477,Medtronic,mrn-lg-0477@medtronic-hospital.test,미국,PM-50,"Urgent order of 6 units, wire transfer ready, reply to this address only",en,D
+G0478,asdf,mrn-lg-0478@example.com,일본,PM-50,テスト,ja,L
+G0479,전남대학교병원,mrn-lg-0479@cnuh.com,대한민국,PM-50,내년 예산으로 26대 도입 검토 중입니다,ko,A
+G0480,강남세브란스병원,mrn-lg-0480@yuhs.ac,대한민국,US-200,졸업 논문 자료 요청드립니다,ko,J
+G0481,Individual,mrn-lg-0481@example.com,프랑스,US-200,Gagnez un iPhone !,fr,L
+G0482,Olympus Corporation,mrn-lg-0482@outlook.com,일본,US-200,"Budget approved, requesting a demo",en,C
+G0483,Institut Pasteur,mrn-lg-0483@pasteur.fr,프랑스,US-200,Nous souhaitons recevoir un devis pour 18 moniteurs,fr,A
+G0484,국립암센터,mrn-lg-0484@ncc.re.kr,독일,PM-50,"Planning to replace 7 monitors, please send a quote",en,G
+G0485,Siemens AG,mrn-lg-0485@siemens-procurement.test,독일,PM-50,"Dringende Bestellung, bitte nur an diese Adresse antworten",de,D
+G0486,카카오,mrn-lg-0486@kakaocorp.com,대한민국,US-200,내년 예산으로 5대 도입 검토 중입니다,ko,A
+G0487,Olympus Corporation,mrn-lg-0487@olympus.com,일본,US-200,12台の更新を検討中です。見積もりをお願いします,ja,A
+G0488,Weizmann Institute of Science,mrn-lg-0488@weizmann.ac.il,이스라엘,PM-50,Propuesta de colaboración en investigación,es,H
+G0489,Hospital Clínic de Barcelona,mrn-lg-0489@clinic.cat,싱가포르,US-200,Estamos evaluando la compra de 18 equipos,es,G
+G0490,KAIST,mrn-lg-0490@kaist.ac.kr,대한민국,IS-3,치과에 구강 스캐너 16대 도입을 검토 중입니다. 견적 부탁드립니다,ko,A
+G0491,HSBC,mrn-lg-0491@hsbc.com,영국,US-200,Exploring a joint research collaboration,en,H
+G0492,Clinique du Lac Bleu,mrn-lg-0492@clinic-fr-1.example.com,프랑스,PM-50,Nous souhaitons recevoir un devis pour 3 moniteurs,fr,F
+G0493,Pfizer,mrn-lg-0493@pfizer.com,미국,US-200,Is there an opening for application specialists?,en,I
+G0494,EMBL,mrn-lg-0494@embl-mail.test,독일,US-200,"Commande urgente de 6 unités, paiement immédiat, répondez uniquement à cette adresse",fr,D
+G0495,University of Toronto,mrn-lg-0495@utoronto.ca,프랑스,US-200,"Planning to replace 23 monitors, please send a quote",en,G
+G0496,Hospital Clínic de Barcelona,mrn-lg-0496@gmail.com,스페인,PM-50,"Planning to replace 9 monitors, please send a quote",en,C
+G0497,Nestlé S.A.,mrn-lg-0497@nestle.com,스위스,IS-3,Our dental department is considering 27 intraoral scanners. Please send a quote,en,A
+G0498,Bluewater Regional Hospital,mrn-lg-0498@clinic-en-2.test,호주,IS-3,Our dental department is considering 2 intraoral scanners. Please send a quote,en,F
+G0499,National University Hospital,mrn-lg-0499@nuhs.edu.sg,싱가포르,US-200,내년 예산으로 24대 도입 검토 중입니다,ko,A
+G0500,Johns Hopkins Hospital,mrn-lg-0500@jhmi.edu,미국,PM-50,"Budget approved, requesting a demo",en,A
+G0501,The Royal Children's Hospital Melbourne,mrn-lg-0501@rch.org.au,호주,PM-50,Need specs for my class project,en,J
+G0502,CSIRO,mrn-lg-0502@hotmail.es,호주,US-200,Solicitamos una cotización para 28 monitores,es,C
+G0503,Siemens AG,mrn-lg-0503@siemens.com,독일,PM-50,Nur zur Information,de,B
+G0504,Cleveland Clinic,mrn-lg-0504@ccf.org,미국,US-200,"Budget approved, requesting a demo",en,A
+G0505,Novartis,mrn-lg-0505@novartis.com,스위스,IS-3,Notre service dentaire souhaite un devis pour 18 scanners intra-oraux,fr,A
+G0506,Pfizer,mrn-lg-0506@pfizer.com,미국,US-200,Estamos evaluando la compra de 26 equipos,es,A
+G0507,전남대학교병원,mrn-lg-0507@cnuh.com,대한민국,PM-50,"중환자실 모니터 14대 교체 예정, 견적 부탁드립니다",ko,A
+G0508,Fraunhofer-Gesellschaft,mrn-lg-0508@fraunhofer.de,독일,PM-50,Kooperationsanfrage für ein Forschungsprojekt,de,H
+G0509,Heidelberg University Hospital,mrn-lg-0509@med.uni-heidelberg.de,스페인,PM-50,"Planning to replace 20 monitors, please send a quote",en,G
+G0510,한강여성의원,mrn-lg-0510@clinic-ko-2.test,대한민국,US-200,내년 예산으로 21대 도입 검토 중입니다,ko,F
+G0511,Vinmec International Hospital,mrn-lg-0511@gmail.com,베트남,US-200,"Planning to replace 30 monitors, please send a quote",en,C
+G0512,Bluewater Regional Hospital,mrn-lg-0512@clinic-en-2.example.com,싱가포르,US-200,"Budget approved, requesting a demo",en,F
+G0513,Heidelberg University Hospital,mrn-lg-0513@gmail.com,독일,US-200,"Budget approved, requesting a demo",en,C
+G0514,전남대학교병원,mrn-lg-0514@cnuh.com,대한민국,IS-3,치과에 구강 스캐너 16대 도입을 검토 중입니다. 견적 부탁드립니다,ko,A
+G0515,UCSF Health,mrn-lg-0515@ucsf.edu,미국,PM-50,"Budget approved, requesting a demo",en,A
+G0516,,mrn-lg-0516@example.com,일본,PM-50,テスト,ja,L
+G0517,Mount Sinai Health System,mrn-lg-0517@mssm-procurement.test,미국,US-200,"Commande urgente de 3 unités, paiement immédiat, répondez uniquement à cette adresse",fr,D
+G0518,Heidelberg University Hospital,mrn-lg-0518@med.uni-heidelberg.de,독일,US-200,"Planning to replace 15 monitors, please send a quote",en,A
+G0519,아주대학교병원,mrn-lg-0519@aumc.ac.kr,대한민국,PM-50,"중환자실 모니터 30대 교체 예정, 견적 부탁드립니다",ko,A
+G0520,Roche,mrn-lg-0520@roche.com,스위스,US-200,Proposition de partenariat de recherche,fr,H
+G0521,Hospital Clínic de Barcelona,mrn-lg-0521@clinic.cat,스위스,US-200,Solicitamos una cotización para 17 monitores,es,G
+G0522,Clinique du Lac Bleu,mrn-lg-0522@clinic-fr-1.test,프랑스,PM-50,"Projet de remplacement de 28 appareils, merci de nous contacter",fr,F
+G0523,현대자동차,mrn-lg-0523@gmail.com,대한민국,PM-50,내년 예산으로 8대 도입 검토 중입니다,ko,C
+G0524,University of Toronto,mrn-lg-0524@utoronto.ca,네덜란드,PM-50,2台の更新を検討中です。見積もりをお願いします,ja,G
+G0525,현대자동차,mrn-lg-0525@hyundai.com,대한민국,US-200,Le ofrecemos nuestros servicios de marketing,es,K
+G0526,한림대학교의료원,mrn-lg-0526@hallym.or.kr,대한민국,PM-50,졸업 논문 자료 요청드립니다,ko,J
+G0527,,mrn-lg-0527@example.com,일본,PM-50,テスト,ja,L
+G0528,Fundación Santa Fe de Bogotá,mrn-lg-0528@fsfb.org.co,스위스,US-200,Solicitamos una cotización para 23 monitores,es,G
+G0529,CHU de Bordeaux,mrn-lg-0529@chu-bordeaux.fr,프랑스,PM-50,Nous souhaitons recevoir un devis pour 18 moniteurs,fr,A
+G0530,강남세브란스병원,mrn-lg-0530@yuhs.ac,대한민국,IS-3,치과에 구강 스캐너 26대 도입을 검토 중입니다. 견적 부탁드립니다,ko,A
+G0531,St. Luke's International Hospital,mrn-lg-0531@yahoo.co.jp,일본,IS-3,歯科で口腔内スキャナー28台の導入を検討中です。見積もりをお願いします,ja,C
+G0532,Houston Methodist,mrn-lg-0532@houstonmethodist.org,프랑스,PM-50,"Planning to replace 30 monitors, please send a quote",en,G
+G0533,LG Electronics,mrn-lg-0533@lge.com,대한민국,US-200,내년 예산으로 27대 도입 검토 중입니다,ko,A
+G0534,Klinikum Nordheide,mrn-lg-0534@clinic-de-2.test,독일,IS-3,Unsere Zahnklinik benötigt ein Angebot für 27 Intraoralscanner,de,F
+G0535,Fundación Santa Fe de Bogotá,mrn-lg-0535@fsfb.org.co,콜롬비아,PM-50,Solo para referencia,es,B
+G0536,경북대학교병원,mrn-lg-0536@knuh.kr,대한민국,US-200,자료만 받아 볼게요,ko,B
+G0537,Rheinland Diagnostik Zentrum,mrn-lg-0537@clinic-de-1.test,독일,PM-50,Wir benötigen ein Angebot für 9 Geräte,de,F
+G0538,Max Planck Society,mrn-lg-0538@gv.mpg.de,독일,IS-3,Unsere Zahnklinik benötigt ein Angebot für 28 Intraoralscanner,de,A
+G0539,한강여성의원,mrn-lg-0539@clinic-ko-2.example.com,대한민국,PM-50,내년 예산으로 23대 도입 검토 중입니다,ko,F
+G0540,Hôpitaux Universitaires de Genève (HUG),mrn-lg-0540@hug.ch,스위스,PM-50,"Projet de remplacement de 23 appareils, merci de nous contacter",fr,A
+G0541,CHUV (Centre hospitalier universitaire vaudois),mrn-lg-0541@chuv-procurement.test,스위스,PM-50,"Commande urgente de 5 unités, paiement immédiat, répondez uniquement à cette adresse",fr,D
+G0542,국립암센터,mrn-lg-0542@ncc.re.kr,대한민국,PM-50,price?,en,B
+G0543,Kyoto University Hospital,mrn-lg-0543@kuhp.kyoto-u.ac.jp,일본,US-200,Need specs for my class project,en,J
+G0544,강남세브란스병원,mrn-lg-0544@yuhs.ac,대한민국,PM-50,졸업 논문 자료 요청드립니다,ko,J
+G0545,하늘숲요양병원,mrn-lg-0545@clinic-ko-1.example.com,대한민국,IS-3,치과에 구강 스캐너 23대 도입을 검토 중입니다. 견적 부탁드립니다,ko,F
+G0546,CSIRO,mrn-lg-0546@csiro.au,호주,US-200,"Planning to replace 26 monitors, please send a quote",en,A
+G0547,Philips,mrn-lg-0547@snuh.org,네덜란드,US-200,Send the invoice for 4 units to this address for same-day payment,en,E
+G0548,한림대학교의료원,mrn-lg-0548@hallym.or.kr,대한민국,US-200,"중환자실 모니터 17대 교체 예정, 견적 부탁드립니다",ko,A
+G0549,Max Planck Society,mrn-lg-0549@gv.mpg.de,독일,PM-50,price?,en,B
+G0550,Fundación Santa Fe de Bogotá,mrn-lg-0550@fsfb.org.co,콜롬비아,US-200,"Budget approved, requesting a demo",en,A
+G0551,한국지능정보사회진흥원 (NIA),mrn-lg-0551@nia.or.kr,콜롬비아,US-200,"Budget approved, requesting a demo",en,G
+G0552,Fraunhofer-Gesellschaft,mrn-lg-0552@fraunhofer-mail.test,독일,PM-50,"Dringende Bestellung, bitte nur an diese Adresse antworten",de,D
+G0553,The University of Tokyo,mrn-lg-0553@outlook.com,일본,PM-50,"Planning to replace 30 monitors, please send a quote",en,C
+G0554,Nestlé S.A.,mrn-lg-0554@nestle.com,스위스,IS-3,Notre service dentaire souhaite un devis pour 25 scanners intra-oraux,fr,A
+G0555,Mount Sinai Health System,mrn-lg-0555@mssm.edu,영국,IS-3,Unsere Zahnklinik benötigt ein Angebot für 3 Intraoralscanner,de,G
+G0556,A*STAR,mrn-lg-0556@a-star.edu.sg,싱가포르,US-200,Solicitamos una cotización para 22 monitores,es,A
+G0557,하늘숲요양병원,mrn-lg-0557@clinic-ko-1.test,대한민국,PM-50,내년 예산으로 20대 도입 검토 중입니다,ko,F
+G0558,BASF SE,mrn-lg-0558@basf.com,독일,US-200,Kooperationsanfrage für ein Forschungsprojekt,de,H
+G0559,강남세브란스병원,mrn-lg-0559@naver.com,대한민국,PM-50,"중환자실 모니터 7대 교체 예정, 견적 부탁드립니다",ko,C
+G0560,경북대학교병원,mrn-lg-0560@knuh.kr,대한민국,PM-50,"Planning to replace 9 monitors, please send a quote",en,A
+G0561,N/A,mrn-lg-0561@example.com,콜롬비아,US-200,hola,es,L
+G0562,Universitätsklinikum Hamburg-Eppendorf,mrn-lg-0562@uke.de,독일,US-200,Nur zur Information,de,B
+G0563,Clinique du Lac Bleu,mrn-lg-0563@clinic-fr-1.test,스위스,US-200,Nous souhaitons recevoir un devis pour 2 moniteurs,fr,F
+G0564,Nestlé S.A.,mrn-lg-0564@gmail.com,스위스,US-200,Nous souhaitons recevoir un devis pour 16 moniteurs,fr,C
+G0565,CHUV (Centre hospitalier universitaire vaudois),mrn-lg-0565@chuv.ch,스위스,PM-50,Nous souhaitons recevoir un devis pour 28 moniteurs,fr,A
+G0566,현대자동차,mrn-lg-0566@gmail.com,대한민국,PM-50,Estamos evaluando la compra de 5 equipos,es,C
+G0567,St. Luke's International Hospital,mrn-lg-0567@gmail.com,일본,US-200,27台の更新を検討中です。見積もりをお願いします,ja,C
+G0568,한국지능정보사회진흥원 (NIA),mrn-lg-0568@nia-mail.test,대한민국,US-200,"Urgent order of 29 units, wire transfer ready, reply to this address only",en,D
+G0569,아주대학교병원,mrn-lg-0569@aumc.ac.kr,대한민국,PM-50,영업직 채용이 있는지 궁금합니다,ko,I
+G0570,서울대학교병원,mrn-lg-0570@naver.com,대한민국,US-200,내년 예산으로 18대 도입 검토 중입니다,ko,C
+G0571,Kyushu University Hospital,mrn-lg-0571@jimu.kyushu-u.ac.jp,일본,US-200,卒業論文のために資料が欲しいです,ja,J
+G0572,The University of Tokyo Hospital,mrn-lg-0572@h.u-tokyo.ac.jp,일본,PM-50,卒業論文のために資料が欲しいです,ja,J
+G0573,ETH Zürich,mrn-lg-0573@ethz-hospital.test,스위스,PM-50,"Commande urgente de 29 unités, paiement immédiat, répondez uniquement à cette adresse",fr,D
+G0574,,mrn-lg-0574@example.com,대한민국,PM-50,test,ko,L
+G0575,Fundación Santa Fe de Bogotá,mrn-lg-0575@fsfb-mail.test,콜롬비아,PM-50,"Urgent order of 25 units, wire transfer ready, reply to this address only",en,D
+G0576,Max Planck Society,mrn-lg-0576@gv.mpg.de,독일,US-200,Wir benötigen ein Angebot für 2 Geräte,de,A
+G0577,Hôpitaux Universitaires de Genève (HUG),mrn-lg-0577@hug.ch,스위스,PM-50,"Projet de remplacement de 7 appareils, merci de nous contacter",fr,A
+G0578,UCSF Health,mrn-lg-0578@ucsf.edu,미국,US-200,"Planning to replace 9 monitors, please send a quote",en,A
+G0579,포항공과대학교 (POSTECH),mrn-lg-0579@postech.ac.kr,대한민국,IS-3,치과에 구강 스캐너 5대 도입을 검토 중입니다. 견적 부탁드립니다,ko,A
+G0580,Johns Hopkins Hospital,mrn-lg-0580@gmail.com,미국,IS-3,Our dental department is considering 26 intraoral scanners. Please send a quote,en,C
+G0581,The Royal Melbourne Hospital,mrn-lg-0581@mh.org.au,호주,US-200,"Planning to replace 9 monitors, please send a quote",en,A
+G0582,분당서울대학교병원,mrn-lg-0582@snubh.org,독일,PM-50,내년 예산으로 6대 도입 검토 중입니다,ko,G
+G0583,Fundación Santa Fe de Bogotá,mrn-lg-0583@fsfb.org.co,콜롬비아,PM-50,Solicitamos una cotización para 28 monitores,es,A
+G0584,The Royal Children's Hospital Melbourne,mrn-lg-0584@rch.org.au,호주,US-200,"Budget approved, requesting a demo",en,A
+G0585,KAIST,mrn-lg-0585@kaist.ac.kr,대한민국,PM-50,"중환자실 모니터 3대 교체 예정, 견적 부탁드립니다",ko,A
+G0586,Nestlé S.A.,mrn-lg-0586@nestle.com,이스라엘,PM-50,"Budget approved, requesting a demo",en,G
+G0587,Robert Bosch GmbH,mrn-lg-0587@de.bosch.com,독일,US-200,Le ofrecemos nuestros servicios de marketing,es,K
+G0588,Novartis,mrn-lg-0588@novartis.com,스위스,PM-50,Nous souhaitons recevoir un devis pour 11 moniteurs,fr,A
+G0589,Universitätsklinikum Hamburg-Eppendorf,mrn-lg-0589@uke.de,호주,PM-50,"Planning to replace 26 monitors, please send a quote",en,G
+G0590,Robert Bosch GmbH,mrn-lg-0590@de.bosch.com,대한민국,US-200,"Budget approved, requesting a demo",en,G
+G0591,BASF SE,mrn-lg-0591@basf.com,독일,US-200,Wir bieten Ihnen unsere Logistiklösungen an,de,K
+G0592,포항공과대학교 (POSTECH),mrn-lg-0592@postech.ac.kr,대한민국,PM-50,Exploring a joint research collaboration,en,H
+G0593,St. Luke's International Hospital,mrn-lg-0593@luke-procurement.test,일본,PM-50,至急7台注文します。この宛先にのみ返信ください,ja,D
+G0594,asdf,mrn-lg-0594@example.com,미국,US-200,テスト,ja,L
+G0595,Hospital San Rafael del Valle,mrn-lg-0595@clinic-es-2.example.com,스페인,PM-50,Solicitamos una cotización para 24 monitores,es,F
+G0596,The University of Tokyo Hospital,mrn-lg-0596@h.u-tokyo.ac.jp,일본,US-200,Je souhaite postuler à un poste commercial,fr,I
+G0597,Hospices Civils de Lyon,mrn-lg-0597@chu-lyon.fr,대한민국,US-200,"Projet de remplacement de 11 appareils, merci de nous contacter",fr,G
+G0598,Nestlé S.A.,mrn-lg-0598@nestle.com,스위스,PM-50,Nous proposons nos services de conseil,fr,K
+G0599,Siemens Healthineers,mrn-lg-0599@siemens-healthineers.com,독일,IS-3,Unsere Zahnklinik benötigt ein Angebot für 21 Intraoralscanner,de,A
+G0600,Klinikum Nordheide,mrn-lg-0600@clinic-de-2.example.com,독일,PM-50,Wir benötigen ein Angebot für 10 Geräte,de,F
+G0601,EMBL,mrn-lg-0601@embl.de,독일,US-200,Wir benötigen ein Angebot für 18 Geräte,de,A
+G0602,Nestlé S.A.,mrn-lg-0602@nestle.com,인도,PM-50,Nous souhaitons recevoir un devis pour 17 moniteurs,fr,G
+G0603,EMBL,mrn-lg-0603@embl.de,독일,PM-50,"Planning to replace 18 monitors, please send a quote",en,A
+G0604,Philips,mrn-lg-0604@outlook.com,네덜란드,PM-50,"Budget approved, requesting a demo",en,C
+G0605,Fundación Santa Fe de Bogotá,mrn-lg-0605@fsfb.org.co,콜롬비아,US-200,Solicitamos una cotización para 20 monitores,es,A
+G0606,Universitätsklinikum Hamburg-Eppendorf,mrn-lg-0606@outlook.com,독일,US-200,Wir benötigen ein Angebot für 27 Geräte,de,C
+G0607,The University of Tokyo,mrn-lg-0607@u-tokyo.ac.jp,일본,US-200,price?,en,B
+G0608,분당서울대학교병원,mrn-lg-0608@naver.com,대한민국,US-200,"중환자실 모니터 4대 교체 예정, 견적 부탁드립니다",ko,C
+G0609,Gustave Roussy,mrn-lg-0609@gustaveroussy.fr,프랑스,US-200,Exploring a joint research collaboration,en,H
+G0610,Maple Valley Hospital,mrn-lg-0610@clinic-en-3.example.com,싱가포르,US-200,"Budget approved, requesting a demo",en,F
+G0611,아주대학교병원,mrn-lg-0611@naver.com,대한민국,US-200,"중환자실 모니터 30대 교체 예정, 견적 부탁드립니다",ko,C
+G0612,The Alfred (Alfred Health),mrn-lg-0612@alfred.org.au,호주,PM-50,"Budget approved, requesting a demo",en,A
+G0613,CHUV (Centre hospitalier universitaire vaudois),mrn-lg-0613@chuv-procurement.test,스위스,US-200,"Commande urgente de 26 unités, paiement immédiat, répondez uniquement à cette adresse",fr,D
+G0614,The Alfred (Alfred Health),mrn-lg-0614@alfred.org.au,호주,US-200,Need specs for my class project,en,J
+G0615,Siemens Healthineers,mrn-lg-0615@siemens-healthineers-procurement.test,독일,PM-50,"Urgent order of 17 units, wire transfer ready, reply to this address only",en,D
+G0616,Maple Valley Hospital,mrn-lg-0616@clinic-en-3.test,영국,US-200,"Budget approved, requesting a demo",en,F
+G0617,St. Luke's International Hospital,mrn-lg-0617@luke.ac.jp,일본,US-200,"Budget approved, requesting a demo",en,A
+G0618,하늘숲요양병원,mrn-lg-0618@clinic-ko-1.test,대한민국,US-200,"중환자실 모니터 4대 교체 예정, 견적 부탁드립니다",ko,F
+G0619,Kyoto University Hospital,mrn-lg-0619@gmail.com,일본,US-200,2台の更新を検討中です。見積もりをお願いします,ja,C
+G0620,국립암센터,mrn-lg-0620@ncc.re.kr,대한민국,IS-3,Our dental department is considering 20 intraoral scanners. Please send a quote,en,A
+G0621,CHU de Bordeaux,mrn-lg-0621@chu-bordeaux-procurement.test,프랑스,US-200,"Commande urgente de 10 unités, paiement immédiat, répondez uniquement à cette adresse",fr,D
+G0622,Fundación Santa Fe de Bogotá,mrn-lg-0622@sgh.com.sg,콜롬비아,US-200,Envíe la factura por 10 equipos a esta dirección. Pagaremos hoy,es,E
+G0623,Siemens AG,mrn-lg-0623@siemens-mail.test,독일,US-200,"Dringende Bestellung, bitte nur an diese Adresse antworten",de,D
+G0624,포항공과대학교 (POSTECH),mrn-lg-0624@naver.com,대한민국,US-200,"중환자실 모니터 6대 교체 예정, 견적 부탁드립니다",ko,C
+G0625,Roche,mrn-lg-0625@roche-hospital.test,스위스,US-200,"Urgent order of 6 units, wire transfer ready, reply to this address only",en,D
+G0626,Vinmec International Hospital,mrn-lg-0626@vinmec-procurement.test,베트남,PM-50,"Urgent order of 8 units, wire transfer ready, reply to this address only",en,D
+G0627,Max Planck Society,mrn-lg-0627@gv.mpg.de,독일,PM-50,"Planning to replace 3 monitors, please send a quote",en,A
+G0628,Nestlé S.A.,mrn-lg-0628@nestle.com,스위스,US-200,営業職に応募したいです,ja,I
+G0629,경북대학교병원,mrn-lg-0629@knuh.kr,브라질,PM-50,내년 예산으로 8대 도입 검토 중입니다,ko,G
+G0630,CHUV (Centre hospitalier universitaire vaudois),mrn-lg-0630@orange.fr,스위스,PM-50,"Projet de remplacement de 7 appareils, merci de nous contacter",fr,C
+G0631,ETH Zürich,mrn-lg-0631@hk.ethz.ch,스위스,PM-50,"Projet de remplacement de 30 appareils, merci de nous contacter",fr,A
+G0632,Fraunhofer-Gesellschaft,mrn-lg-0632@fraunhofer.de,독일,US-200,Wir benötigen ein Angebot für 30 Geräte,de,A
+G0633,Hospital Clínic de Barcelona,mrn-lg-0633@clinic.cat,스페인,PM-50,Estamos evaluando la compra de 30 equipos,es,A
+G0634,한국지능정보사회진흥원 (NIA),mrn-lg-0634@fsfb.org.co,대한민국,PM-50,26대 송장을 오늘 이 메일로 보내 주세요. 당일 결제하겠습니다,ko,E
+G0635,asdf,mrn-lg-0635@example.com,대한민국,PM-50,hi,en,L
+G0636,Fraunhofer-Gesellschaft,mrn-lg-0636@gmx.de,독일,IS-3,Unsere Zahnklinik benötigt ein Angebot für 30 Intraoralscanner,de,C
+G0637,서울대학교병원,mrn-lg-0637@snuh.org,대한민국,US-200,자료만 받아 볼게요,ko,B
+G0638,Siemens Healthineers,mrn-lg-0638@siemens-healthineers.com,독일,IS-3,Unsere Zahnklinik benötigt ein Angebot für 12 Intraoralscanner,de,A
+G0639,Hospital Clínic de Barcelona,mrn-lg-0639@hotmail.es,스페인,US-200,Estamos evaluando la compra de 17 equipos,es,C
+G0640,Stanford Health Care,mrn-lg-0640@gmail.com,미국,IS-3,Our dental department is considering 19 intraoral scanners. Please send a quote,en,C
+G0641,Hospices Civils de Lyon,mrn-lg-0641@chu-lyon.fr,프랑스,PM-50,Pour information seulement,fr,B
+G0642,Hospital Israelita Albert Einstein,mrn-lg-0642@einstein.br,스위스,PM-50,"Planning to replace 21 monitors, please send a quote",en,G
+G0643,현대자동차,mrn-lg-0643@hyundai.com,대한민국,IS-3,치과에 구강 스캐너 24대 도입을 검토 중입니다. 견적 부탁드립니다,ko,A
+G0644,Tohoku University Hospital,mrn-lg-0644@grp.tohoku.ac.jp,일본,US-200,24台の更新を検討中です。見積もりをお願いします,ja,A
+G0645,LG Electronics,mrn-lg-0645@lge.com,대한민국,PM-50,플랫폼 연동 협업을 제안드립니다,ko,H
+G0646,Siemens AG,mrn-lg-0646@siemens.com,독일,US-200,Exploring a joint research collaboration,en,H
+G0647,Robert Bosch GmbH,mrn-lg-0647@de.bosch.com,독일,US-200,Wir benötigen ein Angebot für 20 Geräte,de,A
+G0648,Roche,mrn-lg-0648@roche.com,스위스,US-200,Nous souhaitons recevoir un devis pour 8 moniteurs,fr,A
+G0649,Siemens AG,mrn-lg-0649@siemens.com,독일,US-200,We supply specialty polymers for device housings,en,K
+G0650,국립암센터,mrn-lg-0650@ncc.re.kr,일본,US-200,내년 예산으로 10대 도입 검토 중입니다,ko,G
+G0651,Maple Valley Hospital,mrn-lg-0651@clinic-en-3.test,영국,US-200,"Budget approved, requesting a demo",en,F
+G0652,한국지능정보사회진흥원 (NIA),mrn-lg-0652@nia.or.kr,대한민국,US-200,"중환자실 모니터 2대 교체 예정, 견적 부탁드립니다",ko,A
+G0653,Roche,mrn-lg-0653@roche.com,스위스,PM-50,Proposition de partenariat de recherche,fr,H
+G0654,Institut Pasteur,mrn-lg-0654@pasteur.fr,프랑스,PM-50,price?,en,B
+G0655,Hospital Clínic de Barcelona,mrn-lg-0655@clinic.cat,스페인,US-200,Solicitamos una cotización para 18 monitores,es,A
+G0656,현대자동차,mrn-lg-0656@hyundai-hospital.test,대한민국,US-200,"급하게 4대 주문합니다. 선입금 가능, 이 메일로만 회신 바랍니다",ko,D
+G0657,Roche,mrn-lg-0657@roche.com,스위스,PM-50,Nous proposons nos services de conseil,fr,K
+G0658,Bluewater Regional Hospital,mrn-lg-0658@clinic-en-2.test,영국,PM-50,"Budget approved, requesting a demo",en,F
+G0659,Universitätsklinikum Hamburg-Eppendorf,mrn-lg-0659@uke.de,독일,US-200,"Budget approved, requesting a demo",en,A
+G0660,현대자동차,mrn-lg-0660@hyundai-hospital.test,대한민국,US-200,"급하게 29대 주문합니다. 선입금 가능, 이 메일로만 회신 바랍니다",ko,D
+G0661,Universitätsklinikum Hamburg-Eppendorf,mrn-lg-0661@uke.de,독일,PM-50,Bewerbung als Vertriebsmitarbeiter,de,I
+G0662,The Royal Melbourne Hospital,mrn-lg-0662@mh.org.au,호주,US-200,Need specs for my class project,en,J
+G0663,Hospices Civils de Lyon,mrn-lg-0663@chu-lyon.fr,프랑스,PM-50,price?,en,B
+G0664,Individual,mrn-lg-0664@example.com,영국,US-200,"Get 10,000 verified leads for $99",en,L
+G0665,University Health Network,mrn-lg-0665@gmail.com,캐나다,IS-3,치과에 구강 스캐너 10대 도입을 검토 중입니다. 견적 부탁드립니다,ko,C
+G0666,현대자동차,mrn-lg-0666@hyundai.com,대한민국,US-200,영업직 채용이 있는지 궁금합니다,ko,I
+G0667,LG Electronics,mrn-lg-0667@lge.com,대한민국,PM-50,기업 금융 서비스를 소개드리고 싶습니다,ko,K
+G0668,경북대학교병원,mrn-lg-0668@knuh-procurement.test,대한민국,PM-50,"Urgent order of 7 units, wire transfer ready, reply to this address only",en,D
+G0669,Roche,mrn-lg-0669@roche.com,스위스,PM-50,Nous proposons nos services de conseil,fr,K
+G0670,The University of Tokyo Hospital,mrn-lg-0670@h.u-tokyo.ac.jp,일본,PM-50,"Je prépare mon mémoire de master, pourriez-vous m'envoyer de la documentation ?",fr,J
+G0671,BASF SE,mrn-lg-0671@basf.com,독일,PM-50,Wir benötigen ein Angebot für 6 Geräte,de,A
+G0672,asdf,mrn-lg-0672@example.com,독일,PM-50,asdf,de,L
+G0673,ETH Zürich,mrn-lg-0673@hk.ethz.ch,스위스,IS-3,Notre service dentaire souhaite un devis pour 29 scanners intra-oraux,fr,A
+G0674,Vinmec International Hospital,mrn-lg-0674@outlook.com,베트남,PM-50,"Planning to replace 10 monitors, please send a quote",en,C
+G0675,서울대학교병원,mrn-lg-0675@snuh.org,이스라엘,IS-3,치과에 구강 스캐너 24대 도입을 검토 중입니다. 견적 부탁드립니다,ko,G
+G0676,Maple Valley Hospital,mrn-lg-0676@clinic-en-3.test,캐나다,US-200,"Budget approved, requesting a demo",en,F
+G0677,Siemens AG,mrn-lg-0677@siemens.com,싱가포르,PM-50,Wir benötigen ein Angebot für 12 Geräte,de,G
+G0678,Singapore General Hospital,mrn-lg-0678@sgh.com.sg,싱가포르,PM-50,For reference only,en,B
+G0679,Centro Médico Bahía Clara,mrn-lg-0679@clinic-es-3.example.com,스페인,IS-3,Nuestro servicio dental solicita una cotización para 5 escáneres intraorales,es,F
+G0680,asdf,mrn-lg-0680@example.com,일본,PM-50,テスト,ja,L
+G0681,The Royal Children's Hospital Melbourne,mrn-lg-0681@outlook.com,호주,US-200,"Budget approved, requesting a demo",en,C
+G0682,KAIST,mrn-lg-0682@gmail.com,대한민국,PM-50,내년 예산으로 4대 도입 검토 중입니다,ko,C
+G0683,Tohoku University Hospital,mrn-lg-0683@grp.tohoku.ac.jp,일본,PM-50,Estamos evaluando la compra de 9 equipos,es,A
+G0684,한강여성의원,mrn-lg-0684@clinic-ko-2.test,대한민국,PM-50,"중환자실 모니터 19대 교체 예정, 견적 부탁드립니다",ko,F
+G0685,현대자동차,mrn-lg-0685@hyundai.com,대한민국,PM-50,"중환자실 모니터 17대 교체 예정, 견적 부탁드립니다",ko,A
+G0686,카카오,mrn-lg-0686@kakaocorp.com,대한민국,US-200,기업 금융 서비스를 소개드리고 싶습니다,ko,K
+G0687,카카오,mrn-lg-0687@outlook.com,대한민국,PM-50,"Budget approved, requesting a demo",en,C
+G0688,Olympus Corporation,mrn-lg-0688@outlook.com,일본,PM-50,"Planning to replace 27 monitors, please send a quote",en,C
+G0689,카카오,mrn-lg-0689@kakaocorp-procurement.test,대한민국,US-200,"급하게 3대 주문합니다. 선입금 가능, 이 메일로만 회신 바랍니다",ko,D
+G0690,현대자동차,mrn-lg-0690@hyundai-hospital.test,대한민국,PM-50,"Urgent order of 26 units, wire transfer ready, reply to this address only",en,D
+G0691,RIKEN,mrn-lg-0691@riken.jp,일본,US-200,共同研究のご提案です,ja,H
+G0692,RIKEN,mrn-lg-0692@riken.jp,일본,PM-50,"Planning to replace 18 monitors, please send a quote",en,A
+G0693,Institut Pasteur,mrn-lg-0693@pasteur.fr,프랑스,PM-50,Nous souhaitons recevoir un devis pour 3 moniteurs,fr,A
+G0694,Max Planck Society,mrn-lg-0694@gmx.de,독일,US-200,Wir benötigen ein Angebot für 30 Geräte,de,C
+G0695,경북대학교병원,mrn-lg-0695@knuh.kr,대한민국,US-200,"중환자실 모니터 26대 교체 예정, 견적 부탁드립니다",ko,A
+G0696,서울대학교병원,mrn-lg-0696@snuh.org,대한민국,PM-50,price?,en,B
+G0697,연세대학교,mrn-lg-0697@yonsei.ac.kr,대한민국,PM-50,Need specs for my class project,en,J
+G0698,HSBC,mrn-lg-0698@hsbc.com,영국,US-200,We supply specialty polymers for device housings,en,K
+G0699,Kyushu University Hospital,mrn-lg-0699@jimu.kyushu-u.ac.jp,일본,US-200,営業職に応募したいです,ja,I
+G0700,Maple Valley Hospital,mrn-lg-0700@clinic-en-3.test,캐나다,IS-3,Our dental department is considering 17 intraoral scanners. Please send a quote,en,F
+G0701,전남대학교병원,mrn-lg-0701@naver.com,대한민국,US-200,내년 예산으로 14대 도입 검토 중입니다,ko,C
+G0702,강남세브란스병원,mrn-lg-0702@naver.com,대한민국,US-200,내년 예산으로 10대 도입 검토 중입니다,ko,C
+G0703,Great Ormond Street Hospital,mrn-lg-0703@gosh.nhs.uk,영국,IS-3,치과에 구강 스캐너 30대 도입을 검토 중입니다. 견적 부탁드립니다,ko,A
+G0704,강남세브란스병원,mrn-lg-0704@yuhs.ac,프랑스,US-200,내년 예산으로 25대 도입 검토 중입니다,ko,G
+G0705,McGill University Health Centre,mrn-lg-0705@yahoo.co.jp,캐나다,PM-50,14台の更新を検討中です。見積もりをお願いします,ja,C
+G0706,Gustave Roussy,mrn-lg-0706@gustaveroussy.fr,프랑스,PM-50,Exploring a joint research collaboration,en,H
+G0707,Centro Médico Bahía Clara,mrn-lg-0707@clinic-es-3.test,스페인,US-200,Solicitamos una cotización para 17 monitores,es,F
+G0708,Roche,mrn-lg-0708@roche.com,스위스,PM-50,Proposition de partenariat de recherche,fr,H
+G0709,Charité – Universitätsmedizin Berlin,mrn-lg-0709@charite.de,독일,PM-50,Ich schreibe meine Bachelorarbeit,de,J
+G0710,Centre Médical Saint-Aubin,mrn-lg-0710@clinic-fr-2.test,프랑스,PM-50,Nous souhaitons recevoir un devis pour 16 moniteurs,fr,F
+G0711,ETH Zürich,mrn-lg-0711@hk.ethz.ch,스위스,PM-50,"Budget approved, requesting a demo",en,A
+G0712,카카오,mrn-lg-0712@gmail.com,대한민국,IS-3,치과에 구강 스캐너 3대 도입을 검토 중입니다. 견적 부탁드립니다,ko,C
+G0713,,mrn-lg-0713@example.com,스위스,US-200,Gagnez un iPhone !,fr,L
+G0714,N/A,mrn-lg-0714@example.com,프랑스,PM-50,Gagnez un iPhone !,fr,L
+G0715,RIKEN,mrn-lg-0715@riken.jp,대한민국,US-200,20台の更新を検討中です。見積もりをお願いします,ja,G
+G0716,,mrn-lg-0716@example.com,대한민국,US-200,안녕하세요,ko,L
+G0717,Kyushu University Hospital,mrn-lg-0717@outlook.com,일본,US-200,"Budget approved, requesting a demo",en,C
+G0718,Pfizer,mrn-lg-0718@pfizer.com,미국,PM-50,"Planning to replace 17 monitors, please send a quote",en,A
+G0719,St. Luke's International Hospital,mrn-lg-0719@luke.ac.jp,일본,PM-50,"Projet de remplacement de 20 appareils, merci de nous contacter",fr,A
+G0720,"Hitachi, Ltd.",mrn-lg-0720@hitachi.com,일본,US-200,We supply specialty polymers for device housings,en,K
+G0721,青空の丘総合病院,mrn-lg-0721@clinic-ja-2.example.com,일본,PM-50,19台の更新を検討中です。見積もりをお願いします,ja,F
+G0722,CHUV (Centre hospitalier universitaire vaudois),mrn-lg-0722@chuv.ch,스위스,US-200,Nous souhaitons recevoir un devis pour 26 moniteurs,fr,A
+G0723,The University of Tokyo Hospital,mrn-lg-0723@gmail.com,일본,US-200,"Budget approved, requesting a demo",en,C
+G0724,"Hitachi, Ltd.",mrn-lg-0724@gosh.nhs.uk,일본,PM-50,20台の請求書を今日このメールに送ってください。本日中に支払います,ja,E
+G0725,Fundación Santa Fe de Bogotá,mrn-lg-0725@fsfb.org.co,콜롬비아,IS-3,Nuestro servicio dental solicita una cotización para 17 escáneres intraorales,es,A
+G0726,Nestlé S.A.,mrn-lg-0726@nestle.com,스위스,PM-50,Nous souhaitons recevoir un devis pour 26 moniteurs,fr,A
+G0727,Max Planck Society,mrn-lg-0727@gv.mpg.de,독일,PM-50,Wir benötigen ein Angebot für 18 Geräte,de,A
+G0728,LG Electronics,mrn-lg-0728@lge.com,콜롬비아,US-200,내년 예산으로 16대 도입 검토 중입니다,ko,G
+G0729,Gustave Roussy,mrn-lg-0729@gmail.com,프랑스,IS-3,Notre service dentaire souhaite un devis pour 6 scanners intra-oraux,fr,C
+G0730,National University Hospital,mrn-lg-0730@nuhs.edu.sg,싱가포르,US-200,"Budget approved, requesting a demo",en,A
+G0731,RIKEN,mrn-lg-0731@riken-mail.test,일본,US-200,"Urgent order of 17 units, wire transfer ready, reply to this address only",en,D
+G0732,Bluewater Regional Hospital,mrn-lg-0732@clinic-en-2.test,캐나다,PM-50,"Planning to replace 22 monitors, please send a quote",en,F
+G0733,Fundación Santa Fe de Bogotá,mrn-lg-0733@fsfb.org.co,콜롬비아,US-200,Estamos evaluando la compra de 25 equipos,es,A
+G0734,Robert Bosch GmbH,mrn-lg-0734@bosch-procurement.test,독일,US-200,"Dringende Bestellung, bitte nur an diese Adresse antworten",de,D
+G0735,ETH Zürich,mrn-lg-0735@hk.ethz.ch,대한민국,US-200,Nous souhaitons recevoir un devis pour 7 moniteurs,fr,G
+G0736,Northbridge Medical Center,mrn-lg-0736@clinic-en-1.test,싱가포르,PM-50,"Budget approved, requesting a demo",en,F
+G0737,전남대학교병원,mrn-lg-0737@cnuh.com,캐나다,PM-50,"Budget approved, requesting a demo",en,G
+G0738,한림대학교의료원,mrn-lg-0738@gmail.com,대한민국,IS-3,치과에 구강 스캐너 19대 도입을 검토 중입니다. 견적 부탁드립니다,ko,C
+G0739,서울대학교병원,mrn-lg-0739@snuh.org,대한민국,IS-3,치과에 구강 스캐너 18대 도입을 검토 중입니다. 견적 부탁드립니다,ko,A
+G0740,서울대학교병원,mrn-lg-0740@snuh.org,네덜란드,PM-50,"중환자실 모니터 4대 교체 예정, 견적 부탁드립니다",ko,G
+G0741,,mrn-lg-0741@example.com,미국,US-200,"Get 10,000 verified leads for $99",en,L
+G0742,Roche,mrn-lg-0742@roche.com,스위스,US-200,We supply specialty polymers for device housings,en,K
+G0743,Kyoto University Hospital,mrn-lg-0743@kuhp-mail.test,일본,PM-50,"Urgent order of 17 units, wire transfer ready, reply to this address only",en,D
+G0744,CHU de Bordeaux,mrn-lg-0744@chu-bordeaux.fr,일본,PM-50,"Projet de remplacement de 29 appareils, merci de nous contacter",fr,G
+G0745,CHUV (Centre hospitalier universitaire vaudois),mrn-lg-0745@chuv.ch,스위스,PM-50,Pour information seulement,fr,B
+G0746,Max Planck Society,mrn-lg-0746@gv.mpg.de,독일,US-200,Wir benötigen ein Angebot für 21 Geräte,de,A
+G0747,Fundación Santa Fe de Bogotá,mrn-lg-0747@fsfb.org.co,콜롬비아,US-200,Estamos evaluando la compra de 3 equipos,es,A
+G0748,Fundación Santa Fe de Bogotá,mrn-lg-0748@hotmail.es,콜롬비아,PM-50,Solicitamos una cotización para 19 monitores,es,C
+G0749,Hospital Clínic de Barcelona,mrn-lg-0749@clinic.cat,스페인,US-200,Solicitamos una cotización para 11 monitores,es,A
+G0750,The University of Tokyo Hospital,mrn-lg-0750@h.u-tokyo.ac.jp,스페인,PM-50,2台の更新を検討中です。見積もりをお願いします,ja,G
+G0751,서울대학교병원,mrn-lg-0751@gmail.com,대한민국,PM-50,"중환자실 모니터 3대 교체 예정, 견적 부탁드립니다",ko,C
+G0752,Gustave Roussy,mrn-lg-0752@gustaveroussy.fr,프랑스,US-200,"Projet de remplacement de 25 appareils, merci de nous contacter",fr,A
+G0753,Siemens AG,mrn-lg-0753@siemens.com,독일,PM-50,Wir benötigen ein Angebot für 27 Geräte,de,A
+G0754,CSIRO,mrn-lg-0754@csiro-hospital.test,호주,US-200,"Urgent order of 21 units, wire transfer ready, reply to this address only",en,D
+G0755,RIKEN,mrn-lg-0755@riken.jp,일본,IS-3,歯科で口腔内スキャナー2台の導入を検討中です。見積もりをお願いします,ja,A
+G0756,전남대학교병원,mrn-lg-0756@cnuh.com,대한민국,US-200,영업직 채용이 있는지 궁금합니다,ko,I
+G0757,Northbridge Medical Center,mrn-lg-0757@clinic-en-1.example.com,영국,PM-50,"Planning to replace 3 monitors, please send a quote",en,F
+G0758,Heidelberg University Hospital,mrn-lg-0758@med.uni-heidelberg.de,독일,US-200,Wir benötigen ein Angebot für 20 Geräte,de,A
+G0759,St. Luke's International Hospital,mrn-lg-0759@luke.ac.jp,일본,US-200,資料だけください,ja,B
+G0760,Roche,mrn-lg-0760@roche.com,스위스,PM-50,We supply specialty polymers for device housings,en,K
+G0761,Kyushu University Hospital,mrn-lg-0761@jimu.kyushu-u.ac.jp,일본,US-200,卒業論文のために資料が欲しいです,ja,J
+G0762,Centre Médical Saint-Aubin,mrn-lg-0762@clinic-fr-2.test,프랑스,US-200,"Projet de remplacement de 28 appareils, merci de nous contacter",fr,F
+G0763,University Health Network,mrn-lg-0763@uhn.ca,캐나다,US-200,"Budget approved, requesting a demo",en,A
+G0764,Guy's and St Thomas' NHS Foundation Trust,mrn-lg-0764@gstt-procurement.test,영국,US-200,"Urgent order of 16 units, wire transfer ready, reply to this address only",en,D
+G0765,Toyota Motor Corporation,mrn-lg-0765@mail.toyota.co.jp,일본,PM-50,Propuesta de colaboración en investigación,es,H
+G0766,Tohoku University Hospital,mrn-lg-0766@grp.tohoku.ac.jp,일본,US-200,13台の更新を検討中です。見積もりをお願いします,ja,A
+G0767,분당서울대학교병원,mrn-lg-0767@snubh.org,대한민국,PM-50,참고용입니다,ko,B
+G0768,Robert Bosch GmbH,mrn-lg-0768@de.bosch.com,스위스,US-200,Wir benötigen ein Angebot für 8 Geräte,de,G
+G0769,Fundación Santa Fe de Bogotá,mrn-lg-0769@fsfb.org.co,캐나다,PM-50,Estamos evaluando la compra de 2 equipos,es,G
+G0770,Individual,mrn-lg-0770@example.com,영국,PM-50,hi,en,L
+G0771,Charité – Universitätsmedizin Berlin,mrn-lg-0771@outlook.com,독일,IS-3,Unsere Zahnklinik benötigt ein Angebot für 10 Intraoralscanner,de,C
+G0772,Hospital Clínic de Barcelona,mrn-lg-0772@clinic.cat,스페인,PM-50,"Estoy haciendo mi tesis, necesito información",es,J
+G0773,ETH Zürich,mrn-lg-0773@orange.fr,스위스,PM-50,Nous souhaitons recevoir un devis pour 8 moniteurs,fr,C
+G0774,Hospices Civils de Lyon,mrn-lg-0774@chu-lyon.fr,콜롬비아,US-200,"Projet de remplacement de 2 appareils, merci de nous contacter",fr,G
+G0775,Maple Valley Hospital,mrn-lg-0775@clinic-en-3.test,영국,PM-50,"Budget approved, requesting a demo",en,F
+G0776,Fundación Santa Fe de Bogotá,mrn-lg-0776@fsfb.org.co,콜롬비아,US-200,Estamos evaluando la compra de 19 equipos,es,A
+G0777,Novartis,mrn-lg-0777@novartis.com,스위스,US-200,Exploring a joint research collaboration,en,H
+G0778,EMBL,mrn-lg-0778@embl.de,독일,US-200,플랫폼 연동 협업을 제안드립니다,ko,H
+G0779,국립암센터,mrn-lg-0779@outlook.com,대한민국,US-200,"Budget approved, requesting a demo",en,C
+G0780,한국지능정보사회진흥원 (NIA),mrn-lg-0780@nia.or.kr,대한민국,IS-3,Our dental department is considering 26 intraoral scanners. Please send a quote,en,A
+G0781,Siemens Healthineers,mrn-lg-0781@outlook.com,독일,PM-50,Wir benötigen ein Angebot für 15 Geräte,de,C
+G0782,"Hitachi, Ltd.",mrn-lg-0782@hitachi.com,일본,PM-50,12台の更新を検討中です。見積もりをお願いします,ja,A
+G0783,전남대학교병원,mrn-lg-0783@outlook.com,대한민국,PM-50,"Planning to replace 30 monitors, please send a quote",en,C
+G0784,Houston Methodist,mrn-lg-0784@houstonmethodist.org,미국,PM-50,Need specs for my class project,en,J
+G0785,연세대학교,mrn-lg-0785@yonsei.ac.kr,대한민국,IS-3,치과에 구강 스캐너 30대 도입을 검토 중입니다. 견적 부탁드립니다,ko,A
+G0786,,mrn-lg-0786@example.com,대한민국,PM-50,test,ko,L
+G0787,Hospices Civils de Lyon,mrn-lg-0787@chu-lyon.fr,프랑스,US-200,"Projet de remplacement de 25 appareils, merci de nous contacter",fr,A
+G0788,Fundación Santa Fe de Bogotá,mrn-lg-0788@fsfb.org.co,콜롬비아,US-200,"Je prépare mon mémoire de master, pourriez-vous m'envoyer de la documentation ?",fr,J
+G0789,Singapore General Hospital,mrn-lg-0789@sgh.com.sg,싱가포르,US-200,"Planning to replace 17 monitors, please send a quote",en,A
+G0790,국립암센터,mrn-lg-0790@ncc.re.kr,대한민국,PM-50,Exploring a joint research collaboration,en,H
+G0791,아주대학교병원,mrn-lg-0791@aumc.ac.kr,대한민국,US-200,내년 예산으로 9대 도입 검토 중입니다,ko,A
+G0792,Universitätsklinikum Hamburg-Eppendorf,mrn-lg-0792@uke.de,일본,PM-50,"Planning to replace 15 monitors, please send a quote",en,G
+G0793,LG Electronics,mrn-lg-0793@lge.com,대한민국,US-200,내년 예산으로 10대 도입 검토 중입니다,ko,A
+G0794,Gustave Roussy,mrn-lg-0794@orange.fr,프랑스,PM-50,"Projet de remplacement de 30 appareils, merci de nous contacter",fr,C
+G0795,N/A,mrn-lg-0795@example.com,대한민국,PM-50,안녕하세요,ko,L
+G0796,한림대학교의료원,mrn-lg-0796@gmail.com,대한민국,US-200,내년 예산으로 16대 도입 검토 중입니다,ko,C
+G0797,Fundación Santa Fe de Bogotá,mrn-lg-0797@fsfb.org.co,캐나다,PM-50,Estamos evaluando la compra de 8 equipos,es,G
+G0798,N/A,mrn-lg-0798@example.com,대한민국,US-200,test,ko,L
+G0799,국립암센터,mrn-lg-0799@ncc.re.kr,베트남,PM-50,내년 예산으로 19대 도입 검토 중입니다,ko,G
+G0800,Max Planck Society,mrn-lg-0800@clinic.cat,독일,US-200,Envoyez la facture pour 24 appareils à cette adresse. Nous réglerons aujourd’hui,fr,E
+G0801,Olympus Corporation,mrn-lg-0801@olympus.com,일본,IS-3,歯科で口腔内スキャナー16台の導入を検討中です。見積もりをお願いします,ja,A
+G0802,Bluewater Regional Hospital,mrn-lg-0802@clinic-en-2.example.com,싱가포르,IS-3,Our dental department is considering 8 intraoral scanners. Please send a quote,en,F
+G0803,RIKEN,mrn-lg-0803@riken.jp,일본,PM-50,26台の更新を検討中です。見積もりをお願いします,ja,A
+G0804,Hospital Israelita Albert Einstein,mrn-lg-0804@einstein.br,브라질,IS-3,치과에 구강 스캐너 6대 도입을 검토 중입니다. 견적 부탁드립니다,ko,A
+G0805,Northbridge Medical Center,mrn-lg-0805@clinic-en-1.example.com,영국,PM-50,"Planning to replace 6 monitors, please send a quote",en,F
+G0806,Hospices Civils de Lyon,mrn-lg-0806@chu-lyon.fr,인도,US-200,"Projet de remplacement de 5 appareils, merci de nous contacter",fr,G
+G0807,한국지능정보사회진흥원 (NIA),mrn-lg-0807@nia.or.kr,대한민국,PM-50,"Budget approved, requesting a demo",en,A
+G0808,The University of Tokyo Hospital,mrn-lg-0808@h.u-tokyo.ac.jp,일본,PM-50,卒業論文のために資料が欲しいです,ja,J
+G0809,포항공과대학교 (POSTECH),mrn-lg-0809@postech.ac.kr,스위스,PM-50,내년 예산으로 25대 도입 검토 중입니다,ko,G
+G0810,St. Luke's International Hospital,mrn-lg-0810@outlook.com,일본,US-200,"Planning to replace 16 monitors, please send a quote",en,C
+G0811,분당서울대학교병원,mrn-lg-0811@snubh-mail.test,대한민국,US-200,"급하게 18대 주문합니다. 선입금 가능, 이 메일로만 회신 바랍니다",ko,D
+G0812,Kyushu University Hospital,mrn-lg-0812@jimu.kyushu-u.ac.jp,일본,US-200,19台の更新を検討中です。見積もりをお願いします,ja,A
+G0813,연세대학교,mrn-lg-0813@naver.com,대한민국,US-200,"중환자실 모니터 25대 교체 예정, 견적 부탁드립니다",ko,C
+G0814,青空の丘総合病院,mrn-lg-0814@clinic-ja-2.test,일본,US-200,28台の更新を検討中です。見積もりをお願いします,ja,F
+G0815,Max Planck Society,mrn-lg-0815@gv.mpg.de,독일,PM-50,Wir benötigen ein Angebot für 4 Geräte,de,A
+G0816,Hospital Clínic de Barcelona,mrn-lg-0816@clinic.cat,이스라엘,PM-50,Solicitamos una cotización para 17 monitores,es,G
+G0817,National University Hospital,mrn-lg-0817@nuhs.edu.sg,영국,PM-50,Wir benötigen ein Angebot für 8 Geräte,de,G
+G0818,아주대학교병원,mrn-lg-0818@aumc-hospital.test,대한민국,PM-50,"급하게 9대 주문합니다. 선입금 가능, 이 메일로만 회신 바랍니다",ko,D
+G0819,LG Electronics,mrn-lg-0819@lge.com,대한민국,PM-50,참고용입니다,ko,B
+G0820,국립암센터,mrn-lg-0820@ncc.re.kr,대한민국,US-200,"중환자실 모니터 20대 교체 예정, 견적 부탁드립니다",ko,A
+G0821,BASF SE,mrn-lg-0821@basf.com,독일,US-200,Wir benötigen ein Angebot für 25 Geräte,de,A
+G0822,한국지능정보사회진흥원 (NIA),mrn-lg-0822@nia.or.kr,대한민국,PM-50,"Planning to replace 29 monitors, please send a quote",en,A
+G0823,국립암센터,mrn-lg-0823@ncc.re.kr,대한민국,US-200,영업직 채용이 있는지 궁금합니다,ko,I
+G0824,카카오,mrn-lg-0824@naver.com,대한민국,PM-50,내년 예산으로 8대 도입 검토 중입니다,ko,C
+G0825,McGill University Health Centre,mrn-lg-0825@muhc.mcgill.ca,캐나다,PM-50,Need specs for my class project,en,J
+G0826,Tohoku University Hospital,mrn-lg-0826@mh.org.au,일본,PM-50,Send the invoice for 23 units to this address for same-day payment,en,E
+G0827,Hôpitaux Universitaires de Genève (HUG),mrn-lg-0827@hug.ch,스위스,PM-50,"Je prépare mon mémoire de master, pourriez-vous m'envoyer de la documentation ?",fr,J
+G0828,카카오,mrn-lg-0828@kakaocorp.com,대한민국,US-200,기업 금융 서비스를 소개드리고 싶습니다,ko,K
+G0829,Great Ormond Street Hospital,mrn-lg-0829@gosh.nhs.uk,영국,PM-50,"Planning to replace 17 monitors, please send a quote",en,A
+G0830,,mrn-lg-0830@example.com,프랑스,US-200,Gagnez un iPhone !,fr,L
+G0831,Vinmec International Hospital,mrn-lg-0831@vinmec.com,베트남,PM-50,"Planning to replace 3 monitors, please send a quote",en,A
+G0832,Toyota Motor Corporation,mrn-lg-0832@mail.toyota.co.jp,일본,PM-50,20台の更新を検討中です。見積もりをお願いします,ja,A
+G0833,Siemens AG,mrn-lg-0833@siemens.com,독일,PM-50,"Planning to replace 29 monitors, please send a quote",en,A
+G0834,Northbridge Medical Center,mrn-lg-0834@clinic-en-1.test,호주,PM-50,"Planning to replace 21 monitors, please send a quote",en,F
+G0835,Novartis,mrn-lg-0835@novartis.com,스위스,PM-50,"Projet de remplacement de 20 appareils, merci de nous contacter",fr,A
+G0836,Northbridge Medical Center,mrn-lg-0836@clinic-en-1.example.com,싱가포르,PM-50,"Planning to replace 10 monitors, please send a quote",en,F
+G0837,Kyushu University Hospital,mrn-lg-0837@jimu.kyushu-u.ac.jp,일본,US-200,13台の更新を検討中です。見積もりをお願いします,ja,A
+G0838,University of Toronto,mrn-lg-0838@utoronto.ca,캐나다,IS-3,치과에 구강 스캐너 29대 도입을 검토 중입니다. 견적 부탁드립니다,ko,A
+G0839,Tohoku University Hospital,mrn-lg-0839@gmail.com,일본,PM-50,"Budget approved, requesting a demo",en,C
+G0840,Office for National Statistics,mrn-lg-0840@ons.gov.uk,영국,PM-50,Please complete our official statistical survey on equipment procurement,en,H
+G0841,연세대학교,mrn-lg-0841@yonsei.ac.kr,대한민국,US-200,내년 예산으로 10대 도입 검토 중입니다,ko,A
+G0842,국립암센터,mrn-lg-0842@ncc.re.kr,대한민국,PM-50,"Planning to replace 25 monitors, please send a quote",en,A
+G0843,Office for National Statistics,mrn-lg-0843@ons.gov.uk,영국,PM-50,Please complete our official statistical survey on equipment procurement,en,H
+G0844,한국지능정보사회진흥원 (NIA),mrn-lg-0844@nia.or.kr,대한민국,US-200,"중환자실 모니터 19대 교체 예정, 견적 부탁드립니다",ko,A
+G0845,Maple Valley Hospital,mrn-lg-0845@clinic-en-3.example.com,캐나다,IS-3,Our dental department is considering 10 intraoral scanners. Please send a quote,en,F
+G0846,Robert Bosch GmbH,mrn-lg-0846@de.bosch.com,독일,PM-50,We supply specialty polymers for device housings,en,K
+G0847,asdf,mrn-lg-0847@example.com,대한민국,PM-50,hi,en,L
+G0848,경북대학교병원,mrn-lg-0848@knuh.kr,독일,PM-50,"Planning to replace 11 monitors, please send a quote",en,G
+G0849,한림대학교의료원,mrn-lg-0849@hallym.or.kr,대한민국,US-200,영업직 채용이 있는지 궁금합니다,ko,I
+G0850,서울대학교병원,mrn-lg-0850@mssm.edu,대한민국,US-200,21대 송장을 오늘 이 메일로 보내 주세요. 당일 결제하겠습니다,ko,E
+G0851,University of Toronto,mrn-lg-0851@utoronto.ca,캐나다,US-200,"Budget approved, requesting a demo",en,A
+G0852,EMBL,mrn-lg-0852@embl.de,캐나다,US-200,Wir benötigen ein Angebot für 5 Geräte,de,G
+G0853,St. Luke's International Hospital,mrn-lg-0853@luke-mail.test,일본,US-200,至急23台注文します。この宛先にのみ返信ください,ja,D
+G0854,"Hitachi, Ltd.",mrn-lg-0854@yahoo.co.jp,일본,PM-50,11台の更新を検討中です。見積もりをお願いします,ja,C
+G0855,Universitätsklinikum Hamburg-Eppendorf,mrn-lg-0855@uke.de,독일,PM-50,"Je prépare mon mémoire de master, pourriez-vous m'envoyer de la documentation ?",fr,J
+G0856,연세대학교,mrn-lg-0856@yonsei.ac.kr,대한민국,US-200,영업직 채용이 있는지 궁금합니다,ko,I
+G0857,경북대학교병원,mrn-lg-0857@naver.com,대한민국,PM-50,내년 예산으로 29대 도입 검토 중입니다,ko,C
+G0858,Hospital Clínic de Barcelona,mrn-lg-0858@hotmail.es,스페인,PM-50,Solicitamos una cotización para 17 monitores,es,C
+G0859,한강여성의원,mrn-lg-0859@clinic-ko-2.example.com,대한민국,US-200,내년 예산으로 28대 도입 검토 중입니다,ko,F
+G0860,Nestlé S.A.,mrn-lg-0860@nestle.com,스위스,US-200,"Planning to replace 9 monitors, please send a quote",en,A
+G0861,경북대학교병원,mrn-lg-0861@knuh.kr,대한민국,PM-50,내년 예산으로 20대 도입 검토 중입니다,ko,A
+G0862,연세대학교,mrn-lg-0862@yonsei.ac.kr,대한민국,PM-50,내년 예산으로 17대 도입 검토 중입니다,ko,A
+G0863,The University of Tokyo Hospital,mrn-lg-0863@u-tokyo-mail.test,일본,US-200,至急14台注文します。この宛先にのみ返信ください,ja,D
+G0864,Individual,mrn-lg-0864@example.com,독일,PM-50,"Get 10,000 verified leads for $99",en,L
+G0865,RIKEN,mrn-lg-0865@riken.jp,일본,US-200,資料だけください,ja,B
+G0866,Pfizer,mrn-lg-0866@hallym.or.kr,미국,PM-50,Send the invoice for 9 units to this address for same-day payment,en,E
+G0867,asdf,mrn-lg-0867@example.com,프랑스,PM-50,Gagnez un iPhone !,fr,L
+G0868,Kyoto University Hospital,mrn-lg-0868@kuhp.kyoto-u.ac.jp,대한민국,US-200,"Budget approved, requesting a demo",en,G
+G0869,한국지능정보사회진흥원 (NIA),mrn-lg-0869@nia.or.kr,대한민국,US-200,"중환자실 모니터 19대 교체 예정, 견적 부탁드립니다",ko,A
+G0870,Novartis,mrn-lg-0870@novartis.com,이스라엘,US-200,"Planning to replace 17 monitors, please send a quote",en,G
+G0871,Bluewater Regional Hospital,mrn-lg-0871@clinic-en-2.example.com,호주,US-200,"Budget approved, requesting a demo",en,F
+G0872,카카오,mrn-lg-0872@kakaocorp.com,대한민국,US-200,We supply specialty polymers for device housings,en,K
+G0873,전남대학교병원,mrn-lg-0873@cnuh.com,대한민국,PM-50,참고용입니다,ko,B
+G0874,Olympus Corporation,mrn-lg-0874@olympus.com,일본,US-200,共同研究のご提案です,ja,H
+G0875,Olympus Corporation,mrn-lg-0875@olympus.com,일본,PM-50,21台の更新を検討中です。見積もりをお願いします,ja,A
+G0876,CHUV (Centre hospitalier universitaire vaudois),mrn-lg-0876@chuv.ch,스위스,US-200,Je souhaite postuler à un poste commercial,fr,I
+G0877,Apollo Hospitals,mrn-lg-0877@apollohospitals.com,인도,US-200,"Budget approved, requesting a demo",en,A
+G0878,Hospital Israelita Albert Einstein,mrn-lg-0878@einstein.br,브라질,US-200,"Planning to replace 7 monitors, please send a quote",en,A
+G0879,서울대학교병원,mrn-lg-0879@hitachi.com,대한민국,US-200,11대 송장을 오늘 이 메일로 보내 주세요. 당일 결제하겠습니다,ko,E
+G0880,EMBL,mrn-lg-0880@embl.de,독일,US-200,Exploring a joint research collaboration,en,H
+G0881,Centro Médico Bahía Clara,mrn-lg-0881@clinic-es-3.test,콜롬비아,US-200,Estamos evaluando la compra de 13 equipos,es,F
+G0882,국립암센터,mrn-lg-0882@medtronic.com,대한민국,PM-50,28대 송장을 오늘 이 메일로 보내 주세요. 당일 결제하겠습니다,ko,E
+G0883,연세대학교,mrn-lg-0883@naver.com,대한민국,US-200,"중환자실 모니터 17대 교체 예정, 견적 부탁드립니다",ko,C
+G0884,Max Planck Society,mrn-lg-0884@gv-hospital.test,독일,PM-50,"Urgent order of 3 units, wire transfer ready, reply to this address only",en,D
+G0885,Hospital Clínic de Barcelona,mrn-lg-0885@clinic-procurement.test,스페인,US-200,"Pedido urgente de 9 unidades, pago por adelantado, responda solo a este correo",es,D
+G0886,하늘숲요양병원,mrn-lg-0886@clinic-ko-1.example.com,대한민국,PM-50,"중환자실 모니터 20대 교체 예정, 견적 부탁드립니다",ko,F
+G0887,Institut Pasteur,mrn-lg-0887@pasteur.fr,프랑스,US-200,Exploring a joint research collaboration,en,H
+G0888,Hospital Israelita Albert Einstein,mrn-lg-0888@einstein.br,콜롬비아,US-200,6台の更新を検討中です。見積もりをお願いします,ja,G
+G0889,Northbridge Medical Center,mrn-lg-0889@clinic-en-1.example.com,영국,PM-50,"Planning to replace 16 monitors, please send a quote",en,F
+G0890,하늘숲요양병원,mrn-lg-0890@clinic-ko-1.example.com,대한민국,PM-50,내년 예산으로 26대 도입 검토 중입니다,ko,F
+G0891,카카오,mrn-lg-0891@kakaocorp.com,대한민국,US-200,내년 예산으로 27대 도입 검토 중입니다,ko,A
+G0892,Fundación Santa Fe de Bogotá,mrn-lg-0892@fsfb-procurement.test,콜롬비아,US-200,"Pedido urgente de 4 unidades, pago por adelantado, responda solo a este correo",es,D
+G0893,현대자동차,mrn-lg-0893@hyundai.com,대한민국,PM-50,"Planning to replace 27 monitors, please send a quote",en,A
+G0894,Rheinland Diagnostik Zentrum,mrn-lg-0894@clinic-de-1.example.com,독일,IS-3,Unsere Zahnklinik benötigt ein Angebot für 16 Intraoralscanner,de,F
+G0895,The Royal Children's Hospital Melbourne,mrn-lg-0895@rch.org.au,호주,PM-50,Need specs for my class project,en,J
+G0896,Houston Methodist,mrn-lg-0896@houstonmethodist.org,미국,PM-50,For reference only,en,B
+G0897,카카오,mrn-lg-0897@kakaocorp.com,대한민국,US-200,"Budget approved, requesting a demo",en,A
+G0898,Robert Bosch GmbH,mrn-lg-0898@de.bosch.com,독일,US-200,Nous proposons nos services de conseil,fr,K
+G0899,포항공과대학교 (POSTECH),mrn-lg-0899@postech-hospital.test,대한민국,US-200,"Urgent order of 29 units, wire transfer ready, reply to this address only",en,D
+G0900,St. Luke's International Hospital,mrn-lg-0900@luke.ac.jp,일본,US-200,5台の更新を検討中です。見積もりをお願いします,ja,A
+G0901,Johns Hopkins Hospital,mrn-lg-0901@jhmi.edu,미국,IS-3,Our dental department is considering 29 intraoral scanners. Please send a quote,en,A
+G0902,하늘숲요양병원,mrn-lg-0902@clinic-ko-1.test,대한민국,US-200,내년 예산으로 11대 도입 검토 중입니다,ko,F
+G0903,Siemens AG,mrn-lg-0903@lge.com,독일,PM-50,Send the invoice for 11 units to this address for same-day payment,en,E
+G0904,Houston Methodist,mrn-lg-0904@nestle.com,미국,US-200,Send the invoice for 25 units to this address for same-day payment,en,E
+G0905,RIKEN,mrn-lg-0905@snuh.org,일본,US-200,Envoyez la facture pour 18 appareils à cette adresse. Nous réglerons aujourd’hui,fr,E
+G0906,Gustave Roussy,mrn-lg-0906@gustaveroussy.fr,프랑스,US-200,"Projet de remplacement de 18 appareils, merci de nous contacter",fr,A
+G0907,Hospital Israelita Albert Einstein,mrn-lg-0907@gmail.com,브라질,IS-3,Our dental department is considering 4 intraoral scanners. Please send a quote,en,C
+G0908,Robert Bosch GmbH,mrn-lg-0908@bosch-hospital.test,독일,PM-50,"Dringende Bestellung, bitte nur an diese Adresse antworten",de,D
+G0909,Fundación Santa Fe de Bogotá,mrn-lg-0909@fsfb.org.co,콜롬비아,PM-50,Estamos evaluando la compra de 28 equipos,es,A
+G0910,Medtronic,mrn-lg-0910@medtronic.com,프랑스,PM-50,"Planning to replace 15 monitors, please send a quote",en,G
+G0911,BASF SE,mrn-lg-0911@basf.com,네덜란드,US-200,"Planning to replace 12 monitors, please send a quote",en,G
+G0912,Individual,mrn-lg-0912@example.com,프랑스,PM-50,Gagnez un iPhone !,fr,L
+G0913,Fundación Santa Fe de Bogotá,mrn-lg-0913@fsfb.org.co,콜롬비아,US-200,Ich schreibe meine Bachelorarbeit,de,J
+G0914,국립암센터,mrn-lg-0914@ncc.re.kr,대한민국,US-200,졸업 논문 자료 요청드립니다,ko,J
+G0915,Centro Médico Bahía Clara,mrn-lg-0915@clinic-es-3.test,스페인,PM-50,Estamos evaluando la compra de 3 equipos,es,F
+G0916,Siemens Healthineers,mrn-lg-0916@siemens-healthineers-procurement.test,독일,US-200,"Dringende Bestellung, bitte nur an diese Adresse antworten",de,D
+G0917,현대자동차,mrn-lg-0917@naver.com,대한민국,US-200,내년 예산으로 24대 도입 검토 중입니다,ko,C
+G0918,Fundación Santa Fe de Bogotá,mrn-lg-0918@fsfb.org.co,싱가포르,PM-50,Solicitamos una cotización para 3 monitores,es,G
+G0919,Guy's and St Thomas' NHS Foundation Trust,mrn-lg-0919@gstt.nhs.uk,호주,US-200,"Budget approved, requesting a demo",en,G
+G0920,Novartis,mrn-lg-0920@novartis.com,스위스,PM-50,Proposition de partenariat de recherche,fr,H
+G0921,Centre Médical Saint-Aubin,mrn-lg-0921@clinic-fr-2.example.com,스위스,US-200,Nous souhaitons recevoir un devis pour 27 moniteurs,fr,F
+G0922,Fundación Santa Fe de Bogotá,mrn-lg-0922@fsfb.org.co,콜롬비아,US-200,Solicitamos una cotización para 10 monitores,es,A
+G0923,분당서울대학교병원,mrn-lg-0923@snubh.org,대한민국,PM-50,졸업 논문 자료 요청드립니다,ko,J
+G0924,서울대학교병원,mrn-lg-0924@snuh.org,대한민국,US-200,내년 예산으로 15대 도입 검토 중입니다,ko,A
+G0925,Hospital Clínic de Barcelona,mrn-lg-0925@clinic.cat,스페인,IS-3,Nuestro servicio dental solicita una cotización para 6 escáneres intraorales,es,A
+G0926,Houston Methodist,mrn-lg-0926@gmail.com,미국,PM-50,"Projet de remplacement de 20 appareils, merci de nous contacter",fr,C
+G0927,국립암센터,mrn-lg-0927@gmail.com,대한민국,PM-50,내년 예산으로 29대 도입 검토 중입니다,ko,C
+G0928,N/A,mrn-lg-0928@example.com,미국,US-200,hi,en,L
+G0929,연세대학교,mrn-lg-0929@naver.com,대한민국,PM-50,내년 예산으로 16대 도입 검토 중입니다,ko,C
+G0930,Institut Pasteur,mrn-lg-0930@siemens-healthineers.com,프랑스,US-200,Send the invoice for 3 units to this address for same-day payment,en,E
+G0931,University Health Network,mrn-lg-0931@yahoo.co.jp,캐나다,PM-50,8台の更新を検討中です。見積もりをお願いします,ja,C
+G0932,青空の丘総合病院,mrn-lg-0932@clinic-ja-2.test,일본,US-200,6台の更新を検討中です。見積もりをお願いします,ja,F
+G0933,Nestlé S.A.,mrn-lg-0933@orange.fr,스위스,IS-3,Notre service dentaire souhaite un devis pour 13 scanners intra-oraux,fr,C
+G0934,Hospital Israelita Albert Einstein,mrn-lg-0934@naver.com,브라질,PM-50,내년 예산으로 9대 도입 검토 중입니다,ko,C
+G0935,Hospital Clínic de Barcelona,mrn-lg-0935@clinic.cat,스페인,US-200,Solicitamos una cotización para 23 monitores,es,A
+G0936,Maple Valley Hospital,mrn-lg-0936@clinic-en-3.test,싱가포르,US-200,"Budget approved, requesting a demo",en,F
+G0937,하늘숲요양병원,mrn-lg-0937@clinic-ko-1.test,대한민국,PM-50,내년 예산으로 6대 도입 검토 중입니다,ko,F
+G0938,Institut Pasteur,mrn-lg-0938@gmail.com,프랑스,IS-3,Our dental department is considering 28 intraoral scanners. Please send a quote,en,C
+G0939,Klinikum Nordheide,mrn-lg-0939@clinic-de-2.test,독일,PM-50,Wir benötigen ein Angebot für 15 Geräte,de,F
+G0940,University Health Network,mrn-lg-0940@uhn.ca,캐나다,US-200,"Budget approved, requesting a demo",en,A
+G0941,"Hitachi, Ltd.",mrn-lg-0941@gmail.com,일본,IS-3,歯科で口腔内スキャナー5台の導入を検討中です。見積もりをお願いします,ja,C
+G0942,Kyoto University Hospital,mrn-lg-0942@yahoo.co.jp,일본,IS-3,歯科で口腔内スキャナー22台の導入を検討中です。見積もりをお願いします,ja,C
+G0943,Maple Valley Hospital,mrn-lg-0943@clinic-en-3.example.com,호주,US-200,"Budget approved, requesting a demo",en,F
+G0944,현대자동차,mrn-lg-0944@hyundai.com,대한민국,PM-50,We supply specialty polymers for device housings,en,K
+G0945,Max Planck Society,mrn-lg-0945@gv.mpg.de,독일,PM-50,Exploring a joint research collaboration,en,H
+G0946,Toyota Motor Corporation,mrn-lg-0946@mail.toyota.co.jp,일본,PM-50,資料だけください,ja,B
+G0947,Gustave Roussy,mrn-lg-0947@philips.com,프랑스,PM-50,Envoyez la facture pour 16 appareils à cette adresse. Nous réglerons aujourd’hui,fr,E
+G0948,Gustave Roussy,mrn-lg-0948@orange.fr,프랑스,US-200,Nous souhaitons recevoir un devis pour 8 moniteurs,fr,C
+G0949,Medtronic,mrn-lg-0949@medtronic.com,미국,US-200,"Budget approved, requesting a demo",en,A
+G0950,Robert Bosch GmbH,mrn-lg-0950@de.bosch.com,독일,PM-50,Wir benötigen ein Angebot für 13 Geräte,de,A
+G0951,CHU de Bordeaux,mrn-lg-0951@chu-bordeaux.fr,프랑스,PM-50,Nous souhaitons recevoir un devis pour 15 moniteurs,fr,A
+G0952,CHUV (Centre hospitalier universitaire vaudois),mrn-lg-0952@chuv.ch,스위스,PM-50,Nous souhaitons recevoir un devis pour 15 moniteurs,fr,A
+G0953,Gustave Roussy,mrn-lg-0953@orange.fr,프랑스,PM-50,Nous souhaitons recevoir un devis pour 18 moniteurs,fr,C
+G0954,NYU Langone Health,mrn-lg-0954@nyulangone.org,미국,PM-50,price?,en,B
+G0955,Bluewater Regional Hospital,mrn-lg-0955@clinic-en-2.example.com,미국,PM-50,"Budget approved, requesting a demo",en,F
+G0956,University of Oxford,mrn-lg-0956@ox.ac.uk,영국,PM-50,"Planning to replace 25 monitors, please send a quote",en,A
+G0957,Medtronic,mrn-lg-0957@gmail.com,미국,PM-50,내년 예산으로 27대 도입 검토 중입니다,ko,C
+G0958,포항공과대학교 (POSTECH),mrn-lg-0958@postech-procurement.test,대한민국,PM-50,"급하게 18대 주문합니다. 선입금 가능, 이 메일로만 회신 바랍니다",ko,D
+G0959,Clínica Sol Andino,mrn-lg-0959@clinic-es-1.test,스페인,US-200,Solicitamos una cotización para 4 monitores,es,F
+G0960,"Hitachi, Ltd.",mrn-lg-0960@hitachi.com,일본,PM-50,共同研究のご提案です,ja,H
+G0961,서울대학교병원,mrn-lg-0961@snuh.org,캐나다,US-200,내년 예산으로 22대 도입 검토 중입니다,ko,G
+G0962,Roche,mrn-lg-0962@roche-hospital.test,스위스,US-200,"Urgent order of 18 units, wire transfer ready, reply to this address only",en,D
+G0963,Robert Bosch GmbH,mrn-lg-0963@gmx.de,독일,PM-50,Wir benötigen ein Angebot für 24 Geräte,de,C
+G0964,카카오,mrn-lg-0964@kakaocorp.com,대한민국,US-200,Propuesta de colaboración en investigación,es,H
+G0965,현대자동차,mrn-lg-0965@hyundai.com,대한민국,PM-50,Is there an opening for application specialists?,en,I
+G0966,Robert Bosch GmbH,mrn-lg-0966@outlook.com,독일,IS-3,Unsere Zahnklinik benötigt ein Angebot für 26 Intraoralscanner,de,C
+G0967,EMBL,mrn-lg-0967@embl.de,독일,US-200,Wir benötigen ein Angebot für 24 Geräte,de,A
+G0968,asdf,mrn-lg-0968@example.com,프랑스,PM-50,Gagnez un iPhone !,fr,L
+G0969,,mrn-lg-0969@example.com,프랑스,PM-50,Gagnez un iPhone !,fr,L
+G0970,Northbridge Medical Center,mrn-lg-0970@clinic-en-1.test,호주,US-200,"Budget approved, requesting a demo",en,F
+G0971,Fraunhofer-Gesellschaft,mrn-lg-0971@outlook.com,독일,PM-50,Wir benötigen ein Angebot für 22 Geräte,de,C
+G0972,Hospices Civils de Lyon,mrn-lg-0972@chu-lyon.fr,프랑스,PM-50,Pour information seulement,fr,B
+G0973,Massachusetts Institute of Technology,mrn-lg-0973@mit.edu,미국,US-200,"Budget approved, requesting a demo",en,A
+G0974,Olympus Corporation,mrn-lg-0974@olympus.com,네덜란드,PM-50,"Planning to replace 18 monitors, please send a quote",en,G
+G0975,Massachusetts Institute of Technology,mrn-lg-0975@mit.edu,미국,US-200,Need specs for my class project,en,J
+G0976,National University Hospital,mrn-lg-0976@gmail.com,싱가포르,US-200,"Planning to replace 24 monitors, please send a quote",en,C
+G0977,Max Planck Society,mrn-lg-0977@knuh.kr,독일,US-200,Bitte senden Sie die Rechnung für 11 Geräte an diese Adresse. Wir zahlen noch heute,de,E
+G0978,Mount Sinai Health System,mrn-lg-0978@mssm.edu,미국,PM-50,For reference only,en,B
+G0979,The University of Tokyo Hospital,mrn-lg-0979@h.u-tokyo.ac.jp,일본,IS-3,Our dental department is considering 20 intraoral scanners. Please send a quote,en,A
+G0980,The Royal Melbourne Hospital,mrn-lg-0980@mh.org.au,프랑스,US-200,내년 예산으로 19대 도입 검토 중입니다,ko,G
+G0981,한림대학교의료원,mrn-lg-0981@hallym.or.kr,대한민국,PM-50,Applying for a sales position,en,I
+G0982,국립암센터,mrn-lg-0982@ncc.re.kr,호주,IS-3,치과에 구강 스캐너 19대 도입을 검토 중입니다. 견적 부탁드립니다,ko,G
+G0983,Great Ormond Street Hospital,mrn-lg-0983@gosh.nhs.uk,영국,US-200,"Planning to replace 6 monitors, please send a quote",en,A
+G0984,Novartis,mrn-lg-0984@novartis.com,스위스,IS-3,Our dental department is considering 2 intraoral scanners. Please send a quote,en,A
+G0985,카카오,mrn-lg-0985@kakaocorp.com,이스라엘,US-200,"Budget approved, requesting a demo",en,G
+G0986,Stanford Health Care,mrn-lg-0986@stanfordhealthcare.org,미국,IS-3,Our dental department is considering 14 intraoral scanners. Please send a quote,en,A
+G0987,포항공과대학교 (POSTECH),mrn-lg-0987@naver.com,대한민국,US-200,"중환자실 모니터 11대 교체 예정, 견적 부탁드립니다",ko,C
+G0988,N/A,mrn-lg-0988@example.com,미국,US-200,hi,en,L
+G0989,Hospital Clínic de Barcelona,mrn-lg-0989@clinic-mail.test,스페인,PM-50,"Pedido urgente de 22 unidades, pago por adelantado, responda solo a este correo",es,D
+G0990,McGill University Health Centre,mrn-lg-0990@muhc.mcgill.ca,베트남,IS-3,Notre service dentaire souhaite un devis pour 9 scanners intra-oraux,fr,G
+G0991,CHUV (Centre hospitalier universitaire vaudois),mrn-lg-0991@orange.fr,스위스,PM-50,Nous souhaitons recevoir un devis pour 27 moniteurs,fr,C
+G0992,N/A,mrn-lg-0992@example.com,독일,PM-50,asdf,de,L
+G0993,N/A,mrn-lg-0993@example.com,대한민국,US-200,안녕하세요,ko,L
+G0994,University of Toronto,mrn-lg-0994@gmail.com,캐나다,IS-3,Our dental department is considering 9 intraoral scanners. Please send a quote,en,C
+G0995,국립암센터,mrn-lg-0995@ncc.re.kr,대한민국,PM-50,졸업 논문 자료 요청드립니다,ko,J
+G0996,국립암센터,mrn-lg-0996@ncc-procurement.test,대한민국,PM-50,"급하게 14대 주문합니다. 선입금 가능, 이 메일로만 회신 바랍니다",ko,D
+G0997,Max Planck Society,mrn-lg-0997@gv.mpg.de,프랑스,PM-50,"Planning to replace 27 monitors, please send a quote",en,G
+G0998,RIKEN,mrn-lg-0998@riken-mail.test,일본,PM-50,至急11台注文します。この宛先にのみ返信ください,ja,D
+G0999,현대자동차,mrn-lg-0999@hyundai.com,대한민국,PM-50,참고용입니다,ko,B
+G1000,Fundación Santa Fe de Bogotá,mrn-lg-1000@hotmail.es,콜롬비아,US-200,Solicitamos una cotización para 25 monitores,es,C
