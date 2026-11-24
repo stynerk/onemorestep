@@ -3,7 +3,7 @@ import { expect, test } from "@playwright/test";
 type Counts = { live: number; replayed: number; blocked: number };
 
 test("S2-12 Liner 기록·재생은 문의함의 실제 선별 경로를 거친다", async ({ page }) => {
-  await page.goto("/");
+  await page.goto("/inbox", { waitUntil: "domcontentloaded" });
   await page.getByRole("button", { name: /^L03 미선별/ }).click();
   const request = page.waitForResponse((response) =>
     new URL(response.url()).pathname === "/api/forwarding/assess" && response.request().method() === "POST",

@@ -20,32 +20,15 @@
   gap: 12px;
   height: auto;
   min-height: 66px;
-  padding: 9px max(24px, calc((100vw - 1472px) / 2));
+  padding: 9px 24px;
   border-bottom: 1px solid var(--rule);
   background: var(--paper);
   color: var(--ink);
 }
 
-.triage-toolbar .brand { flex: none; gap: 8px; }
-
-.triage-toolbar .brand-icon {
-  width: 30px;
-  height: 30px;
-  border: 1px solid var(--rule);
-  border-radius: 3px;
-  background: transparent;
-  color: var(--ink);
-  font-size: var(--type-18);
-}
-
-.triage-toolbar .brand-name,
-.triage-toolbar .brand-company { color: var(--ink); font-weight: var(--weight-semibold); letter-spacing: 0; }
-.triage-toolbar .brand-name { font-size: var(--type-15); }
-.triage-toolbar .brand-company { font-size: var(--type-13); }
 .triage-workspace .triage-toolbar h1 {
   flex: none;
-  padding-inline: 12px 2px;
-  border-inline-start: 1px solid var(--rule);
+  padding-inline-end: 2px;
   color: var(--ink);
   font-size: var(--type-23);
   white-space: nowrap;
@@ -73,22 +56,11 @@
 .triage-toolbar .triage-clock p { white-space: nowrap; }
 .triage-toolbar .triage-clock .button { padding-inline: 6px; }
 .triage-toolbar .masthead-actions { flex: 0 1 auto; flex-wrap: wrap; gap: 6px; margin-inline-start: auto; }
-.triage-toolbar .button-reset,
-.triage-workspace .triage-toolbar .masthead-link,
-.triage-workspace .triage-toolbar .masthead-link:hover {
-  border-color: var(--rule);
-  background: var(--paper);
-  color: var(--ink);
-}
 .triage-workspace .triage-toolbar .run-button { padding-inline: 12px; }
 
 .triage-workspace .workspace-inner { padding-top: 12px; }
 
 .triage-strip {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: start;
-  gap: 6px 12px;
   margin-bottom: 14px;
   border-bottom: 1px solid var(--rule);
 }
@@ -125,40 +97,28 @@
 }
 .triage-workspace .group-nav button:focus-visible { outline-offset: -3px; }
 .triage-workspace .group-nav button:hover:not([aria-pressed="true"]) { background: transparent; color: var(--ink); }
-.triage-workspace .progress-block {
-  flex: 0 0 auto;
-  margin: 0;
-  padding: 3px 0 0;
-  border: 0;
-  min-width: 92px;
-  color: var(--ink);
-  line-height: 1.15;
-}
-.triage-workspace .progress-block div { gap: 7px; font-size: var(--type-13); }
-.triage-workspace .progress-block span { color: var(--ink); font-size: var(--type-13); }
-.triage-workspace .progress-block progress { height: 4px; }
-.triage-workspace .progress-block progress::-webkit-progress-bar { background: var(--rule); border-radius: 0; }
-.triage-workspace .progress-block progress::-webkit-progress-value { background: var(--dispatch); border-radius: 0; }
+.triage-workspace .inbox-current-filter { margin: 0 0 10px; color: var(--secondary-ink); font-size: var(--type-13); }
 
-.triage-workspace .triage-strip .direction-panel {
-  margin: 0;
-  padding: 0;
-  border: 0;
-  border-radius: 0;
-  background: transparent;
-}
-.triage-workspace .triage-strip .direction-toggle {
-  gap: 7px;
-  min-height: 42px;
-  padding: 6px 9px;
-  border: 1px solid var(--rule);
-  border-radius: 3px;
+.inbox-report .workspace-inner { display: grid; gap: 16px; }
+.inbox-report-section { padding: 10px 0 16px; border-bottom: 1px solid var(--rule); }
+.inbox-report-section h2 { margin-bottom: 8px; font-size: var(--type-18); }
+.inbox-report-section progress { width: min(100%, 320px); height: 10px; margin-bottom: 8px; accent-color: var(--dispatch); }
+.inbox-report-counts { display: flex; flex-wrap: wrap; gap: 8px; padding: 0; list-style: none; }
+.workspace .inbox-report-counts a {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 8px;
+  min-width: 84px;
+  padding: 7px 10px;
+  border: 1px solid var(--field-border);
   color: var(--ink);
-  font-size: var(--type-13);
+  text-decoration: none;
 }
-.triage-workspace .triage-strip .direction-toggle span:last-child { font-size: var(--type-13); }
-.triage-workspace .triage-strip .direction-panel:has(> section:not([hidden])) { grid-column: 1 / -1; padding-bottom: 8px; }
-.triage-workspace .triage-strip .direction-panel:has(> section:not([hidden])) .direction-toggle { width: auto; }
+.inbox-report-counts strong { margin-inline-start: auto; color: var(--dispatch); font-size: var(--type-18); }
+.workspace .inbox-report-counts a:hover { background: var(--dispatch-soft); }
+.inbox-feedback .direction-panel { margin: 0; padding: 0; border: 0; background: transparent; }
+.inbox-feedback .direction-panel > h2 { margin-bottom: 10px; }
+.inbox-feedback .direction-lead { scroll-margin-block-start: 12px; }
 
 .triage-workspace .board {
   grid-template-columns: minmax(0, 1.16fr) minmax(0, 1fr);
@@ -321,11 +281,7 @@
 @media (max-width: 900px) {
   .triage-workspace .board { grid-template-columns: 1fr; }
   .triage-workspace .inbox-column { min-height: 0; max-height: 49vh; }
-  .triage-strip { grid-template-columns: minmax(0, 1fr); }
-  .triage-workspace .triage-strip .direction-panel { grid-column: 1; }
-  .triage-workspace .triage-strip .direction-toggle { width: auto; min-height: 34px; }
   .triage-groups { gap: 6px; }
-  .triage-workspace .progress-block { position: absolute; width: 1px; height: 1px; clip-path: inset(50%); overflow: hidden; }
 }
 
 @media (max-width: 500px) {

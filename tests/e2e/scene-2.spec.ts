@@ -54,7 +54,7 @@ test.beforeEach(async ({ page }) => {
 });
 
 test("S2-01 초기 문의함에서 30건 모두 미선별이며 L06이 맨 아래다", async ({ page }) => {
-  await page.goto("/");
+  await page.goto("/inbox", { waitUntil: "domcontentloaded" });
   const unassessed = group(page, "미선별");
   await expect(unassessed.getByRole("heading")).toHaveText("미선별 30");
   await expect(unassessed.getByRole("listitem")).toHaveCount(30);
@@ -73,7 +73,7 @@ test("S2-02 한 번 클릭하면 리드당 POST 한 건을 보내고 선별 중�
     if (leadId === "L01") await gate.promise;
     await route.continue();
   });
-  await page.goto("/");
+  await page.goto("/inbox", { waitUntil: "domcontentloaded" });
   try {
     await runButton(page).click();
     await expect(page.getByRole("button", { name: "선별 중…", exact: true })).toBeDisabled();
@@ -87,7 +87,7 @@ test("S2-02 한 번 클릭하면 리드당 POST 한 건을 보내고 선별 중�
 });
 
 test("S2-03 저장 결과 그룹은 8·6·3·2·11건이고 유효 그룹 처음은 L06이다", async ({ page }, testInfo) => {
-  await page.goto("/");
+  await page.goto("/inbox", { waitUntil: "domcontentloaded" });
   await runAssessment(page);
   for (const [label, count] of [
     ["유효", 8], ["애매", 6], ["국가 확인", 3], ["제휴 확인", 2], ["무효", 11],
@@ -115,7 +115,7 @@ test("S2-03 저장 결과 그룹은 8·6·3·2·11건이고 유효 그룹 처음
 });
 
 test("S2-04 무효 11건은 각각 근거가 있고 업종만으로 무효 처리하지 않는다", async ({ page }) => {
-  await page.goto("/");
+  await page.goto("/inbox", { waitUntil: "domcontentloaded" });
   await runAssessment(page);
   await page.getByRole("navigation", { name: "문의함 필터" }).getByRole("button", { name: /^무효\s+11$/u }).click();
   const reasons = await group(page, "무효").locator(".lead-button > span:last-child").allTextContents();
@@ -127,7 +127,7 @@ test("S2-04 무효 11건은 각각 근거가 있고 업종만으로 무효 처�
 });
 
 test("S2-05 일괄 무효 처리는 무효 11건만 대상으로 한다", async ({ page }) => {
-  await page.goto("/");
+  await page.goto("/inbox", { waitUntil: "domcontentloaded" });
   await runAssessment(page);
   const untouched = ["유효", "애매", "국가 확인", "제휴 확인"].map((label) =>
     group(page, label).locator(".lead-meta > span:last-child"));
@@ -151,7 +151,7 @@ test("S2-05 일괄 무효 처리는 무효 11건만 대상으로 한다", async 
 });
 
 test("S2-06 일괄 처리 뒤 L18만 다시 검토로 꺼낸다", async ({ page }) => {
-  await page.goto("/");
+  await page.goto("/inbox", { waitUntil: "domcontentloaded" });
   await runAssessment(page);
   const invalid = group(page, "무효");
   await invalid.getByRole("button", { name: "일괄 무효 처리" }).click();
@@ -169,7 +169,7 @@ test("S2-07 L01의 HTTP 500만 애매·재시도로 표시하고 다른 29건을
     if (leadId !== "L01") return route.continue();
     await route.fulfill({ status: 500, json: { error: "가상 서버 오류" } });
   });
-  await page.goto("/");
+  await page.goto("/inbox", { waitUntil: "domcontentloaded" });
   await runAssessment(page);
   const ambiguous = group(page, "애매");
   await expect(ambiguous.getByRole("listitem").filter({ hasText: /\bL01\b/u })).toHaveCount(1);
@@ -193,7 +193,7 @@ test("S2-08 응답이 8초 넘게 없으면 그 리드만 외부 확인 실패�
     // Cleanup happens after the timeout assertion, without returning a success to the browser.
     await route.abort().catch(() => {});
   });
-  await page.goto("/");
+  await page.goto("/inbox", { waitUntil: "domcontentloaded" });
   try {
     await runButton(page).click();
     await requestStarted.promise;
@@ -221,7 +221,7 @@ test("S2-09 선별 도중 새로고침하면 완료 건만 남고 중복 기록�
     await gate.promise;
     await route.abort().catch(() => {});
   });
-  await page.goto("/");
+  await page.goto("/inbox", { waitUntil: "domcontentloaded" });
   try {
     await runButton(page).click();
     await expect.poll(async () => (await events(page)).filter((event) => event.type === "assessed").map(({ leadId }) => leadId))
@@ -238,7 +238,7 @@ test("S2-09 선별 도중 새로고침하면 완료 건만 남고 중복 기록�
 });
 
 test("S2-10 손상된 브라우저 저장값은 초기화 전까지 보존한다", async ({ page }) => {
-  await page.goto("/");
+  await page.goto("/inbox", { waitUntil: "domcontentloaded" });
   const broken = "{invalid-json";
   await page.evaluate(({ key, value }) => localStorage.setItem(key, value), { key: storageKey, value: broken });
   await page.reload();
@@ -254,7 +254,7 @@ test("S2-10 손상된 브라우저 저장값은 초기화 전까지 보존한다
 });
 
 test("S2-11 빈 기관은 무효이고 200자 기관명은 목록과 카드에서 줄인다", async ({ page }, testInfo) => {
-  await page.goto("/");
+  await page.goto("/inbox", { waitUntil: "domcontentloaded" });
   await runAssessment(page);
   await expect(row(page, "L15").getByText("소속 미기재", { exact: true })).toBeVisible();
   await expect(row(page, "L15").getByText("확인 가능한 소속 기관이 없습니다.", { exact: true })).toBeVisible();

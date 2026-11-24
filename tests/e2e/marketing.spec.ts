@@ -3,9 +3,9 @@ import { expect, test } from "@playwright/test";
 const publicDemo = "http://127.0.0.1:3150";
 
 test("마케팅 시연에서 정책 점수를 확인하고 사유를 붙여 순위를 조정한다", async ({ page }) => {
-  await page.goto(publicDemo);
+  await page.goto(publicDemo + "/inbox", { waitUntil: "domcontentloaded" });
   await page.getByRole("navigation", { name: "업무 메뉴" })
-    .getByRole("link", { name: "마케팅 협조 요청", exact: true }).click();
+    .getByRole("link", { name: "마케팅 요청", exact: true }).click();
   await expect(page).toHaveURL(/\/marketing$/);
   const requests = page.getByRole("list", { name: "요청 우선순위" });
   const rows = requests.getByRole("button");
