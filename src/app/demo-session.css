@@ -1,14 +1,165 @@
 .demo-login {
   display: grid;
+  grid-template-columns: minmax(0, 11fr) minmax(0, 9fr);
+  gap: 32px clamp(28px, 4vw, 64px);
   min-height: 100dvh;
   box-sizing: border-box;
-  padding: 24px 16px;
+  max-width: 1440px;
+  margin-inline: auto;
+  padding: 24px clamp(24px, 5vw, 72px);
   place-items: center;
   background: var(--paper);
   color: var(--ink);
   font-family: var(--font-family);
   font-size: var(--type-15);
   line-height: 1.5;
+}
+
+.demo-login-banner {
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  word-break: keep-all;
+}
+
+.demo-login-banner h2 {
+  margin: 0 0 10px;
+  font-size: var(--type-29);
+  font-weight: var(--weight-semibold);
+  line-height: 1.25;
+}
+
+.demo-login-banner > p {
+  max-width: 37ch;
+  margin: 0;
+  font-size: var(--type-18);
+  color: var(--secondary-ink);
+}
+
+.demo-banner-steps {
+  --step-rise: 30px;
+  display: grid;
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.2fr) minmax(0, 1fr);
+  margin: 44px 0 0;
+  padding: 26px 0 0;
+  list-style: none;
+  font-size: var(--type-13);
+  font-variant-numeric: tabular-nums;
+}
+
+.demo-banner-step {
+  position: relative;
+  min-width: 0;
+  padding: 11px clamp(8px, 1.15vw, 16px) 14px;
+  border-block-start: 2px solid var(--field-border);
+  border-block-end: 1px solid var(--rule);
+  overflow-wrap: anywhere;
+}
+
+.demo-banner-arrival { margin-block-start: calc(2 * var(--step-rise)); }
+.demo-banner-selection { margin-block-start: var(--step-rise); }
+
+.demo-banner-selection::before,
+.demo-banner-handoff::before {
+  content: "";
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-start: 0;
+  height: var(--step-rise);
+  border-inline-start: 2px solid var(--field-border);
+}
+
+.demo-banner-handoff::before {
+  inset-block: -26px 0;
+  height: auto;
+  border-inline-start: 1px dashed var(--field-border);
+}
+
+.demo-banner-before {
+  position: absolute;
+  inset-block-end: calc(100% + 6px);
+  inset-inline-start: 8px;
+  color: var(--secondary-ink);
+  font-weight: var(--weight-semibold);
+}
+
+.demo-banner-stage {
+  margin: 0 0 9px;
+  font-size: var(--type-15);
+  font-weight: var(--weight-semibold);
+}
+
+.demo-banner-stack {
+  position: relative;
+  isolation: isolate;
+  max-width: 124px;
+  margin: 18px 10px 0 0;
+}
+
+.demo-banner-stack::before,
+.demo-banner-stack::after,
+.demo-banner-stack > span {
+  border: 1px solid var(--field-border);
+  border-radius: 2px;
+}
+
+.demo-banner-stack::before,
+.demo-banner-stack::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background: var(--rule);
+}
+
+.demo-banner-stack::before { transform: translate(10px, -10px); }
+.demo-banner-stack::after { transform: translate(5px, -5px); }
+
+.demo-banner-stack > span {
+  display: block;
+  padding: 9px 7px;
+  background: color-mix(in srgb, var(--rule) 38%, var(--slip));
+}
+
+.demo-banner-tags { display: flex; flex-wrap: wrap; gap: 4px; }
+
+.demo-banner-tags span {
+  padding: 2px 6px;
+  border: 1px solid var(--rule);
+  border-inline-start: 4px solid var(--tag-mark);
+}
+
+.demo-banner-valid { --tag-mark: var(--verdict-valid); background: var(--valid-soft); }
+.demo-banner-ambiguous { --tag-mark: var(--verdict-ambiguous); background: var(--ambiguous-soft); }
+.demo-banner-check { --tag-mark: var(--verdict-check); background: var(--check-soft); }
+.demo-banner-invalid { --tag-mark: var(--verdict-invalid); background: var(--slip); }
+
+.demo-banner-evidence { margin: 8px 0 0; color: var(--secondary-ink); }
+
+.demo-banner-slip {
+  max-width: 148px;
+  padding: 10px;
+  background: var(--dispatch);
+  color: var(--slip);
+}
+
+.demo-banner-slip strong { display: block; font-size: var(--type-18); font-weight: var(--weight-semibold); }
+
+@media (width < 1024px) {
+  .demo-login { grid-template-columns: minmax(0, 1fr); align-content: center; padding-inline: clamp(16px, 5vw, 48px); }
+  .demo-login-banner { max-width: 560px; }
+  .demo-login-banner h2 { font-size: var(--type-23); }
+  .demo-login-banner > p { max-width: none; font-size: var(--type-15); }
+  .demo-banner-steps { --step-rise: 20px; margin-block-start: 16px; }
+}
+
+@media (width < 440px) {
+  .demo-banner-steps { --step-rise: 16px; grid-template-columns: minmax(0, 0.74fr) minmax(0, 1.22fr) minmax(0, 1fr); }
+  .demo-banner-step { padding-inline: 5px; padding-block-end: 9px; }
+  .demo-banner-before { inset-inline-start: 5px; }
+  .demo-banner-tags span { padding-inline: 3px; }
+  .demo-banner-slip { padding-inline: 5px; }
+  .demo-banner-slip strong { font-size: var(--type-15); }
 }
 
 .demo-login-panel {
