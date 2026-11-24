@@ -73,6 +73,7 @@
 .marketing-field-source { color: var(--dispatch); font-size: var(--type-13); font-weight: var(--weight-semibold); }
 .marketing-workflow-actions { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 8px; }
 .marketing-workflow-actions label { flex: 1 1 140px; }
+.marketing-workflow-actions label:has(> select) { flex: 0 1 260px; min-width: 0; }
 .marketing-workflow-history { display: grid; gap: 4px; padding-inline-start: 20px; color: var(--secondary-ink); font-size: var(--type-13); }
 .marketing-requester-choice { max-width: 260px; }
 .marketing-requester-list { display: grid; gap: 6px; padding: 0; list-style: none; }

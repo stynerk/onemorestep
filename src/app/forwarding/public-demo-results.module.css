@@ -1,5 +1,4 @@
 .results {
-  position: relative;
   flex: none;
 }
 
@@ -29,6 +28,8 @@
 }
 
 .results[open] > summary {
+  width: fit-content;
+  min-height: 42px;
   border-color: var(--dispatch);
   color: var(--dispatch);
 }
@@ -36,20 +37,15 @@
 .results[open] > summary::after { transform: translateY(1px) rotate(225deg); }
 
 .content {
-  position: absolute;
-  inset-block-start: calc(100% + 8px);
-  inset-inline-end: 0;
-  z-index: 1;
   display: grid;
   gap: 12px;
-  width: min(680px, calc(100vw - 24px));
-  max-height: min(73vh, 680px);
+  margin-top: 8px;
+  max-height: min(73dvh, 680px);
   padding: 16px;
   overflow-y: auto;
   border: 1px solid var(--rule);
   background: var(--slip);
   color: var(--ink);
-  box-shadow: 0 8px 20px #1a2a3321;
 }
 
 .context,
@@ -103,11 +99,6 @@
   border: 1px solid var(--rule);
   border-radius: 3px;
   color: var(--dispatch);
-}
-
-@media (max-width: 900px) {
-  .results { position: static; }
-  .content { inset-block-start: 100%; inset-inline-end: 12px; }
 }
 
 @media (max-width: 480px) {
