@@ -84,7 +84,7 @@ function DirectionForm({ lead, assessment, question, pending, disabled, onAnswer
           <textarea value={note} onChange={(event) => setNote(event.target.value)} rows={2} maxLength={400} />
         </label>
         <button type="submit" className="button button-primary" disabled={!choice || (needsCountry && !country)}>
-          {pending ? "다시 판정 중…" : "답변 반영"}
+          {pending ? "다시 선별 중…" : "답변 반영"}
         </button>
       </fieldset>
     </form>

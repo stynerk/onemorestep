@@ -21,7 +21,7 @@ const percent = new Intl.NumberFormat("ko-KR", { style: "percent", maximumFracti
 const score = (value: number | null) => value === null ? "집계 중" : value.toFixed(2);
 const ownershipLabels = { belongs: "기관 소유", not_belongs: "다른 소유자", unknown: "확인 보류" };
 const domainLabels = { matched: "기관 공식 이메일과 일치", "free-email": "무료 이메일", suspicious: "사칭 의심", unverified: "소유 관계 미확인" };
-const modeLabels = { liner: "실시간 검색", cache: "Liner 캐시", mixed: "실시간 및 캐시", curated: "저장된 결과", local: "시연 판정" };
+const modeLabels = { liner: "실시간 검색", cache: "Liner 캐시", mixed: "실시간 및 캐시", curated: "저장된 결과", local: "시연 선별" };
 const memoLabels = { buying: "구매", partnership: "제휴", job: "채용", student: "학생 과제", sales: "영업 제안", spam: "스팸", unknown: "불명" };
 const outcomeLabels: Record<DealerOutcome, string> = { deal: "deal", "no-deal": "no deal", "in-progress": "진행 중", "no-response": "미응답" };
 const mailLabels: Record<MailKind, string> = { "dealer-summary": "딜러용 요약", "country-check": "국가 확인", "partnership-check": "제휴 확인", "manager-confirmation": "담당자 확인", operations: "운영 알림" };
@@ -284,7 +284,7 @@ export function DecisionCard({ lead, inbox, openDirection }: {
     </header>}
     {!assessment && leadIdentity}
     {!assessment ? <div className="card-body"><h3>문의 메모</h3><blockquote>{lead.memo}</blockquote>
-      <button className="button button-primary" disabled={disabled} onClick={() => void inbox.assess(lead)}>{disabled ? "확인 중…" : "이 문의 판정"}</button>
+      <button className="button button-primary" disabled={disabled} onClick={() => void inbox.assess(lead)}>{disabled ? "확인 중…" : "이 문의 선별"}</button>
     </div> : <div className={"card-body " + styles.body}>
       {proposal && <ReassignmentCard proposal={proposal} dealerLabel={dealerLabel} days={days} disabled={disabled} approve={() => inbox.approveReassignment(lead, proposal)} />}
       {canDecide && assessment.verdict !== "invalid" && <section className="decision-buttons" aria-label="결정">
@@ -315,7 +315,7 @@ export function DecisionCard({ lead, inbox, openDirection }: {
           <p>{assessment.reason}</p>
           {openDirection && <a href="#direction-questions" onClick={openDirection}>질문에 답하기</a>}
         </div>
-        <h3>판정 근거</h3>
+        <h3>선별 근거</h3>
         <Evidence assessment={assessment} historicalCount={historicalCount}
           priorRelationshipCount={priorRelationshipCount} confirmedDomain={confirmedDomain} />
         {confirmations.map((confirmation) => <DirectionConfirmation key={confirmation.kind} confirmation={confirmation} />)}

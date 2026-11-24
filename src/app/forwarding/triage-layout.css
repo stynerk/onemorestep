@@ -73,16 +73,6 @@
 .triage-toolbar .triage-clock p { white-space: nowrap; }
 .triage-toolbar .triage-clock .button { padding-inline: 6px; }
 .triage-toolbar .masthead-actions { flex: 0 1 auto; flex-wrap: wrap; gap: 6px; margin-inline-start: auto; }
-.triage-toolbar .masthead-actions:has(> details[open]) {
-  display: grid;
-  flex-basis: 100%;
-  grid-template-columns: minmax(0, 1fr) repeat(3, max-content);
-  align-items: start;
-}
-.triage-toolbar .masthead-actions > details[open] { grid-area: 1 / 1 / 2 / -1; }
-.triage-toolbar .masthead-actions:has(> details[open]) > nav { grid-area: 1 / 2; }
-.triage-toolbar .masthead-actions:has(> details[open]) > .button-reset { grid-area: 1 / 3; }
-.triage-toolbar .masthead-actions:has(> details[open]) > .run-button { grid-area: 1 / 4; }
 .triage-toolbar .button-reset,
 .triage-workspace .triage-toolbar .masthead-link,
 .triage-workspace .triage-toolbar .masthead-link:hover {
@@ -340,8 +330,6 @@
 
 @media (max-width: 500px) {
   .triage-workspace .triage-toolbar .masthead-actions { width: 100%; justify-content: flex-start; margin: 0; }
-  .triage-toolbar .masthead-actions:has(> details[open]) { display: flex; }
-  .triage-toolbar .masthead-actions > details[open] { flex-basis: 100%; }
   .triage-workspace .triage-toolbar .industry-control { flex: 0 1 auto; flex-wrap: wrap; }
   .triage-workspace .inbox-column {
     --triage-columns: 64px minmax(0, 1.8fr) minmax(0, 1fr) 34px;

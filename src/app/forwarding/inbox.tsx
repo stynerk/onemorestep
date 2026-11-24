@@ -1,5 +1,6 @@
 "use client";
 
+import { DemoLogoutButton } from "../demo-session";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { industryHandoffForLead, isAvailableIndustry, medicom, type DemoIndustry, type DemoIndustryOption } from "../../lib/forwarding/industry-demo";
@@ -11,15 +12,14 @@ import { DecisionCard } from "./decision-card";
 import { DirectionPanel } from "./direction-panel";
 import { handoffLabel } from "./handoff-label";
 import { useInbox } from "./inbox-controller";
-import { PublicDemoResults } from "./public-demo-results";
 import { resetMarketingDemo } from "../marketing/storage";
 import "./triage-layout.css";
 
 const sections = [...VERDICTS, "new"] as const;
 type Group = (typeof sections)[number];
-const title = (group: Group) => group === "new" ? "미판정" : verdictLabels[group];
+const title = (group: Group) => group === "new" ? "미선별" : verdictLabels[group];
 const rowState = {
-  new: "미판정", "decision-pending": "결정 대기", "reply-pending": "회신 대기",
+  new: "미선별", "decision-pending": "결정 대기", "reply-pending": "회신 대기",
   "manager-confirmation-pending": "담당자 확인", "manager-direct-pending": "담당자 직접 처리", "dealer-assigned": "딜러 배정",
   connected: "결과 기록", disqualified: "처리 완료",
 };
@@ -94,7 +94,7 @@ function IndustryInbox({ industry, publicDemo, liveAssessment, industries, choos
   return <main className="workspace triage-workspace">
     <header className="masthead triage-toolbar">
       <div className="brand"><span className="brand-icon" aria-hidden="true">✦</span><div>
-        <p className="brand-name">미리내</p><p className="brand-company">{industry.brand}</p>
+        <p className="brand-name">One More Step</p><p className="brand-company">{industry.brand}</p>
       </div></div>
       <h1>문의함</h1>
       {industries && <div className="industry-control" role="group" aria-label="시연 업종">
@@ -104,7 +104,7 @@ function IndustryInbox({ industry, publicDemo, liveAssessment, industries, choos
           onClick={() => chooseIndustry(option.id)}>{option.label}</button>)}
         {unavailable && !isAvailableIndustry(unavailable)
           ? <p id="industry-unavailable">{unavailable.unavailable}</p>
-          : industry.id !== "medicom" && <p className="triage-visually-hidden">같은 판정 엔진에 업종별 리드, {industry.dealer} 표와 정책을 적용합니다.</p>}
+          : industry.id !== "medicom" && <p className="triage-visually-hidden">같은 선별 엔진에 업종별 리드, {industry.dealer} 표와 정책을 적용합니다.</p>}
       </div>}
       <div className="triage-status">
         <span className="demo-disclosure">가상 리드, 공개 기관 정보만</span>
@@ -117,16 +117,16 @@ function IndustryInbox({ industry, publicDemo, liveAssessment, industries, choos
         {inbox.simulatedNow !== null && <button type="button" className="button button-light" onClick={inbox.clearSimulation}>시연 시각 해제</button>}
       </div>}
       <div className="masthead-actions">
-        {publicDemo && industry.id === "medicom" && <PublicDemoResults />}
         <nav aria-label="업무 메뉴"><Link className="button button-reset masthead-link" href="/marketing">마케팅 협조 요청</Link></nav>
         <button type="button" className="button button-reset" disabled={busy} onClick={() => setConfirmReset(true)}>시연 초기화</button>
+        <DemoLogoutButton className="button button-reset" />
         <button type="button" className="button button-primary run-button" disabled={!inbox.ready || inbox.running}
-          onClick={() => void inbox.assessAll()}>{inbox.running ? "판정 중…" : assessed === state.leads.length ? "다시 판정" : "판정 시작"}</button>
+          onClick={() => void inbox.assessAll()}>{inbox.running ? "선별 중…" : assessed === state.leads.length ? "다시 선별" : "선별 시작"}</button>
       </div>
     </header>
     <div className="workspace-inner">
       {confirmReset && <div className="feedback confirm" role="status">
-        <p>이 브라우저의 판정, 결정, 회신과 마케팅 기록을 지울까요?</p>
+        <p>이 브라우저의 선별, 결정, 회신과 마케팅 기록을 지울까요?</p>
         <button type="button" className="button button-light" onClick={() => setConfirmReset(false)}>취소</button>
         <button type="button" className="button button-primary" disabled={busy} onClick={() => {
           inbox.reset(); resetMarketingDemo(); setFilter("all"); setShowDirection(false); setConfirmReset(false);
@@ -134,7 +134,7 @@ function IndustryInbox({ industry, publicDemo, liveAssessment, industries, choos
       </div>}
       {inbox.error && <p className="feedback" role="alert">{inbox.error}</p>}
       <div className="triage-strip">
-        <aside className="triage-groups" aria-label="판정 그룹">
+        <aside className="triage-groups" aria-label="선별 그룹">
           <nav className="group-nav" aria-label="문의함 필터">
             <button type="button" onClick={() => setGroup("all")} aria-pressed={filter === "all"}>
               <span>전체 문의</span><span>{state.leads.length}</span>
@@ -144,8 +144,8 @@ function IndustryInbox({ industry, publicDemo, liveAssessment, industries, choos
             </button>)}
           </nav>
           <div className="progress-block">
-            <div><strong>판정 현황</strong><span aria-live="polite">{assessed} / {state.leads.length}</span></div>
-            <progress aria-label="판정 완료 건수" value={assessed} max={state.leads.length} />
+            <div><strong>선별 현황</strong><span aria-live="polite">{assessed} / {state.leads.length}</span></div>
+            <progress aria-label="선별 완료 건수" value={assessed} max={state.leads.length} />
           </div>
         </aside>
         {assessed > 0 && !inbox.running && <DirectionPanel rows={directionRows} expanded={showDirection}
@@ -163,7 +163,7 @@ function IndustryInbox({ industry, publicDemo, liveAssessment, industries, choos
       <div className="board">
         <div className="inbox-column" aria-label="문의 목록" ref={leadList} data-filter={filter}>
           <div className="triage-columns" aria-hidden="true">
-            <span>판정</span><span>기관명</span><span>받는 곳</span><span>경과</span>
+            <span>선별</span><span>기관명</span><span>받는 곳</span><span>경과</span>
           </div>
           {shown.map((group) => <section key={group} className="inbox-group" aria-labelledby={"group-" + group} data-empty={groups[group].length === 0}>
             <div className="group-heading">
@@ -203,7 +203,7 @@ function IndustryInbox({ industry, publicDemo, liveAssessment, industries, choos
         <div className="detail-column" id="direction-result" tabIndex={-1}>
           {selected ? <DecisionCard key={selected.id} lead={selected} inbox={inbox}
             openDirection={directionIds.has(selected.id) && !inbox.running ? () => setShowDirection(true) : undefined} /> :
-            <div className="empty-card"><span aria-hidden="true">✦</span><h2>문의를 선택해 주세요</h2><p>판정 근거와 결정 카드를 볼 수 있습니다.</p></div>}
+            <div className="empty-card"><span aria-hidden="true">✦</span><h2>문의를 선택해 주세요</h2><p>선별 근거와 결정 카드를 볼 수 있습니다.</p></div>}
         </div>
       </div>
     </div>
