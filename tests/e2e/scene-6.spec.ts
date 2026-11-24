@@ -62,7 +62,7 @@ scenario.beforeEach(async ({ page, mailRequests }) => {
   await page.clock.setFixedTime(friday);
   await page.goto("/");
   await lead(page, "L03");
-  await card(page).getByRole("button", { name: "이 문의 판정" }).click();
+  await card(page).getByRole("button", { name: "이 문의 선별" }).click();
   await card(page).getByRole("button", { name: "승인", exact: true }).click();
   await confirmAssignment(page, "V MedSource");
 });
@@ -101,7 +101,7 @@ scenario("S6-04 재배정은 V의 미응답과 U의 요약 메일 요청을 한 
 
 scenario("S6-05 다음 미국 리드의 V 점수가 0.1 내려가고 순위가 바뀐다", async ({ page }) => {
   await lead(page, "L23");
-  await card(page).getByRole("button", { name: "이 문의 판정" }).click();
+  await card(page).getByRole("button", { name: "이 문의 선별" }).click();
   await expect(page.locator("#L23-partnership-choice")).toBeVisible();
   const before = await compare(page);
   expect(before.map((entry) => entry.name)).toEqual(["V MedSource", "U Health Supply"]);
@@ -163,7 +163,7 @@ scenario("S6-09 새로고침 뒤 U 배정과 V의 미응답 및 점수가 복원
   expect((await savedEvents(page)).filter((event) => event.type === "reassigned")).toHaveLength(1);
 });
 
-scenario("S6-10 초기화 취소는 기록을 보존하고 확인은 미판정 30건으로 돌린다", async ({ page }) => {
+scenario("S6-10 초기화 취소는 기록을 보존하고 확인은 미선별 30건으로 돌린다", async ({ page }) => {
   await simulate(page);
   await approveAgain(page).click();
   const reset = page.getByRole("button", { name: "시연 초기화" });
@@ -174,9 +174,9 @@ scenario("S6-10 초기화 취소는 기록을 보존하고 확인은 미판정 3
   expect(await savedEvents(page)).toEqual(before);
   await reset.click();
   await page.getByRole("button", { name: "초기화 확인" }).click();
-  await expect(page.getByRole("heading", { name: "미판정 30" })).toBeVisible();
-  await expect(page.getByRole("button", { name: /^L\d{2} 미판정/ })).toHaveCount(30);
-  await expect(page.getByRole("button", { name: /^L\d{2} 미판정/ }).last()).toHaveText(/^L06/);
-  await expect(page.getByRole("button", { name: "판정 시작" })).toBeEnabled();
+  await expect(page.getByRole("heading", { name: "미선별 30" })).toBeVisible();
+  await expect(page.getByRole("button", { name: /^L\d{2} 미선별/ })).toHaveCount(30);
+  await expect(page.getByRole("button", { name: /^L\d{2} 미선별/ }).last()).toHaveText(/^L06/);
+  await expect(page.getByRole("button", { name: "선별 시작" })).toBeEnabled();
   expect(await savedEvents(page)).toEqual([]);
 });

@@ -8,14 +8,14 @@ const row = (page: Page, id: string) => page.locator(".direction-lead").filter({
 });
 const chooseLead = async (page: Page, id: string) => {
   await page.getByRole("button", { name: new RegExp("^" + id + " ") }).click();
-  await card(page).getByRole("button", { name: "이 문의 판정", exact: true }).click();
+  await card(page).getByRole("button", { name: "이 문의 선별", exact: true }).click();
 };
 
 test("의료기기 사칭 의심을 담당자가 확인하면 근거와 기존 딜러 추천이 나온다", async ({ page }) => {
   await page.goto(publicUrl);
-  await page.getByRole("button", { name: "판정 시작", exact: true }).click();
+  await page.getByRole("button", { name: "선별 시작", exact: true }).click();
   await expect(page.getByRole("button", { name: "방향이 필요한 리드 6건" })).toBeEnabled();
-  await expect(page.getByRole("button", { name: "다시 판정", exact: true })).toBeEnabled();
+  await expect(page.getByRole("button", { name: "다시 선별", exact: true })).toBeEnabled();
   await page.getByRole("button", { name: "방향이 필요한 리드 6건" }).click();
   const panel = page.getByRole("region", { name: "방향을 알려 주세요" });
   await expect(panel.locator(".direction-lead")).toHaveCount(6);
@@ -73,7 +73,7 @@ test("같은 기관과 도메인의 다음 SaaS 문의는 새로고침 뒤에도
     await route.fulfill({ json: { leadId, assessment, workflow: "decision-pending" } });
   });
   await page.goto(publicUrl);
-  await expect(page.getByRole("button", { name: "판정 시작", exact: true })).toBeEnabled();
+  await expect(page.getByRole("button", { name: "선별 시작", exact: true })).toBeEnabled();
   await page.getByRole("button", { name: "B2B SaaS" }).click();
   await expect(page.getByRole("button", { name: /^I09 .*BASF SE/ })).toBeVisible();
   await chooseLead(page, "I04");

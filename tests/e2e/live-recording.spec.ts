@@ -1,20 +1,20 @@
-﻿import { expect, test } from "@playwright/test";
+import { expect, test } from "@playwright/test";
 
 type Counts = { live: number; replayed: number; blocked: number };
 
-test("S2-12 Liner 기록·재생은 문의함의 실제 판정 경로를 거친다", async ({ page }) => {
+test("S2-12 Liner 기록·재생은 문의함의 실제 선별 경로를 거친다", async ({ page }) => {
   await page.goto("/");
-  await page.getByRole("button", { name: /^L03 미판정/ }).click();
+  await page.getByRole("button", { name: /^L03 미선별/ }).click();
   const request = page.waitForResponse((response) =>
     new URL(response.url()).pathname === "/api/forwarding/assess" && response.request().method() === "POST",
   );
-  await page.getByRole("button", { name: "이 문의 판정" }).click();
+  await page.getByRole("button", { name: "이 문의 선별" }).click();
   const response = await request;
   expect(response.ok()).toBe(true);
   const result = await response.json();
   expect(result).toMatchObject({ leadId: "L03", assessment: { mode: "live" } });
   expect(result.assessment.details.externalStatus).not.toBe("failed");
-  await expect(page.getByRole("article").getByRole("heading", { name: "판정 근거" })).toBeVisible();
+  await expect(page.getByRole("article").getByRole("heading", { name: "선별 근거" })).toBeVisible();
 
   const metrics = await page.request.get("/__e2e/liner");
   expect(metrics.ok()).toBe(true);
