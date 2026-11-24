@@ -24,6 +24,13 @@ export default defineConfig({
   use: {
     browserName: "chromium",
     baseURL: origin(liner ? 3151 : 3149),
+    storageState: {
+      cookies: [],
+      origins: [3149, 3150, 3151].map((port) => ({
+        origin: origin(port),
+        localStorage: [{ name: "onemorestep.demo-session", value: "1" }],
+      })),
+    },
     headless: true,
     timezoneId: "UTC",
     viewport: { width: 1440, height: 900 },

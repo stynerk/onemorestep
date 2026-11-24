@@ -19,12 +19,12 @@ export function leadRow(page: Page, leadId: "L01" | "L06") {
   return page.getByRole("button", { name: new RegExp(`^${leadId}\\b`) });
 }
 
-export async function assessLead(page: Page, leadId: "L01" | "L06", home = "/") {
-  await page.goto(home);
+export async function assessLead(page: Page, leadId: "L01" | "L06", home = "/inbox") {
+  await page.goto(home, { waitUntil: "domcontentloaded" });
   await leadRow(page, leadId).click();
   const card = page.getByRole("article", { name: leadId === "L01" ? "서울대학교병원" : "Singapore General Hospital" });
-  await card.getByRole("button", { name: "이 문의 판정", exact: true }).click();
-  await expect(card.getByRole("heading", { name: "판정 근거" })).toBeVisible();
+  await card.getByRole("button", { name: "이 문의 선별", exact: true }).click();
+  await expect(card.getByRole("heading", { name: "선별 근거" })).toBeVisible();
   return card;
 }
 

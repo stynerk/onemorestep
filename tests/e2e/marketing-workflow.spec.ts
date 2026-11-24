@@ -3,20 +3,31 @@ import { expect, test } from "@playwright/test";
 const demo = "http://127.0.0.1:3150";
 test.describe.configure({ timeout: 90_000 });
 
-test("문의함 판정 뒤 유입 경로의 효과가 채널 선택에 반영된다", async ({ page }) => {
-  await page.goto(demo + "/marketing", { waitUntil: "domcontentloaded" });
+test("문의함 선별 뒤 유입 경로의 효과가 채널 선택에 반영된다", async ({ page }) => {
+  await page.goto(demo + "/marketing/campaigns", { waitUntil: "domcontentloaded" });
   const campaigns = page.getByRole("region", { name: "캠페인 효과" });
-  await expect(campaigns.getByRole("row", { name: /\bC1\b/u })).toContainText("판정 전");
-  await expect(campaigns.getByRole("row", { name: /\bC2\b/u })).toContainText("판정 전");
+  await expect(campaigns.getByRole("row", { name: /\bC1\b/u })).toContainText("선별 전");
+  await expect(campaigns.getByRole("row", { name: /\bC2\b/u })).toContainText("선별 전");
 
-  await page.getByRole("link", { name: "문의함", exact: true }).click();
-  await page.getByRole("button", { name: "판정 시작", exact: true }).click();
-  await expect(page.getByRole("button", { name: "다시 판정", exact: true })).toBeEnabled({ timeout: 30_000 });
-  await page.locator(".lead").getByRole("button", { name: /^L06\b/u }).click();
-  await expect(page.locator(".decision-card")).toContainText(/유입:\s*C1 LinkedIn/u);
-
-  await page.getByRole("navigation", { name: "업무 메뉴" })
-    .getByRole("link", { name: "마케팅 협조 요청", exact: true }).click();
+  const gate = Promise.withResolvers<void>();
+  await page.route("**/api/forwarding/assess", async (route) => {
+    await gate.promise;
+    await route.continue();
+  });
+  const menu = page.getByRole("navigation", { name: "업무 메뉴" });
+  const inbox = menu.getByRole("link", { name: "전체 문의", exact: true });
+  const campaignPage = menu.getByRole("link", { name: "캠페인 효과 보기", exact: true });
+  await inbox.click();
+  try {
+    await Promise.all([
+      page.waitForRequest("**/api/forwarding/assess"),
+      page.getByRole("button", { name: "선별 시작", exact: true }).click(),
+    ]);
+    await campaignPage.click();
+    await expect(campaigns.getByRole("row", { name: /\bC1\b/u })).toContainText("선별 전");
+  } finally {
+    gate.resolve();
+  }
   for (const [code, channel, count, effect] of [
     ["C1", "LinkedIn", "3/5", "효과 높음"],
     ["C2", "Instagram", "0/6", "효과 낮음"],
@@ -28,22 +39,28 @@ test("문의함 판정 뒤 유입 경로의 효과가 채널 선택에 반영된
     await expect(campaign).toContainText(count);
     await expect(campaign).toContainText(effect);
   }
+  await inbox.click();
+  await page.locator(".lead").getByRole("button", { name: /^L06\b/u }).click();
+  await expect(page.locator(".decision-card")).toContainText(/유입:\s*C1 LinkedIn/u);
+
+  await menu.getByRole("link", { name: "마케팅 요청", exact: true }).click();
   const instagram = page.getByRole("checkbox", { name: "Instagram 사용" });
   const instagramRow = page.getByRole("listitem").filter({ has: instagram });
   await expect(instagramRow).toContainText("효과 낮음 · 유효 0/6");
   await expect(instagram).toBeEnabled();
   await instagram.check();
   await instagram.uncheck();
+  await page.getByRole("link", { name: "캠페인 효과 보기", exact: true }).click();
   await expect(campaigns.getByRole("row", { name: /\bC2\b/u })).toContainText("0/6");
 });
 
 test("연결 리드로 요청을 접수하고 초안을 승인해야 캠페인을 완료할 수 있다", async ({ page }) => {
   await page.clock.setFixedTime(new Date("2026-11-24T03:00:00Z"));
-  await page.goto(demo);
-  await page.getByRole("button", { name: "판정 시작", exact: true }).click();
-  await expect(page.getByRole("button", { name: "다시 판정", exact: true })).toBeEnabled({ timeout: 30_000 });
+  await page.goto(demo + "/inbox", { waitUntil: "domcontentloaded" });
+  await page.getByRole("button", { name: "선별 시작", exact: true }).click();
+  await expect(page.getByRole("button", { name: "다시 선별", exact: true })).toBeEnabled({ timeout: 30_000 });
   await page.getByRole("navigation", { name: "업무 메뉴" })
-    .getByRole("link", { name: "마케팅 협조 요청", exact: true }).click();
+    .getByRole("link", { name: "마케팅 요청", exact: true }).click();
   await page.getByRole("button", { name: "요청 접수", exact: true }).click();
 
   const form = page.getByRole("region", { name: "마케팅 요청 접수" });
@@ -86,8 +103,11 @@ test("연결 리드로 요청을 접수하고 초안을 승인해야 캠페인�
   await draft.getByRole("button", { name: "초안 승인", exact: true }).click();
   await complete.click();
   await expect(workflow).toContainText("C05");
+  await page.getByRole("link", { name: "캠페인 효과 보기", exact: true }).click();
   await expect(page.getByRole("row", { name: /\bC05\b/u })).toContainText("판단 보류");
+  await page.getByRole("link", { name: "마케팅 요청", exact: true }).click();
 
+  await expect(page).toHaveURL(demo + "/marketing");
   await page.reload();
   await list.getByRole("button", { name: /M09/u }).click();
   await expect(workflow).toContainText("C05");

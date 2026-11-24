@@ -12,6 +12,8 @@ import { createBrowserForwardingStore, type StoreResult } from "../../lib/forwar
 import type { Assessment, DecisionAction, DealerDelivery, DealerOutcome, DirectionAnswer, ForwardingEvent, ForwardingState, LeadInput, ReplyKind, WorkflowState } from "../../lib/forwarding/types";
 import type { ForwardingMailResult } from "../../lib/forwarding/forwarding-mail.server";
 
+export const MEDICOM_INBOX_CHANGED = "onemorestep:medicom-inbox-change";
+
 type Assessed = { assessment: Assessment; workflow: WorkflowState };
 const eventBase = (leadId: string, at = Date.now()) => ({ id: crypto.randomUUID(), at: new Date(at).toISOString(), leadId });
 
@@ -70,6 +72,7 @@ export function useInbox(publicDemo: boolean, liveAssessment: boolean, industry:
     }
     setState(result.state);
     setNow(Date.now());
+    if (!result.duplicate && industry.id === "medicom") window.dispatchEvent(new Event(MEDICOM_INBOX_CHANGED));
     return !result.duplicate;
   }
 
@@ -303,14 +306,15 @@ export function useInbox(publicDemo: boolean, liveAssessment: boolean, industry:
   }
 
   function reset() {
-    if (!store.current || batchRunning.current || assessing.current.size || mailing.current.size) return;
+    if (!store.current || batchRunning.current || assessing.current.size || mailing.current.size) return false;
     const result = store.current.reset();
-    if (!apply(result)) return;
+    if (!apply(result)) return false;
     setError("");
     setSelected(null);
     setMail({});
     setSimulatedNow(null);
     setReady(true);
+    return true;
   }
 
   return { state, ready, publicDemo, dealerLabel: industry.dealer, now, responseNow, simulatedNow, clearSimulation: () => setSimulatedNow(null),
