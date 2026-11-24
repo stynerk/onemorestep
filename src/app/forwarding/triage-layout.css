@@ -186,11 +186,19 @@
   --triage-gutter: 10px;
   --triage-inset: 10px;
   min-height: 0;
-  max-height: calc(100dvh - 164px);
   scroll-padding-block-start: 33px;
 }
 @media (min-width: 901px) {
-  .triage-workspace .inbox-column { position: sticky; align-self: start; inset-block-start: 12px; }
+  .triage-workspace .workspace-inner {
+    --inbox-sticky-inset: 12px;
+    padding-block-end: var(--inbox-sticky-inset);
+  }
+  .triage-workspace .inbox-column {
+    position: sticky;
+    align-self: start;
+    inset-block-start: var(--inbox-sticky-inset);
+    max-height: calc(100dvh - 2 * var(--inbox-sticky-inset));
+  }
 }
 .triage-columns {
   z-index: 1;
