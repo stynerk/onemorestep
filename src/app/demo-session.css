@@ -13,7 +13,7 @@
 
 .demo-login-panel {
   box-sizing: border-box;
-  width: min(100%, 448px);
+  width: min(100%, 480px);
   padding: clamp(20px, 5vw, 36px);
   border: 1px solid var(--rule);
   background: var(--slip);
@@ -26,7 +26,7 @@
   line-height: 1.2;
 }
 
-.demo-login-intro { margin: 8px 0 24px; color: var(--secondary-ink); }
+.demo-login-intro { margin: 8px 0 24px; color: var(--secondary-ink); word-break: keep-all; }
 
 .demo-login-notice {
   margin: 0 0 20px;

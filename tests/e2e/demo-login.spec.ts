@@ -53,7 +53,7 @@ test("공개 시연의 직접 진입, 로그인 유지와 로그아웃 이후 �
 test("틀린 시연 값에는 오류를 안내하고 보호 화면 접근을 막는다", async ({ page }) => {
   await page.goto(loginUrl);
   await submitLogin(page, "incorrect-demo-value");
-  await expect(page.getByRole("alert")).toContainText("ID 또는 비밀번호가 맞지 않습니다.");
+  await expect(page.getByRole("main").getByRole("alert")).toContainText("ID 또는 비밀번호가 맞지 않습니다.");
   await expect(page).toHaveURL(loginUrl);
   await page.goto(publicBaseUrl + "/marketing");
   await expect(page).toHaveURL(loginUrl);
