@@ -1,3 +1,4 @@
+.marketing-workspace { container: marketing / inline-size; }
 .marketing-workspace h2 { font-size: var(--type-18); }
 .marketing-workspace h3 { font-size: var(--type-15); }
 .marketing-workspace h4 { margin: 0; font-size: var(--type-15); }
@@ -55,7 +56,6 @@
 .marketing-edit { display: grid; gap: 8px; }
 .marketing-edit textarea { resize: vertical; }
 .marketing-workspace-actions, .marketing-intake, .marketing-board { margin-bottom: 14px; }
-.marketing-anchor { display: inline-flex; align-items: center; text-decoration: none; }
 .marketing-intake { display: grid; gap: 10px; padding: 14px 16px; }
 .marketing-intake-form { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; align-items: start; }
 .marketing-intake-form label, .marketing-intake-stage, .marketing-workflow-actions label, .marketing-requester-choice {
@@ -84,14 +84,14 @@
 .marketing-submission-memo { margin-top: 6px; overflow-wrap: anywhere; white-space: pre-wrap; }
 .marketing-channel-effect { flex-basis: 100%; color: var(--secondary-ink); font-size: var(--type-13); }
 .marketing-channel-effect.marketing-deadline-warning { color: var(--verdict-risk); }
-@media (max-width: 1080px) {
+@container marketing (width <= 1080px) {
   .marketing-reasons { grid-template-columns: repeat(2,minmax(0,1fr)); }
 }
-@media (max-width: 850px) {
+@container marketing (width < 880px) {
   .marketing-board { grid-template-columns: minmax(0,1fr); }
   .marketing-intake-form { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
-@media (max-width: 475px) {
+@container marketing (width <= 475px) {
   .marketing-rank-form { grid-template-columns: minmax(75px,auto) minmax(0,1fr); }
   .marketing-channels { grid-template-columns: minmax(0,1fr); }
   .marketing-detail-head, .marketing-detail-section { padding-inline: 12px; }
@@ -110,7 +110,7 @@
 .marketing-score-track > span { display: block; block-size: 100%; background: var(--dispatch); }
 .marketing-detail { background: var(--slip); }
 
-@media (max-width: 510px) {
+@container marketing (width <= 510px) {
   .marketing-list-heading { display: none; }
   .marketing-request { grid-template-columns: 31px minmax(0, 1fr) 62px; row-gap: 4px; }
   .marketing-rank { grid-column: 1; grid-row: 1; }

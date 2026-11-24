@@ -1,18 +1,16 @@
 "use client";
 
-import { DemoLogoutButton } from "../demo-session";
-import Link from "next/link";
 import { useEffect, useRef, useState, useSyncExternalStore, type FormEvent } from "react";
 import { marketingDraftTemplate, type MarketingDraft } from "../../lib/marketing/draft";
 import { marketingChannels, rankedMarketingRequests, type ChannelId } from "../../lib/marketing/policy";
 import { deadlineWarning, initialWorkflow, rankWorkflowRequests, type MarketingIntake, type WorkflowStatus } from "../../lib/marketing/workflow";
 import {
-  hasApprovedDraft, isMarketingDraft, readMarketingSnapshot, readMarketingState, resetMarketingDemo, submitMarketingRequest,
+  hasApprovedDraft, isMarketingDraft, readMarketingSnapshot, readMarketingState, submitMarketingRequest,
   subscribeToMarketingState, updateMarketingState, updateMarketingWorkflow,
   type DraftRecord,
 } from "./storage";
 import { DraftPreview } from "./draft-preview";
-import { CampaignTracking, campaignEffectLabel, useCampaignTracking } from "./campaign-tracking";
+import { campaignEffectLabel, useCampaignTracking } from "./campaign-tracking";
 import { RequestIntake } from "./request-intake";
 import { RequesterView, RequestWorkflow } from "./request-workflow";
 
@@ -33,7 +31,6 @@ export function MarketingWorkspace({ publicDemo }: { publicDemo: boolean }) {
   const warnings = new Map(summaries.map(summary => [summary.id, summary.warning]));
   const imminent = summaries.filter(summary => summary.warning === "마감 임박").length;
   const overdue = summaries.filter(summary => summary.warning === "마감 초과").length;
-  const issuedCodes = summaries.flatMap(({ code, title }) => code ? [{ code, title }] : []);
   const [selectedId, setSelectedId] = useState(rankedMarketingRequests[0].id);
   const [openPanel, setOpenPanel] = useState<"intake" | "requester" | null>(null);
   const [rankTarget, setRankTarget] = useState("");
@@ -43,7 +40,6 @@ export function MarketingWorkspace({ publicDemo }: { publicDemo: boolean }) {
   const [editing, setEditing] = useState(false);
   const [notice, setNotice] = useState("");
   const [error, setError] = useState("");
-  const [confirmReset, setConfirmReset] = useState(false);
   const activeRequest = useRef<AbortController | null>(null);
   const detailHeading = useRef<HTMLHeadingElement | null>(null);
   const selected = summaries.find(item => item.id === selectedId) ?? summaries[0];
@@ -67,7 +63,8 @@ export function MarketingWorkspace({ publicDemo }: { publicDemo: boolean }) {
     setEditing(false);
     setNotice("");
     setError("");
-    if (window.matchMedia("(max-width: 850px)").matches) {
+    const workspaceWidth = detailHeading.current?.closest(".marketing-workspace")?.clientWidth;
+    if (workspaceWidth !== undefined && workspaceWidth < 880) {
       requestAnimationFrame(() => detailHeading.current?.focus());
     }
   }
@@ -175,39 +172,10 @@ export function MarketingWorkspace({ publicDemo }: { publicDemo: boolean }) {
     setEditing(false);
   }
 
-  function reset() {
-    activeRequest.current?.abort();
-    if (!resetMarketingDemo()) {
-      setError("브라우저의 마케팅 시연 기록을 초기화하지 못했습니다.");
-      return;
-    }
-    setSelectedId(rankedMarketingRequests[0].id);
-    setOpenPanel(null);
-    setRankTarget("");
-    setReason("");
-    setActiveChannel(null);
-    setEditing(false);
-    setConfirmReset(false);
-    setNotice("마케팅 시연 기록을 초기화했습니다.");
-    setError("");
-  }
-
   return <main className="workspace marketing-workspace">
-    <header className="masthead">
-      <div className="brand">
-        <span className="brand-icon" aria-hidden="true">✦</span>
-        <div><p className="brand-name">One More Step</p><p className="brand-company">MEDICOM</p></div>
-      </div>
-      <nav className="masthead-actions" aria-label="업무 메뉴">
-        <Link className="button button-reset masthead-link" href="/">문의함</Link>
-        <button className="button button-reset" type="button" onClick={() => setConfirmReset(true)}>시연 초기화</button>
-        <DemoLogoutButton className="button button-reset" />
-      </nav>
-    </header>
-
     <div className="workspace-inner">
       <div className="page-heading">
-        <div><h1>마케팅 협조 요청</h1><p>본사 세일즈 요청을 처리하고 유입 리드의 품질을 확인하세요.</p></div>
+        <div><h1>마케팅 협조 요청</h1><p>본사 세일즈 요청을 접수하고 우선순위에 따라 처리하세요.</p></div>
         {publicDemo && <span className="marketing-pill">공개 시연 · 기록 재생</span>}
       </div>
       <div className="marketing-actions marketing-workspace-actions">
@@ -215,18 +183,12 @@ export function MarketingWorkspace({ publicDemo }: { publicDemo: boolean }) {
           onClick={() => setOpenPanel(openPanel === "intake" ? null : "intake")}>요청 접수</button>
         <button type="button" className="button button-light" aria-expanded={openPanel === "requester"}
           onClick={() => setOpenPanel(openPanel === "requester" ? null : "requester")}>요청자 보기</button>
-        {openPanel !== "requester" && <a className="button button-light marketing-anchor" href="#campaign-tracking-title">캠페인 효과 보기</a>}
       </div>
-      {confirmReset && <div className="feedback confirm" role="status">
-        <p>이 브라우저의 마케팅 접수, 처리, 순위 조정, 채널 설정과 초안 기록을 지울까요?</p>
-        <button className="button button-light" type="button" onClick={() => setConfirmReset(false)}>취소</button>
-        <button className="button button-primary" type="button" onClick={reset}>초기화 확인</button>
-      </div>}
       {error && <p className="feedback" role="alert">{error}</p>}
       {notice && <p className="feedback" role="status">{notice}</p>}
       {openPanel === "intake" && <RequestIntake leads={tracking.leadOptions} submit={receive} cancel={() => setOpenPanel(null)} />}
-      {openPanel === "requester" ? <RequesterView requests={summaries} /> : <>
-      <div className="marketing-board">
+      {openPanel === "requester" && <RequesterView requests={summaries} />}
+      {openPanel === null && <div className="marketing-board">
         <div className="marketing-left">
           <section className="marketing-card marketing-queue" aria-labelledby="marketing-priority">
             <div className="marketing-section-head">
@@ -355,9 +317,7 @@ export function MarketingWorkspace({ publicDemo }: { publicDemo: boolean }) {
               editing={editing} setEditing={setEditing} saveDraft={saveDraft} readOnly={terminal} />}
           </section>
         </article>
-      </div>
-      <CampaignTracking campaigns={tracking.campaigns} issuedCodes={issuedCodes} />
-      </>}
+      </div>}
     </div>
   </main>;
 }

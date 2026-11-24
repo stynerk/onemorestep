@@ -46,9 +46,7 @@ export function CampaignTracking({ campaigns, issuedCodes = [] }: {
   issuedCodes?: readonly { code: string; title: string }[];
 }) {
   const largestCampaign = Math.max(1, ...campaigns.map(({ total }) => total));
-  return <section className="marketing-card" aria-labelledby="campaign-tracking-title">
-    <h2 id="campaign-tracking-title" className={styles.title}>캠페인 효과</h2>
-    <p className={styles.summary}>문의함 선별 기록으로 집계합니다. 유입 리드의 선별이 끝나면 유효 비율과 효과가 표시됩니다.</p>
+  return <section className="marketing-card" aria-label="캠페인 효과">
     <div className={styles.scroller} tabIndex={0} role="region" aria-label="캠페인 효과 표 스크롤">
       <table className={styles.table} aria-label="캠페인 효과">
         <thead>
