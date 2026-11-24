@@ -81,6 +81,37 @@ export function DemoLogin() {
 
   return (
     <main className="demo-login">
+      <figure className="demo-login-banner" role="img" aria-labelledby="demo-banner-title demo-banner-copy" aria-describedby="demo-banner-summary">
+        <h2 id="demo-banner-title">세일즈보다 한 걸음 먼저</h2>
+        <p id="demo-banner-copy">쏟아지는 문의에서 진짜 고객을 먼저 골라, 받을 곳에 넘길 준비까지 해 둡니다.</p>
+        <p id="demo-banner-summary" hidden>문의 30건이 도착하면 Liner 검색·모델로 근거를 확인해 선별합니다. 세일즈가 보기 전에 받는 곳 A Medical을 준비해 두고, 세일즈는 한 번 승인합니다.</p>
+
+        <ol className="demo-banner-steps" aria-hidden="true">
+          <li className="demo-banner-step demo-banner-arrival">
+            <p className="demo-banner-stage">문의 도착</p>
+            <div className="demo-banner-stack"><span>문의 <strong>30건</strong></span></div>
+          </li>
+          <li className="demo-banner-step demo-banner-selection">
+            <p className="demo-banner-stage">선별</p>
+            <div className="demo-banner-tags">
+              <span className="demo-banner-valid">유효</span>
+              <span className="demo-banner-ambiguous">애매</span>
+              <span className="demo-banner-check">국가 확인</span>
+              <span className="demo-banner-check">제휴 확인</span>
+              <span className="demo-banner-invalid">무효</span>
+            </div>
+            <p className="demo-banner-evidence">Liner 검색·모델로 근거 확인</p>
+          </li>
+          <li className="demo-banner-step demo-banner-handoff">
+            <span className="demo-banner-before">세일즈가 보기 전</span>
+            <p className="demo-banner-stage">넘길 준비</p>
+            <div className="demo-banner-slip">
+              <span>받는 곳</span> <strong>A Medical</strong> <span>· 승인 한 번</span>
+            </div>
+          </li>
+        </ol>
+      </figure>
+
       <section className="demo-login-panel" aria-labelledby="demo-login-title">
         <h1 id="demo-login-title">One More Step</h1>
         <p className="demo-login-intro">세일즈보다 한발 앞에서 리드를 선별하고 넘길 곳을 준비합니다.</p>
