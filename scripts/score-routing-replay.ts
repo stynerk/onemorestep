@@ -38,7 +38,9 @@ function summarize(rows: Comparison[], stage: "before" | "after") {
   const totals = {
     size: rows.length, verdictMatch: 0, handoffMatch: 0, unassigned: 0,
     humanAmbiguous: 0, automatic: 0, automaticAgrees: 0, freeEmail: 0, weakIntent: 0,
-    r3Agrees: 0, validToInvalid: 0, falseValid: 0,
+    r3Agrees: 0, freeEmailAgrees: 0, weakIntentAgrees: 0, validToInvalid: 0, falseValid: 0,
+    humanReasons: { impersonation: 0, externalFailure: 0, unverifiedPurchase: 0, other: 0 },
+    r3LabelDisagreements: { valid: 0, "country-check": 0, "partnership-check": 0, invalid: 0 },
   };
   for (const { route, verdict, handoff } of rows) {
     const target = handoffKey(route[stage], route.country);
@@ -48,13 +50,20 @@ function summarize(rows: Comparison[], stage: "before" | "after") {
     totals.handoffMatch += Number(target === handoff);
     totals.unassigned += Number(target === "regional-sales:unassigned");
     totals.humanAmbiguous += Number(route.verdict === "ambiguous" && !r3);
+    if (stage === "after" && route.humanReason) totals.humanReasons[route.humanReason]++;
     totals.automatic += Number(automatic);
     totals.automaticAgrees += Number(automatic && route.verdict === verdict);
     totals.freeEmail += Number(r3 === "free-email");
     totals.weakIntent += Number(r3 === "weak-intent");
     totals.r3Agrees += Number(Boolean(r3) && route.verdict === verdict);
+    totals.freeEmailAgrees += Number(r3 === "free-email" && route.verdict === verdict);
+    totals.weakIntentAgrees += Number(r3 === "weak-intent" && route.verdict === verdict);
+    if (r3 && verdict !== "ambiguous") totals.r3LabelDisagreements[verdict]++;
     totals.validToInvalid += Number(verdict === "valid" && route.verdict === "invalid");
     totals.falseValid += Number(verdict !== "valid" && route.verdict === "valid");
+  }
+  if (stage === "after") {
+    assert.equal(Object.values(totals.humanReasons).reduce((sum, count) => sum + count, 0), totals.humanAmbiguous);
   }
   return totals;
 }

@@ -251,7 +251,7 @@ async function measure(mode: "capture" | "replay" | "routing") {
     if (critical.error) throw new Error(critical.error);
     const { verdict, reason, handoff, mode: evidenceMode } = assessment;
     if (mode === "routing") {
-      const route = routingReplayRow(lead, assessment);
+      const route = routingReplayRow(lead, assessment, (await intent)?.intent);
       routing.set(lead.id, route);
       return { id: lead.id, verdict, reason, handoff: route.before, mode: evidenceMode, failures };
     }

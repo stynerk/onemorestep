@@ -180,10 +180,11 @@ async function measure(mode: Mode) {
     });
     if (blocked) throw new Error(blocked);
     const { verdict, reason, handoff, sources, mode: evidenceMode, details } = result.assessment;
-    const route = mode === "routing" ? routingReplayRow(lead, result.assessment) : undefined;
+    const intentAdvice = await intent;
+    const route = mode === "routing" ? routingReplayRow(lead, result.assessment, intentAdvice?.intent) : undefined;
     if (route) routing.push(route);
     predictions.push({ id: lead.id, verdict, reason, handoff: route ? route.before : handoff, sources, mode: evidenceMode, details,
-      intentAdvice: await intent, domainAdvice });
+      intentAdvice, domainAdvice });
     if (mode === "capture") console.log(lead.id + " recorded");
   }
   if (used.size !== recordings.size) throw new Error("Capture includes requests the frozen engine did not consume.");
