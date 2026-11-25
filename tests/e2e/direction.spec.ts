@@ -16,10 +16,10 @@ test("의료기기 사칭 의심을 담당자가 확인하면 근거와 기존 �
   await page.goto(publicUrl + "/inbox", { waitUntil: "domcontentloaded" });
   await page.getByRole("button", { name: "선별 시작", exact: true }).click();
   await expect(page.getByRole("button", { name: "다시 선별", exact: true })).toBeEnabled();
-  await expect(feedback(page)).toContainText("6");
+  await expect(feedback(page)).toContainText("3");
   await feedback(page).click();
-  const panel = page.getByRole("region", { name: "방향이 필요한 리드 6건" });
-  await expect(panel.locator(".direction-lead")).toHaveCount(6);
+  const panel = page.getByRole("region", { name: "사람 확인 필요 3건" });
+  await expect(panel.locator(".direction-lead")).toHaveCount(3);
   await expect(row(page, "L17")).toHaveCount(0);
   const inquiry = row(page, "L29");
   await expect(inquiry.getByRole("link").first()).toBeVisible();
@@ -27,7 +27,7 @@ test("의료기기 사칭 의심을 담당자가 확인하면 근거와 기존 �
   await inquiry.getByRole("textbox", { name: "답변 메모" }).fill("대표 연락처로 확인함");
   await inquiry.getByRole("button", { name: "답변 반영" }).click();
   await expect(row(page, "L29")).toHaveCount(0);
-  await expect(feedback(page)).toContainText("5");
+  await expect(feedback(page)).toContainText("2");
   await page.getByRole("link", { name: "전체 문의", exact: true }).click();
   await expect(card(page).getByText("유효", { exact: true })).toBeVisible();
   await expect(card(page).getByRole("heading", { name: "추천 딜러" })).toBeVisible();
@@ -38,6 +38,34 @@ test("의료기기 사칭 의심을 담당자가 확인하면 근거와 기존 �
     headers: { Origin: publicUrl }, data: {},
   });
   expect(mail.status()).toBe(403);
+});
+
+test("애매 문의의 자동 확인 대기와 사람 확인을 나누고 자동 회신으로 다시 선별한다", async ({ page }) => {
+  await page.goto(publicUrl + "/inbox", { waitUntil: "domcontentloaded" });
+  await page.getByRole("button", { name: "선별 시작", exact: true }).click();
+  await expect(page.getByRole("button", { name: "다시 선별", exact: true })).toBeEnabled();
+  await page.getByRole("link", { name: "선별 현황", exact: true }).click();
+  const paths = page.getByRole("region", { name: "애매 문의 처리" });
+  await expect(paths.getByRole("link", { name: "자동 확인 메일 대기 3" })).toBeVisible();
+  await expect(paths.getByRole("link", { name: "사람 확인 필요 3" })).toBeVisible();
+  await paths.getByRole("link", { name: "자동 확인 메일 대기 3" }).click();
+  await page.getByRole("button", { name: /^L09 / }).click();
+  await expect(card(page).getByRole("heading", { name: "자동 확인 메일 대기" })).toBeVisible();
+  await expect(card(page).getByRole("button", { name: "전화 필요" })).toHaveCount(0);
+  await card(page).getByRole("link", { name: "확인 메일 회신 기록" }).click();
+
+  const waiting = page.getByRole("region", { name: "자동 확인 메일 대기 3건" });
+  await expect(waiting.getByText("공개 시연에서는 메일을 보내지 않습니다.", { exact: false })).toBeVisible();
+  await expect(row(page, "L08").getByRole("textbox", { name: "회신한 기관 공식 이메일" })).toBeVisible();
+  const plan = row(page, "L09");
+  await plan.getByRole("textbox", { name: "회신한 구매 계획(수량·시기·용도)" }).fill("Need pricing for 10 units");
+  await plan.getByRole("button", { name: "회신 기록 및 다시 선별" }).click();
+  await expect(plan).toHaveCount(0);
+
+  await page.getByRole("link", { name: "전체 문의", exact: true }).click();
+  await expect(card(page).getByText("유효", { exact: true })).toBeVisible();
+  await card(page).getByText("회신 기록", { exact: true }).click();
+  await expect(card(page).getByText("Need pricing for 10 units", { exact: false })).toBeVisible();
 });
 
 test("같은 기관과 도메인의 다음 SaaS 문의는 새로고침 뒤에도 이전 답을 재사용한다", async ({ page }) => {

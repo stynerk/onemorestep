@@ -118,6 +118,9 @@
 .workspace .inbox-report-counts a:hover { background: var(--dispatch-soft); }
 .inbox-feedback .direction-panel { margin: 0; padding: 0; border: 0; background: transparent; }
 .inbox-feedback .direction-panel > h2 { margin-bottom: 10px; }
+.inbox-feedback .confirmation-panel { margin-top: 20px; }
+.confirmation-panel > .muted { margin-bottom: 10px; }
+.confirmation-panel input[type="email"] { min-width: 0; color: var(--ink); background: var(--slip); border: 1px solid var(--field-border); border-radius: 6px; padding: 5px 7px; }
 .inbox-feedback .direction-lead { scroll-margin-block-start: 12px; }
 
 .triage-workspace .board {

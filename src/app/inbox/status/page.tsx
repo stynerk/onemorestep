@@ -29,6 +29,13 @@ export default function InboxStatusPage() {
         <h2 id="assessment-result-title">선별 결과</h2>
         <ul className="inbox-report-counts">{inboxGroups.filter((filter) => filter !== "new").map(summary)}</ul>
       </section>
+      <section className="inbox-report-section" aria-labelledby="ambiguous-path-title">
+        <h2 id="ambiguous-path-title">애매 문의 처리</h2>
+        <ul className="inbox-report-counts">
+          {summary("automatic-confirmation")}
+          {summary("human-review")}
+        </ul>
+      </section>
       <section className="inbox-report-section" aria-labelledby="handoff-counts-title">
         <h2 id="handoff-counts-title">넘길 곳</h2>
         <ul className="inbox-report-counts">{handoffFilters.map(summary)}</ul>
