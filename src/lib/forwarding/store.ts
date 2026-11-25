@@ -1,8 +1,10 @@
+import { confirmationReply, isAutomaticConfirmation } from "./confirmation";
+import { isMailKind } from "./mail-template";
 import { locales } from "./institution-policy";
 import { DIRECTION_ACTOR, matchesPreviousDirectionConfirmation } from "./direction-resolution";
 import { regionalSalesHandoff } from "./handoff";
 import { createIndustryState, medicom, regionalHandoffForPolicy, type DemoIndustry } from "./industry-demo";
-import { mailKindForLead } from "./inbox";
+import { automaticConfirmationForLead, mailKindForLead } from "./inbox";
 import { openAssignment, reassignmentProposal, reassignmentTarget } from "./reassignment";
 import { DOMAIN_CHECKS, EXTERNAL_STATUSES, MEMO_INTENTS, REGIONS, SOURCE_KINDS, VERDICTS, WORKFLOW_STATES } from "./types";
 import type { Assessment, DirectionConfirmation, ForwardingEvent, ForwardingState } from "./types";
@@ -151,6 +153,9 @@ export function isForwardingEvent(value: unknown, state: ForwardingState): value
     }
     case "reply": {
       const fields = [...common, "kind", "text"];
+      if (isAutomaticConfirmation(value.kind)) {
+        return leadExists && exactly(value, fields) && confirmationReply({ kind: value.kind, text: value.text }) !== null;
+      }
       if (Object.hasOwn(value, "selection")) {
         fields.push("selection");
         if (typeof value.selection !== "string") return false;
@@ -171,7 +176,7 @@ export function isForwardingEvent(value: unknown, state: ForwardingState): value
           event.id === value.causeEventId && event.leadId === lead.id && mailKindForLead(event, lead, state.policy) === value.kind)) return false;
       }
       return leadExists && exactly(value, fields)
-        && isId(value.mailId) && member(value.kind, ["dealer-summary", "country-check", "partnership-check", "manager-confirmation", "operations"])
+        && isId(value.mailId) && isMailKind(value.kind)
         && member(value.recipientKind, ["dealer", "lead", "manager", "operations"])
         && member(value.status, ["sent", "failed", "unknown", "blocked"]);
     }
@@ -197,6 +202,12 @@ function projectEvent(state: ForwardingState, input: unknown, validateProposal: 
     const confirmation = input.assessment.directionConfirmation;
     const lead = state.leads.find((row) => row.id === input.leadId)!;
     if (confirmation.at > input.at || (confirmation.previous && !matchesPreviousDirectionConfirmation(state, lead, confirmation))) {
+      return { ok: false, error: "invalid-event", state: structuredClone(state) };
+    }
+  }
+  if (input.type === "reply" && isAutomaticConfirmation(input.kind)) {
+    const lead = state.leads.find((row) => row.id === input.leadId)!;
+    if (automaticConfirmationForLead(state, lead) !== input.kind) {
       return { ok: false, error: "invalid-event", state: structuredClone(state) };
     }
   }

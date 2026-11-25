@@ -1,3 +1,4 @@
+import { automaticConfirmationFor, isAutomaticConfirmation, isConfirmationMail } from "./confirmation";
 import { forwardingPolicy } from "./policy";
 import type { Assessment, ForwardingEvent, ForwardingState, LeadInput, MailKind, ReplyKind, Verdict, WorkflowPolicy } from "./types";
 
@@ -12,6 +13,16 @@ export function inboxBucket(state: ForwardingState, lead: LeadInput): Verdict | 
     (event.type === "assessed" || event.type === "decision" || event.type === "review-reopened"));
   if (latest?.type === "decision" && latest.action === "phone") return "ambiguous";
   return status.assessment?.verdict ?? null;
+}
+
+export function automaticConfirmationForLead(state: ForwardingState, lead: LeadInput) {
+  const status = state.leadStates[lead.id];
+  return status?.workflow === "reply-pending" && status.assessment ? automaticConfirmationFor(status.assessment, lead) : null;
+}
+
+export function lastConfirmationReply(events: ForwardingEvent[], leadId: string) {
+  return events.findLast((event): event is ReplyEvent =>
+    event.type === "reply" && event.leadId === leadId && isAutomaticConfirmation(event.kind));
 }
 
 export function inboxOrder(leads: LeadInput[], bucket: Verdict | null, prioritizedLeadId: string | null = "L06"): LeadInput[] {
@@ -75,21 +86,26 @@ export function hasStaleEvidence(assessment: Assessment, now: number) {
   return assessment.sources.length > 0 && now - Date.parse(assessment.searchedAt) >= 86_400_000;
 }
 
-export function mailKindFor(event: ForwardingEvent): MailKind | null {
+export function mailKindFor(event: ForwardingEvent, lead?: Pick<LeadInput, "memo">): MailKind | null {
   if (event.type === "decision" && event.dealerId && (event.action === "approve" || event.action === "change-dealer")) return "dealer-summary";
   if (event.type === "reassigned") {
     if (event.target === "dealer") return "dealer-summary";
     return event.target === "manager-confirmation" ? "manager-confirmation" : null;
   }
   if (event.type !== "assessed") return null;
+  const confirmation = event.workflow === "reply-pending" && lead && automaticConfirmationFor(event.assessment, lead);
+  if (confirmation) return confirmation === "free-email" ? "free-email-confirmation" : "weak-intent-confirmation";
   if (event.assessment.verdict === "country-check") return "country-check";
   if (event.assessment.verdict === "partnership-check") return "partnership-check";
   if (event.workflow === "manager-confirmation-pending") return "manager-confirmation";
   return null;
 }
 
-export const mailKindForLead = (event: ForwardingEvent, lead: LeadInput, policy: WorkflowPolicy = forwardingPolicy): MailKind | null =>
-  event.type === "assessed" && !Object.hasOwn(policy.countryRegions, lead.country) ? "operations" : mailKindFor(event);
+export function mailKindForLead(event: ForwardingEvent, lead: LeadInput, policy: WorkflowPolicy = forwardingPolicy): MailKind | null {
+  const kind = mailKindFor(event, lead);
+  if (kind && isConfirmationMail(kind)) return kind;
+  return event.type === "assessed" && !Object.hasOwn(policy.countryRegions, lead.country) ? "operations" : kind;
+}
 
 type MailDelivery = Extract<ForwardingEvent, { type: "mail-delivery" }>;
 

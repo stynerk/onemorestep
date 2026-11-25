@@ -93,8 +93,10 @@ export interface LeadState {
   dealerId: string | null;
 }
 export type DecisionAction = "approve" | "change-dealer" | "phone" | "disqualify";
-export type ReplyKind = "country" | "partnership" | "manager-confirmation";
-export type MailKind = "dealer-summary" | "country-check" | "partnership-check" | "manager-confirmation" | "operations";
+export type AutomaticConfirmation = "free-email" | "weak-intent";
+export type ReplyKind = "country" | "partnership" | "manager-confirmation" | AutomaticConfirmation;
+export type MailKind = "dealer-summary" | "country-check" | "partnership-check" | "manager-confirmation" | "operations"
+  | "free-email-confirmation" | "weak-intent-confirmation";
 export type RecipientKind = "dealer" | "lead" | "manager" | "operations";
 export type MailStatus = "sent" | "failed" | "unknown" | "blocked";
 export type ReassignmentTarget =

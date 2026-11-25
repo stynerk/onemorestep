@@ -26,11 +26,13 @@ async function tempDirectory(t: TestContext) {
   return directory;
 }
 
-test("five test templates identify the intended role and omit lead contact details", () => {
+test("test templates identify the intended role and omit lead contact details", () => {
   const labels: Record<MailKind, string> = {
     "dealer-summary": "딜러",
     "country-check": "리드",
     "partnership-check": "리드",
+    "free-email-confirmation": "리드",
+    "weak-intent-confirmation": "리드",
     "manager-confirmation": "지역 담당자",
     operations: "운영",
   };
@@ -39,6 +41,8 @@ test("five test templates identify the intended role and omit lead contact detai
     assert.match(mail.subject, /^\[TEST\] L01 /);
     assert.equal(mail.text.split("\n")[0], `가상 리드 테스트 메일, 원래 수신자: ${label}`);
     if (kind === "partnership-check") assert.match(mail.text, /문의 기관의 소재지/);
+    if (kind === "free-email-confirmation") assert.match(mail.text, /기관 공식 메일 주소로 회신/);
+    if (kind === "weak-intent-confirmation") assert.match(mail.text, /구매 계획\(수량·시기·용도\)/);
     assert.ok(!mail.text.includes(lead.email));
     assert.ok(!mail.text.includes(lead.phone));
   }
@@ -133,6 +137,24 @@ test("separate mail kinds for one business event each deliver only to the config
   assert.deepEqual(first, duplicate);
   assert.deepEqual(mailboxes, kinds.map(() => inbox));
   assert.equal(new Set(first.map((row) => row.event?.id)).size, 5);
+});
+
+test("automatic confirmation deduplicates the same lead and reason even across assessment events", async (t) => {
+  const directory = await tempDirectory(t);
+  const mailboxes: string[] = [];
+  const service = createForwardingMailService({
+    directory, env: () => env, log: () => {},
+    send: async (_settings, mailbox) => {
+      mailboxes.push(mailbox);
+      return "sent";
+    },
+  });
+  const first = { eventId: "first-assessment", leadId: "L08", kind: "free-email-confirmation" } as const;
+  const second = { ...first, eventId: "second-assessment" };
+  const [one, two] = await Promise.all([service.dispatch(first), service.dispatch(second)]);
+  assert.equal(one.code, "sent");
+  assert.deepEqual(two, one);
+  assert.deepEqual(mailboxes, [inbox]);
 });
 
 test("original and replacement dealer summaries for one lead each send once to the sole test inbox", async (t) => {
