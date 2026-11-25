@@ -17,6 +17,7 @@ export const forwardingPolicy = {
     대한민국: "APAC", 일본: "APAC", 싱가포르: "APAC", 호주: "APAC", 베트남: "APAC", 인도: "APAC",
     미국: "NA", 캐나다: "NA", 멕시코: "LATAM", 브라질: "LATAM",
     독일: "EU", 프랑스: "EU", 영국: "EU", 스웨덴: "EU", 아랍에미리트: "MEA",
+    스위스: "EU", 스페인: "EU", 네덜란드: "EU", 콜롬비아: "LATAM", 이스라엘: "MEA",
   } satisfies Record<string, Region>,
   managers: [
     { id: "manager-na", name: "담당 NA", region: "NA" },

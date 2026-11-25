@@ -1,4 +1,5 @@
 import { isPublicDemo, linerRuntimeSettings } from "../../../../lib/demo-mode";
+import { automaticConfirmationFor, confirmationReply } from "../../../../lib/forwarding/confirmation";
 import { createAssessmentService } from "../../../../lib/forwarding/assessment-service";
 import { formulateDirectionQuestion } from "../../../../lib/forwarding/direction-question-router";
 import { lookupSavedDomainEvidence, requestDomainEvidence } from "../../../../lib/forwarding/domain-router";
@@ -27,7 +28,7 @@ export async function POST(request: Request): Promise<Response> {
     return Response.json({ error: "올바른 JSON 요청이 필요합니다." }, { status: 400, headers });
   }
   if (body === null || typeof body !== "object" || !("leadId" in body) || typeof body.leadId !== "string"
-    || Object.keys(body).some((key) => key !== "leadId" && key !== "country" && key !== "partnershipPurchase" && key !== "industry")) {
+    || Object.keys(body).some((key) => key !== "leadId" && key !== "country" && key !== "partnershipPurchase" && key !== "industry" && key !== "confirmation")) {
     return Response.json({ error: "시연 리드 ID를 입력해 주세요." }, { status: 400, headers });
   }
   const industry = "industry" in body ? body.industry : "medicom";
@@ -49,8 +50,13 @@ export async function POST(request: Request): Promise<Response> {
   }
   // The submitted reply note stays in browser storage. Only the confirmed intent changes.
   const confirmedPurchase = "partnershipPurchase" in body;
-  const memo = confirmedPurchase ? "회신에서 구매 견적 요청을 확인함" : lead.memo;
-  const input = { ...lead, country, memo };
+  const confirmation = "confirmation" in body ? confirmationReply(body.confirmation) : null;
+  if ("confirmation" in body && (!confirmation || confirmedPurchase)) {
+    return Response.json({ error: "확인 메일 회신 내용을 확인해 주세요." }, { status: 400, headers });
+  }
+  const memo = confirmation?.kind === "weak-intent" ? confirmation.text : confirmedPurchase ? "회신에서 구매 견적 요청을 확인함" : lead.memo;
+  const email = confirmation?.kind === "free-email" ? confirmation.text : lead.email;
+  const input = { ...lead, country, memo, email };
   const runtime = linerRuntimeSettings();
   // Public assessment only uses recorded Router output. A confirmed reply already gives the intent.
   const intent = confirmedPurchase ? null : publicDemo ? lookupSavedInquiryIntent(memo, savedInquiryIntents)
@@ -60,8 +66,16 @@ export async function POST(request: Request): Promise<Response> {
       // A confirmed country changes the routing decision, but the ownership sources are the same.
       ?? (evidence.country === lead.country ? null : lookupSavedDomainEvidence({ ...evidence, country: lead.country }, savedDomainEvidence))
     : runtime.mode?.trim() === "live" && runtime.apiKey?.trim() ? (evidence) => requestDomainEvidence(evidence, runtime) : undefined;
-  const result = saved ? await assessSavedIndustryLeadWithDomainEvidence(saved, input, lead.country, await intent, domainAdvice)
+  const evaluated = saved ? await assessSavedIndustryLeadWithDomainEvidence(saved, input, lead.country, await intent, domainAdvice)
     : await service.assess(input, { ...runtime, regionalCountry: lead.country, intent, domainAdvice });
+  const routerMemoIntent = (await intent)?.intent;
+  const details = evaluated.assessment.details;
+  const result = details && routerMemoIntent
+    ? { ...evaluated, assessment: { ...evaluated.assessment, details: { ...details, routerMemoIntent } } }
+    : evaluated;
+  if (!confirmation && automaticConfirmationFor(result.assessment)) {
+    return Response.json({ leadId: lead.id, ...result, workflow: "reply-pending" }, { headers });
+  }
   if (result.assessment.verdict === "ambiguous") {
     const directionQuestion = await formulateDirectionQuestion(input, result.assessment, { ...runtime, publicDemo });
     if (directionQuestion) return Response.json({

@@ -1,15 +1,16 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { automaticConfirmationFor, confirmationReply, isConfirmationMail } from "../../lib/forwarding/confirmation";
 import { recommendDealer, recordDealerOutcome } from "../../lib/forwarding/dealers";
 import { getDirectionQuestion, type DirectionKind } from "../../lib/forwarding/direction-questions";
 import { applyDirectionConfirmation, DIRECTION_ACTOR, directionConfirmationFor, isDirectionAnswerFor } from "../../lib/forwarding/direction-resolution";
 import { regionalSalesHandoff } from "../../lib/forwarding/handoff";
 import { createIndustryState, regionalHandoffForPolicy, type DemoIndustry } from "../../lib/forwarding/industry-demo";
-import { confirmedCountry, confirmedManagerDealer, inboxBucket, lastReply, mailKindForLead, mailRequestsFor, responseDeadline } from "../../lib/forwarding/inbox";
+import { automaticConfirmationForLead, confirmedCountry, confirmedManagerDealer, inboxBucket, lastConfirmationReply, lastReply, mailKindForLead, mailRequestsFor, responseDeadline } from "../../lib/forwarding/inbox";
 import { openAssignment, reassignmentTarget, responseClock, type ReassignmentProposal } from "../../lib/forwarding/reassignment";
 import { createBrowserForwardingStore, type StoreResult } from "../../lib/forwarding/store";
-import type { Assessment, DecisionAction, DealerDelivery, DealerOutcome, DirectionAnswer, ForwardingEvent, ForwardingState, LeadInput, ReplyKind, WorkflowState } from "../../lib/forwarding/types";
+import type { Assessment, AutomaticConfirmation, DecisionAction, DealerDelivery, DealerOutcome, DirectionAnswer, ForwardingEvent, ForwardingState, LeadInput, ReplyKind, WorkflowState } from "../../lib/forwarding/types";
 import type { ForwardingMailResult } from "../../lib/forwarding/forwarding-mail.server";
 
 export const MEDICOM_INBOX_CHANGED = "onemorestep:medicom-inbox-change";
@@ -110,6 +111,10 @@ export function useInbox(publicDemo: boolean, liveAssessment: boolean, industry:
   function offerMail(event: ForwardingEvent, lead: LeadInput, previous: ForwardingEvent[]) {
     const kind = mailKindForLead(event, lead, state.policy);
     if (!kind || (event.type === "assessed" && previous.some((item) => item.leadId === lead.id && mailKindForLead(item, lead, state.policy) === kind))) return;
+    if (isConfirmationMail(kind)) {
+      const snapshot = store.current?.snapshot();
+      if (!snapshot || !automaticConfirmationForLead(snapshot, lead)) return;
+    }
     void sendMail(event);
   }
 
@@ -151,6 +156,10 @@ export function useInbox(publicDemo: boolean, liveAssessment: boolean, industry:
         workflow = "manager-confirmation-pending";
       }
     }
+    if (automaticConfirmationFor(assessment)) {
+      const alreadyAnswered = assessment.directionConfirmation?.choice === "unknown" || lastConfirmationReply(previous.events, lead.id);
+      workflow = alreadyAnswered ? "decision-pending" : "reply-pending";
+    }
     const event: ForwardingEvent = { ...eventBase(lead.id), type: "assessed", assessment, workflow };
     if (!append(event)) return false;
     offerMail(event, lead, previous.events);
@@ -188,14 +197,16 @@ export function useInbox(publicDemo: boolean, liveAssessment: boolean, industry:
       const snapshot = store.current?.snapshot();
       if (!snapshot) return;
       const country = lastReply(snapshot.events, lead.id, "country")?.selection;
-      const partnershipPurchase = lastReply(snapshot.events, lead.id, "partnership")?.selection === "purchase";
+      const savedConfirmation = lastConfirmationReply(snapshot.events, lead.id);
+      const confirmation = savedConfirmation ? confirmationReply({ kind: savedConfirmation.kind, text: savedConfirmation.text }) : undefined;
+      const partnershipPurchase = !confirmation && lastReply(snapshot.events, lead.id, "partnership")?.selection === "purchase";
       let result: Assessed;
       try {
         const response = await fetch("/api/forwarding/assess", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ leadId: lead.id, industry: industry.id === "medicom" ? undefined : industry.id,
-            country, partnershipPurchase: partnershipPurchase || undefined }),
+            country, partnershipPurchase: partnershipPurchase || undefined, confirmation: confirmation || undefined }),
           // Live requests may queue behind the shared Liner concurrency limit.
           signal: AbortSignal.any([exit, AbortSignal.timeout(liveAssessment ? 60_000 : 8_000)]),
         });
@@ -296,6 +307,16 @@ export function useInbox(publicDemo: boolean, liveAssessment: boolean, industry:
     if (kind !== "manager-confirmation") await assess(lead);
   }
 
+  async function saveConfirmationReply(lead: LeadInput, kind: AutomaticConfirmation, text: string) {
+    const snapshot = store.current?.snapshot();
+    const reply = confirmationReply({ kind, text });
+    if (!reply || !snapshot || !ready || batchRunning.current || assessing.current.has(lead.id)
+      || automaticConfirmationForLead(snapshot, lead) !== reply.kind) return false;
+    if (!append({ ...eventBase(lead.id), type: "reply", ...reply })) return false;
+    await assess(lead);
+    return true;
+  }
+
   function saveOutcome(delivery: DealerDelivery, outcome: Exclude<DealerOutcome, "in-progress">) {
     const snapshot = store.current?.snapshot();
     if (store.current && snapshot) {
@@ -320,6 +341,7 @@ export function useInbox(publicDemo: boolean, liveAssessment: boolean, industry:
   return { state, ready, publicDemo, dealerLabel: industry.dealer, now, responseNow, simulatedNow, clearSimulation: () => setSimulatedNow(null),
     error, running, pending, mail, selected, setSelected, assess, assessAll, decide,
     directionLeads: state.leads.filter((lead) => needsDirection(state, lead)), answerDirection,
+    confirmationLeads: state.leads.filter((lead) => automaticConfirmationForLead(state, lead) !== null), saveConfirmationReply,
     bulkInvalid, reopen, saveReply, saveOutcome, simulateDeadline, approveReassignment, reset, mailFor };
 }
 

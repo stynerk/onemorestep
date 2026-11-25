@@ -5,6 +5,7 @@ import { parseEnv } from "node:util";
 import { createAssessmentService } from "../src/lib/forwarding/assessment-service";
 import { requestDomainEvidence } from "../src/lib/forwarding/domain-router";
 import { requestInquiryIntent } from "../src/lib/forwarding/intent-router";
+import { routingReplayRow } from "./routing-replay";
 import type { LeadInput } from "../src/lib/forwarding/types";
 
 const engine = "e0c919ffae62a981b494de90d4891a36c2e30ec5";
@@ -13,7 +14,7 @@ const recordingPath = directory + "/recordings.jsonl";
 const manifestPath = directory + "/manifest.json";
 const kinds = ["search", "intent", "domain"] as const;
 type Kind = (typeof kinds)[number];
-type Mode = "capture" | "replay";
+type Mode = "capture" | "replay" | "routing";
 type Reply =
   | { status: number; body: string | null; retryAfter: string | null }
   | { error: "timeout" | "transport" };
@@ -39,7 +40,7 @@ function parseInputs(value: unknown): LeadInput[] {
 
 function readRecordings(header: string, mode: Mode) {
   if (!existsSync(recordingPath)) {
-    if (mode === "replay") throw new Error("Capture recordings are missing.");
+    if (mode !== "capture") throw new Error("Capture recordings are missing.");
     writeFileSync(recordingPath, header + "\n", { flag: "wx" });
   }
   const [first, ...lines] = readFileSync(recordingPath, "utf8").trimEnd().split("\n");
@@ -85,7 +86,7 @@ async function measure(mode: Mode) {
   const header = JSON.stringify({ version: 1, engine, inputSha256 });
   const recordings = readRecordings(header, mode);
   const apiKey = mode === "capture" ? captureKey() : "offline-replay";
-  if (mode === "replay") {
+  if (mode !== "capture") {
     const manifest = JSON.parse(readFileSync(manifestPath, "utf8"));
     if (manifest.engine !== engine || manifest.inputSha256 !== inputSha256
       || manifest.recordingsSha256 !== digest(readFileSync(recordingPath, "utf8"))) {
@@ -130,7 +131,7 @@ async function measure(mode: Mode) {
         }
         counts[kind].replayed++;
         reply = saved.reply;
-      } else if (mode === "replay") {
+      } else if (mode !== "capture") {
         blocked = "No recording matches an exact request fingerprint.";
         throw new Error(blocked);
       } else {
@@ -164,6 +165,7 @@ async function measure(mode: Mode) {
   const intentFetcher = fetchFor("intent");
   const domainFetcher = fetchFor("domain");
   const predictions = [];
+  const routing: ReturnType<typeof routingReplayRow>[] = [];
   for (const lead of leads) {
     activeLead = lead.id;
     const options = { apiKey };
@@ -178,8 +180,11 @@ async function measure(mode: Mode) {
     });
     if (blocked) throw new Error(blocked);
     const { verdict, reason, handoff, sources, mode: evidenceMode, details } = result.assessment;
-    predictions.push({ id: lead.id, verdict, reason, handoff, sources, mode: evidenceMode, details,
-      intentAdvice: await intent, domainAdvice });
+    const intentAdvice = await intent;
+    const route = mode === "routing" ? routingReplayRow(lead, result.assessment, intentAdvice?.intent) : undefined;
+    if (route) routing.push(route);
+    predictions.push({ id: lead.id, verdict, reason, handoff: route ? route.before : handoff, sources, mode: evidenceMode, details,
+      intentAdvice, domainAdvice });
     if (mode === "capture") console.log(lead.id + " recorded");
   }
   if (used.size !== recordings.size) throw new Error("Capture includes requests the frozen engine did not consume.");
@@ -194,14 +199,16 @@ async function measure(mode: Mode) {
   } else if (JSON.stringify(JSON.parse(readFileSync(manifestPath, "utf8"))) !== JSON.stringify(manifest)) {
     throw new Error("Replay differs from capture.");
   }
-  writeFileSync(directory + "/" + mode + ".json", JSON.stringify({ ...manifest, counts, predictions }, null, 2) + "\n");
+  const outputMode = mode === "routing" ? "replay" : mode;
+  writeFileSync(directory + "/" + outputMode + ".json", JSON.stringify({ ...manifest, counts, predictions }, null, 2) + "\n");
+  if (mode === "routing") writeFileSync(directory + "/routing.json", JSON.stringify(routing) + "\n");
   console.log(JSON.stringify({ ...manifest, mode, counts }));
 }
 
 async function main() {
   const mode = process.argv[2];
-  if ((mode !== "capture" && mode !== "replay") || process.argv.length !== 3) {
-    throw new Error("Usage: node --import tsx scripts/evaluate-blind-forwarding.ts capture|replay");
+  if ((mode !== "capture" && mode !== "replay" && mode !== "routing") || process.argv.length !== 3) {
+    throw new Error("Usage: node --import tsx scripts/evaluate-blind-forwarding.ts capture|replay|routing");
   }
   const engineFiles = [
     "src/lib/liner-search.ts",
@@ -210,11 +217,11 @@ async function main() {
     "src/lib/forwarding/seed-leads.json",
   ];
   try {
-    execFileSync("git", ["diff", "--quiet", engine, "--", ...engineFiles], { stdio: "ignore" });
+    if (mode !== "routing") execFileSync("git", ["diff", "--quiet", engine, "--", ...engineFiles], { stdio: "ignore" });
   } catch {
     throw new Error("The checked-out assessment engine does not match " + engine + ".");
   }
-  if (mode === "replay") {
+  if (mode !== "capture") {
     await measure(mode);
     return;
   }

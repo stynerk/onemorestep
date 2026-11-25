@@ -5,7 +5,7 @@ import Link from "next/link";
 import { industryHandoffForLead } from "../../lib/forwarding/industry-demo";
 import { dealerScore, recommendDealer, type DealerScore } from "../../lib/forwarding/dealers";
 import { directionChoiceLabel } from "../../lib/forwarding/direction-questions";
-import { confirmedCountry, confirmedManagerDealer, hasStaleEvidence, maskEmail, maskPhone, responseDeadline, verdictLabels } from "../../lib/forwarding/inbox";
+import { automaticConfirmationForLead, confirmedCountry, confirmedManagerDealer, hasStaleEvidence, maskEmail, maskPhone, responseDeadline, verdictLabels } from "../../lib/forwarding/inbox";
 import { locales } from "../../lib/forwarding/institution-policy";
 import { renderForwardingMail } from "../../lib/forwarding/mail-template";
 import { forwardingPolicy } from "../../lib/forwarding/policy";
@@ -14,6 +14,7 @@ import type { Assessment, DealerDelivery, DealerOutcome, DirectionConfirmation a
 import { demoAcquisitionForLead } from "../../lib/marketing/campaign-policy";
 import { handoffLabel } from "./handoff-label";
 import type { InboxController } from "./inbox-controller";
+import type { AmbiguousPath } from "./inbox-view";
 import styles from "./dispatch-slip.module.css";
 
 const date = new Intl.DateTimeFormat("ko-KR", { timeZone: forwardingPolicy.responseTimeZone, dateStyle: "medium", timeStyle: "short" });
@@ -25,7 +26,7 @@ const domainLabels = { matched: "기관 공식 이메일과 일치", "free-email
 const modeLabels = { liner: "실시간 검색", cache: "Liner 캐시", mixed: "실시간 및 캐시", curated: "저장된 결과", local: "시연 선별" };
 const memoLabels = { buying: "구매", partnership: "제휴", job: "채용", student: "학생 과제", sales: "영업 제안", spam: "스팸", unknown: "불명" };
 const outcomeLabels: Record<DealerOutcome, string> = { deal: "deal", "no-deal": "no deal", "in-progress": "진행 중", "no-response": "미응답" };
-const mailLabels: Record<MailKind, string> = { "dealer-summary": "딜러용 요약", "country-check": "국가 확인", "partnership-check": "제휴 확인", "manager-confirmation": "담당자 확인", operations: "운영 알림" };
+const mailLabels: Record<MailKind, string> = { "dealer-summary": "딜러용 요약", "country-check": "국가 확인", "partnership-check": "제휴 확인", "manager-confirmation": "담당자 확인", operations: "운영 알림", "free-email-confirmation": "공식 이메일 확인", "weak-intent-confirmation": "구매 계획 확인" };
 const statusLabels = { sent: "테스트 메일 발송 완료", failed: "발송 실패", unknown: "전송 불명", blocked: "수신자 검증으로 차단" };
 
 function confirmationsFor(events: ForwardingEvent[], leadId: string) {
@@ -201,8 +202,8 @@ function ReassignmentCard({ proposal, approve, disabled, dealerLabel, days }: {
   </section>;
 }
 
-export function DecisionCard({ lead, inbox, directionHref }: {
-  lead: LeadInput; inbox: InboxController; directionHref?: string;
+export function DecisionCard({ lead, inbox, ambiguousPath, directionHref, confirmationHref }: {
+  lead: LeadInput; inbox: InboxController; ambiguousPath: AmbiguousPath | null; directionHref?: string; confirmationHref?: string;
 }) {
   const [changeDealer, setChangeDealer] = useState(false);
   const [dealerId, setDealerId] = useState("");
@@ -212,6 +213,8 @@ export function DecisionCard({ lead, inbox, directionHref }: {
   const days = state.policy?.aggregationDays ?? forwardingPolicy.aggregationDays;
   const status = state.leadStates[lead.id];
   const assessment = status.assessment;
+  const automaticConfirmation = ambiguousPath === "automatic-confirmation" ? automaticConfirmationForLead(state, lead) : null;
+  const needsHumanReview = ambiguousPath === "human-review" && status.workflow === "decision-pending";
   const confirmations = assessment?.directionConfirmation ? confirmationsFor(state.events, lead.id) : [];
   const confirmedDomain = confirmations.some(({ kind, choice }) => choice === "yes" && (kind === "domain" || kind === "spoof"));
   const handoff = industryHandoffForLead(state, lead);
@@ -246,7 +249,8 @@ export function DecisionCard({ lead, inbox, directionHref }: {
   const runMail = inbox.mailFor(lead);
   const stale = assessment && hasStaleEvidence(assessment, inbox.now);
   const fault = assessment?.details?.externalStatus === "failed";
-  const recommendationText = directionHref ? "담당자에게 진행 방향을 물어요." :
+  const recommendationText = automaticConfirmation ? "자동 확인 메일 대기" :
+    needsHumanReview ? "사람 확인 필요" :
     assigned ? assigned.name + "에 배정했습니다." : dealer ? dealer.name + "에 넘기세요." :
     recommendation?.route === "manager-direct" ? recommendation.manager.name + "에게 넘기세요." :
     recommendation?.route === "manager-confirmation" ? recommendation.manager.name + "의 " + dealerLabel + " 확인이 필요해요." :
@@ -275,7 +279,7 @@ export function DecisionCard({ lead, inbox, directionHref }: {
   return <article className={"decision-card " + styles.slip} aria-labelledby="card-heading"
     data-assessment={assessment?.verdict} data-risk={assessment?.details?.domain === "suspicious" ? "true" : undefined}>
     {assessment && <header className={styles.dispatchHead}>
-      {handoff && <dl className={"handoff-summary " + styles.recipient}>
+      {handoff && !automaticConfirmation && <dl className={"handoff-summary " + styles.recipient}>
         <dt>{directionHref ? "모르겠으면 넘길 곳" : <>
           <span aria-hidden="true">받는 곳</span><span className={styles.screenReaderOnly}>넘길 곳</span>
         </>}</dt>
@@ -288,7 +292,7 @@ export function DecisionCard({ lead, inbox, directionHref }: {
       <button className="button button-primary" disabled={disabled} onClick={() => void inbox.assess(lead)}>{disabled ? "확인 중…" : "이 문의 선별"}</button>
     </div> : <div className={"card-body " + styles.body}>
       {proposal && <ReassignmentCard proposal={proposal} dealerLabel={dealerLabel} days={days} disabled={disabled} approve={() => inbox.approveReassignment(lead, proposal)} />}
-      {canDecide && assessment.verdict !== "invalid" && <section className="decision-buttons" aria-label="결정">
+      {canDecide && !automaticConfirmation && assessment.verdict !== "invalid" && <section className="decision-buttons" aria-label="결정">
         {dealer && <button type="button" className="button button-primary" disabled={disabled}
           onClick={() => inbox.decide(lead, "approve", dealer.id, "추천 " + dealerLabel + " 승인")}>승인</button>}
         {dealChoices.length > 0 && <button type="button" className="button button-light" disabled={disabled}
@@ -313,8 +317,9 @@ export function DecisionCard({ lead, inbox, directionHref }: {
       <section className={styles.evidenceSection}>
         <div className={styles.recommendation}>
           <h3>{recommendationText}</h3>
-          <p>{assessment.reason}</p>
+          <p>{automaticConfirmation === "weak-intent" ? "공식 이메일을 확인했고, 회신으로 구매 계획(수량·시기·용도)을 확인해요." : assessment.reason}</p>
           {directionHref && <Link href={directionHref}>질문에 답하기</Link>}
+          {confirmationHref && <Link href={confirmationHref}>확인 메일 회신 기록</Link>}
         </div>
         <h3>선별 근거</h3>
         <Evidence assessment={assessment} historicalCount={historicalCount}

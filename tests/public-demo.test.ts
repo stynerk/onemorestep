@@ -53,11 +53,19 @@ test("public build and Vercel runtime both enforce stored assessment and block m
     for (const { leadId, verdict, handoff } of demoAnswers) {
       const response = await assess(post("/api/forwarding/assess", { leadId }));
       assert.equal(response.status, 200, leadId);
-      const { assessment: result } = await response.json();
+      const { assessment: result, workflow } = await response.json();
       assert.equal(result.verdict, verdict, leadId);
       assert.deepEqual(result.handoff, handoff, leadId);
       assert.equal(result.directionConfirmation, undefined, leadId);
-      if (verdict === "ambiguous") assert.ok(result.directionQuestion?.question && result.directionQuestion?.summary, leadId);
+      if (verdict === "ambiguous") {
+        if (["L08", "L09", "L10"].includes(leadId)) {
+          assert.equal(workflow, "reply-pending", leadId);
+          assert.equal(result.directionQuestion, undefined, leadId);
+        } else {
+          assert.equal(workflow, "decision-pending", leadId);
+          assert.ok(result.directionQuestion?.question && result.directionQuestion?.summary, leadId);
+        }
+      }
     }
 
     const researchResponse = await research(post("/api/research", { query: "공개 자료" }));

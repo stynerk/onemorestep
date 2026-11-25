@@ -1,6 +1,5 @@
 import { isPublicDemo } from "../../../../lib/demo-mode";
-import { mailKindFor } from "../../../../lib/forwarding/inbox";
-import { forwardingPolicy } from "../../../../lib/forwarding/policy";
+import { mailKindForLead } from "../../../../lib/forwarding/inbox";
 import { createInitialForwardingState } from "../../../../lib/forwarding/seed";
 import { isForwardingEvent } from "../../../../lib/forwarding/store";
 
@@ -41,8 +40,7 @@ export async function POST(request: Request) {
   if (!lead) return invalid();
   if ((event.type === "decision" || (event.type === "reassigned" && event.target === "dealer")) && !demo.dealers.some((dealer) =>
     dealer.id === event.dealerId && dealer.active && dealer.products.includes(lead.product))) return invalid();
-  const kind = event.type === "assessed" && !Object.hasOwn(forwardingPolicy.countryRegions, lead.country)
-    ? "operations" : mailKindFor(event);
+  const kind = mailKindForLead(event, lead);
   if (!kind) return invalid();
   const retryOf = "retryOf" in input && typeof input.retryOf === "string" ? input.retryOf : undefined;
   const { dispatchForwardingMail } = await import("../../../../lib/forwarding/forwarding-mail.server");

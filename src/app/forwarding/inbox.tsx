@@ -119,7 +119,10 @@ export default function Inbox() {
               {leads.map((lead) => {
                 const status = state.leadStates[lead.id];
                 const row = byLead.get(lead.id);
-                const handoff = row?.handoff;
+                const route = row?.ambiguousPath;
+                const handoff = route === "automatic-confirmation" ? null : row?.handoff;
+                const workflowLabel = route ? inboxFilterLabel[route]
+                  : status.workflow === "dealer-assigned" ? industry.dealer + " 배정" : rowState[status.workflow];
                 const showReason = group === "invalid" || (group === "ambiguous" && status.assessment?.details?.domain === "suspicious");
                 return <li key={lead.id} className={"lead" + (lead.id === selected?.id ? " selected" : "")}
                   data-group={group} data-risk={group === "ambiguous" && status.assessment?.details?.domain === "suspicious"}>
@@ -127,7 +130,7 @@ export default function Inbox() {
                     onClick={() => inbox.setSelected(lead.id)}>
                     <span className="lead-meta"><span>{lead.id}</span>
                       {row?.reassignment ? <span className="reassignment-label">재배정 제안</span>
-                        : <span>{inbox.pending.includes(lead.id) ? "조사 중…" : status.workflow === "dealer-assigned" ? industry.dealer + " 배정" : rowState[status.workflow]}</span>}</span>
+                        : <span>{inbox.pending.includes(lead.id) ? "조사 중…" : workflowLabel}</span>}</span>
                     <span aria-hidden="true" className="triage-verdict">{inboxFilterLabel[group]}</span>
                     <strong title={lead.institution}>{lead.institution || "소속 미기재"}</strong>
                     {handoff && <span className="lead-handoff">
@@ -146,8 +149,10 @@ export default function Inbox() {
           </section>)}
         </div>
         <div className="detail-column" id="direction-result" tabIndex={-1}>
-          {selected ? <DecisionCard key={selected.id} lead={selected} inbox={inbox}
-            directionHref={directionIds.has(selected.id) && !inbox.running ? href("/inbox/feedback#direction-" + selected.id) : undefined} /> :
+          {selected ? <DecisionCard key={selected.id} lead={selected} inbox={inbox} ambiguousPath={byLead.get(selected.id)?.ambiguousPath ?? null}
+            directionHref={directionIds.has(selected.id) && !inbox.running ? href("/inbox/feedback#direction-" + selected.id) : undefined}
+            confirmationHref={byLead.get(selected.id)?.ambiguousPath === "automatic-confirmation" && !inbox.running
+              ? href("/inbox/feedback#confirmation-" + selected.id) : undefined} /> :
             <div className="empty-card"><span aria-hidden="true">✦</span><h2>문의를 선택해 주세요</h2><p>선별 근거와 결정 카드를 볼 수 있습니다.</p></div>}
         </div>
       </div>

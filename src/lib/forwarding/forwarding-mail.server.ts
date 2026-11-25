@@ -7,6 +7,7 @@ import {
   type MailEnv,
   type SendGmail,
 } from "./gmail-test-transport.server";
+import { isConfirmationMail } from "./confirmation";
 import { isMailKind, renderForwardingMail } from "./mail-template";
 import leadRows from "./seed-leads.json";
 import type { ForwardingEvent, MailKind, MailStatus } from "./types";
@@ -98,7 +99,9 @@ export function createForwardingMailService({
     if (!lead) return noEvent("invalid-request");
     const { eventId, kind, retryOf } = request;
     const leadId = lead.id;
-    const mailId = createHash("sha256").update(`${kind}\0${eventId}`).digest("hex");
+    // A lead may be assessed in multiple tabs. Automatic confirmation uses one delivery per lead and kind.
+    const dedupeId = isConfirmationMail(kind) ? leadId : eventId;
+    const mailId = createHash("sha256").update(`${kind}\0${dedupeId}`).digest("hex");
     const ongoing = inFlight.get(mailId);
     if (ongoing) return ongoing.leadId === lead.id ? ongoing.result : noEvent("event-conflict");
 

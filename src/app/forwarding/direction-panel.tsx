@@ -13,7 +13,7 @@ export function DirectionPanel({ rows, isPending, answeringDisabled, onAnswer }:
   onAnswer: (lead: LeadInput, answer: ResponseInput) => void | Promise<void>;
 }) {
   return <section className="direction-panel" aria-labelledby="direction-questions-title" id="direction-questions">
-      <h2 id="direction-questions-title">방향이 필요한 리드 {rows.length}건</h2>
+      <h2 id="direction-questions-title">사람 확인 필요 {rows.length}건</h2>
       {rows.length > 0 ? <ul className="direction-list">
         {rows.map(({ lead, assessment }) => {
           const question = getDirectionQuestion(lead, assessment);

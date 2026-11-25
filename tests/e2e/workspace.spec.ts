@@ -30,7 +30,7 @@ test("사이드바 화면을 직접 열고 선별 현황을 문의 목록 필터
       .toHaveAttribute("href", "/inbox?filter=" + id);
   }
 
-  for (const [name, filter] of [["딜러 6", "dealer"], ["권역팀 13", "regional-sales"], ["인사팀 1", "hr"], ["없음 10", "none"]]) {
+  for (const [name, filter] of [["딜러 6", "dealer"], ["권역팀 10", "regional-sales"], ["인사팀 1", "hr"], ["없음 10", "none"]]) {
     await expect(page.getByRole("link", { name, exact: true })).toHaveAttribute("href", "/inbox?filter=" + filter);
   }
 
