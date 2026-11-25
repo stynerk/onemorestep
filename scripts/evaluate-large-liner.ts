@@ -6,6 +6,7 @@ import { gunzipSync, gzipSync } from "node:zlib";
 import { createAssessmentService } from "../src/lib/forwarding/assessment-service";
 import { requestDomainEvidence } from "../src/lib/forwarding/domain-router";
 import { requestInquiryIntent } from "../src/lib/forwarding/intent-router";
+import { routingReplayRow } from "./routing-replay";
 import type { LeadInput } from "../src/lib/forwarding/types";
 
 const engine = "ca0cf6e299772744aa5e734fab99dbe96cbed7be";
@@ -104,7 +105,7 @@ function readInputs() {
   return { leads: parseCsv(input.toString("utf8")), inputSha256 };
 }
 
-async function measure(mode: "capture" | "replay") {
+async function measure(mode: "capture" | "replay" | "routing") {
   const { leads, inputSha256 } = readInputs();
   const journalPath = cacheDirectory + "/liner.jsonl";
   const bundlePath = cacheDirectory + "/liner-recordings.jsonl.gz";
@@ -185,6 +186,7 @@ async function measure(mode: "capture" | "replay") {
     });
   }
 
+  const routing = new Map<string, ReturnType<typeof routingReplayRow>>();
   async function assess(lead: LeadInput) {
     const attempts = new Map<string, number>();
     const failures: { kind: Kind; status: string }[] = [];
@@ -248,6 +250,11 @@ async function measure(mode: "capture" | "replay") {
     });
     if (critical.error) throw new Error(critical.error);
     const { verdict, reason, handoff, mode: evidenceMode } = assessment;
+    if (mode === "routing") {
+      const route = routingReplayRow(lead, assessment);
+      routing.set(lead.id, route);
+      return { id: lead.id, verdict, reason, handoff: route.before, mode: evidenceMode, failures };
+    }
     return { id: lead.id, verdict, reason, handoff, mode: evidenceMode, failures };
   }
 
@@ -294,21 +301,22 @@ async function measure(mode: "capture" | "replay") {
       throw new Error("Offline replay differs from recorded output.");
     }
   }
+  if (mode === "routing") writeFileSync(cacheDirectory + "/routing.json", JSON.stringify(leads.map(({ id }) => routing.get(id))) + "\n");
   console.log(JSON.stringify({ mode, ...manifest }));
 }
 
 async function main() {
   const mode = process.argv[2];
-  if ((mode !== "capture" && mode !== "replay" && mode !== "validate") || process.argv.length !== 3) {
-    throw new Error("Usage: node --import tsx scripts/evaluate-large-liner.ts validate|capture|replay");
+  if ((mode !== "capture" && mode !== "replay" && mode !== "validate" && mode !== "routing") || process.argv.length !== 3) {
+    throw new Error("Usage: node --import tsx scripts/evaluate-large-liner.ts validate|capture|replay|routing");
   }
-  execFileSync("git", ["diff", "--quiet", engine, "--", "src/lib", "src/app/api/forwarding/assess"], { stdio: "ignore" });
+  if (mode !== "routing") execFileSync("git", ["diff", "--quiet", engine, "--", "src/lib", "src/app/api/forwarding/assess"], { stdio: "ignore" });
   if (mode === "validate") {
     const { leads, inputSha256 } = readInputs();
     console.log(JSON.stringify({ mode, engine, inputSha256, total: leads.length, firstId: leads[0].id, lastId: leads.at(-1)?.id }));
     return;
   }
-  if (mode === "replay") {
+  if (mode === "replay" || mode === "routing") {
     await measure(mode);
     return;
   }
