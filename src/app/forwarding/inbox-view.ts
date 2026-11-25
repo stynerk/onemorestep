@@ -42,8 +42,12 @@ export function inboxRows(state: ForwardingState, responseNow: number) {
     const assignment = openAssignment(state, lead.id);
     const reassignment = assignment !== undefined && Boolean(reassignmentProposal(state, lead, responseNow));
     const group = inboxBucket(state, lead) ?? "new";
-    const automaticConfirmation = group === "ambiguous" && automaticConfirmationForLead(state, lead) !== null;
-    const ambiguousPath = group === "ambiguous" ? automaticConfirmation ? "automatic-confirmation" : "human-review" : null;
+    // Reopening an invalid lead projects it into the ambiguous bucket for manual review.
+    const lastAssessmentAction = group === "ambiguous" ? state.events.findLast((event) =>
+      event.leadId === lead.id && (event.type === "assessed" || event.type === "review-reopened")) : undefined;
+    const assessedAmbiguous = lastAssessmentAction?.type === "assessed" && lastAssessmentAction.assessment.verdict === "ambiguous";
+    const automaticConfirmation = assessedAmbiguous && automaticConfirmationForLead(state, lead) !== null;
+    const ambiguousPath = assessedAmbiguous ? automaticConfirmation ? "automatic-confirmation" : "human-review" : null;
     return {
       lead, reassignment, dealerWaiting: assignment !== undefined && !reassignment,
       group, ambiguousPath, handoff: automaticConfirmation ? null : industryHandoffForLead(state, lead),

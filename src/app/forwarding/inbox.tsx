@@ -149,7 +149,7 @@ export default function Inbox() {
           </section>)}
         </div>
         <div className="detail-column" id="direction-result" tabIndex={-1}>
-          {selected ? <DecisionCard key={selected.id} lead={selected} inbox={inbox}
+          {selected ? <DecisionCard key={selected.id} lead={selected} inbox={inbox} ambiguousPath={byLead.get(selected.id)?.ambiguousPath ?? null}
             directionHref={directionIds.has(selected.id) && !inbox.running ? href("/inbox/feedback#direction-" + selected.id) : undefined}
             confirmationHref={byLead.get(selected.id)?.ambiguousPath === "automatic-confirmation" && !inbox.running
               ? href("/inbox/feedback#confirmation-" + selected.id) : undefined} /> :

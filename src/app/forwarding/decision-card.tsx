@@ -14,6 +14,7 @@ import type { Assessment, DealerDelivery, DealerOutcome, DirectionConfirmation a
 import { demoAcquisitionForLead } from "../../lib/marketing/campaign-policy";
 import { handoffLabel } from "./handoff-label";
 import type { InboxController } from "./inbox-controller";
+import type { AmbiguousPath } from "./inbox-view";
 import styles from "./dispatch-slip.module.css";
 
 const date = new Intl.DateTimeFormat("ko-KR", { timeZone: forwardingPolicy.responseTimeZone, dateStyle: "medium", timeStyle: "short" });
@@ -201,8 +202,8 @@ function ReassignmentCard({ proposal, approve, disabled, dealerLabel, days }: {
   </section>;
 }
 
-export function DecisionCard({ lead, inbox, directionHref, confirmationHref }: {
-  lead: LeadInput; inbox: InboxController; directionHref?: string; confirmationHref?: string;
+export function DecisionCard({ lead, inbox, ambiguousPath, directionHref, confirmationHref }: {
+  lead: LeadInput; inbox: InboxController; ambiguousPath: AmbiguousPath | null; directionHref?: string; confirmationHref?: string;
 }) {
   const [changeDealer, setChangeDealer] = useState(false);
   const [dealerId, setDealerId] = useState("");
@@ -212,8 +213,8 @@ export function DecisionCard({ lead, inbox, directionHref, confirmationHref }: {
   const days = state.policy?.aggregationDays ?? forwardingPolicy.aggregationDays;
   const status = state.leadStates[lead.id];
   const assessment = status.assessment;
-  const automaticConfirmation = automaticConfirmationForLead(state, lead);
-  const needsHumanReview = assessment?.verdict === "ambiguous" && status.workflow === "decision-pending" && !automaticConfirmation;
+  const automaticConfirmation = ambiguousPath === "automatic-confirmation" ? automaticConfirmationForLead(state, lead) : null;
+  const needsHumanReview = ambiguousPath === "human-review" && status.workflow === "decision-pending";
   const confirmations = assessment?.directionConfirmation ? confirmationsFor(state.events, lead.id) : [];
   const confirmedDomain = confirmations.some(({ kind, choice }) => choice === "yes" && (kind === "domain" || kind === "spoof"));
   const handoff = industryHandoffForLead(state, lead);
