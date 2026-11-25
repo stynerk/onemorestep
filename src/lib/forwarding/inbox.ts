@@ -17,7 +17,7 @@ export function inboxBucket(state: ForwardingState, lead: LeadInput): Verdict | 
 
 export function automaticConfirmationForLead(state: ForwardingState, lead: LeadInput) {
   const status = state.leadStates[lead.id];
-  return status?.workflow === "reply-pending" && status.assessment ? automaticConfirmationFor(status.assessment, lead) : null;
+  return status?.workflow === "reply-pending" && status.assessment ? automaticConfirmationFor(status.assessment) : null;
 }
 
 export function lastConfirmationReply(events: ForwardingEvent[], leadId: string) {
@@ -86,14 +86,14 @@ export function hasStaleEvidence(assessment: Assessment, now: number) {
   return assessment.sources.length > 0 && now - Date.parse(assessment.searchedAt) >= 86_400_000;
 }
 
-export function mailKindFor(event: ForwardingEvent, lead?: Pick<LeadInput, "memo">): MailKind | null {
+export function mailKindFor(event: ForwardingEvent): MailKind | null {
   if (event.type === "decision" && event.dealerId && (event.action === "approve" || event.action === "change-dealer")) return "dealer-summary";
   if (event.type === "reassigned") {
     if (event.target === "dealer") return "dealer-summary";
     return event.target === "manager-confirmation" ? "manager-confirmation" : null;
   }
   if (event.type !== "assessed") return null;
-  const confirmation = event.workflow === "reply-pending" && lead && automaticConfirmationFor(event.assessment, lead);
+  const confirmation = event.workflow === "reply-pending" && automaticConfirmationFor(event.assessment);
   if (confirmation) return confirmation === "free-email" ? "free-email-confirmation" : "weak-intent-confirmation";
   if (event.assessment.verdict === "country-check") return "country-check";
   if (event.assessment.verdict === "partnership-check") return "partnership-check";
@@ -102,7 +102,7 @@ export function mailKindFor(event: ForwardingEvent, lead?: Pick<LeadInput, "memo
 }
 
 export function mailKindForLead(event: ForwardingEvent, lead: LeadInput, policy: WorkflowPolicy = forwardingPolicy): MailKind | null {
-  const kind = mailKindFor(event, lead);
+  const kind = mailKindFor(event);
   if (kind && isConfirmationMail(kind)) return kind;
   return event.type === "assessed" && !Object.hasOwn(policy.countryRegions, lead.country) ? "operations" : kind;
 }

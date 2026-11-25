@@ -156,8 +156,9 @@ export function useInbox(publicDemo: boolean, liveAssessment: boolean, industry:
         workflow = "manager-confirmation-pending";
       }
     }
-    if (automaticConfirmationFor(assessment, lead)) {
-      workflow = lastConfirmationReply(previous.events, lead.id) ? "decision-pending" : "reply-pending";
+    if (automaticConfirmationFor(assessment)) {
+      const alreadyAnswered = assessment.directionConfirmation?.choice === "unknown" || lastConfirmationReply(previous.events, lead.id);
+      workflow = alreadyAnswered ? "decision-pending" : "reply-pending";
     }
     const event: ForwardingEvent = { ...eventBase(lead.id), type: "assessed", assessment, workflow };
     if (!append(event)) return false;

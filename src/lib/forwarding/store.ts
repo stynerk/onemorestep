@@ -105,6 +105,10 @@ function isAssessment(value: unknown, state: ForwardingState): value is Assessme
     const details = value.details;
     if (!isObject(details)) return false;
     const detailFields = ["domain", "countries", "industry", "memoIntent", "memoQuote", "externalStatus", "sourceKind"];
+    if (Object.hasOwn(details, "routerMemoIntent")) {
+      if (!member(details.routerMemoIntent, MEMO_INTENTS)) return false;
+      detailFields.push("routerMemoIntent");
+    }
     if (Object.hasOwn(details, "memoSource")) {
       if (details.memoSource !== "liner" || !isText(details.memoQuote, 200) || !details.memoQuote.trim()) return false;
       detailFields.push("memoSource");

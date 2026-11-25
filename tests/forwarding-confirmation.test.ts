@@ -29,24 +29,34 @@ test("the five new routing countries use their configured region", () => {
   }
 });
 
-test("only eligible ambiguous leads are handled by automatic confirmation", () => {
-  assert.equal(automaticConfirmationFor(freeEmail, lead), "free-email");
-  for (const memo of ["자료만 보내 주세요.", "For reference only", "資料だけください", "Nur zur Information", "Pour information seulement", "Solo para referencia"]) {
-    assert.equal(automaticConfirmationFor(weakIntent, { memo }), "weak-intent");
+test("automatic confirmation uses the engine checks independently of wording or memo quotes", () => {
+  const rewordedFreeMail = { ...freeEmail, reason: "기관 메일 확인 요청 문구 갱신" };
+  assert.equal(automaticConfirmationFor(freeEmail), "free-email");
+  assert.equal(automaticConfirmationFor(rewordedFreeMail), "free-email");
+
+  for (const memoQuote of [null, "담당 부서에서 어떤 내용을 더 보내 드리면 될까요?", "Demande de présentation du matériel"]) {
+    const reworded = { ...weakIntent, reason: "새 의도 확인 안내", details: { ...weakIntent.details!, memoQuote } };
+    assert.equal(automaticConfirmationFor(reworded), "weak-intent");
   }
-  for (const memo of [
-    "Wir benötigen ein Angebot für 8 Patientenmonitore",
-    "We are surveying medical device manufacturers for official statistics, could you complete our questionnaire?",
-    "For reference only. We would also like to buy 8 devices.",
-    "Hola",
-    "",
-  ]) assert.equal(automaticConfirmationFor(weakIntent, { memo }), null);
-  assert.equal(automaticConfirmationFor({ ...freeEmail, verdict: "invalid" }, lead), null);
-  assert.equal(automaticConfirmationFor({ ...freeEmail, reason: "기관 공식 페이지를 확인하지 못했어요." }, lead), null);
-  assert.equal(automaticConfirmationFor({ ...freeEmail, details: { ...freeEmail.details!, externalStatus: "failed" } }, lead), null);
-  assert.equal(automaticConfirmationFor({ ...freeEmail, details: { ...freeEmail.details!, domain: "suspicious" } }, lead), null);
-  assert.equal(automaticConfirmationFor({ ...weakIntent, details: { ...weakIntent.details!, domain: "unverified" } }, { memo: "For reference only" }), null);
+  assert.equal(automaticConfirmationFor({
+    ...weakIntent, details: { ...weakIntent.details!, memoIntent: "partnership" },
+  }), "weak-intent");
 });
+
+test("failed external checks, suspicious domains and ambiguous confirmed purchases stay with people", () => {
+  assert.equal(automaticConfirmationFor({ ...freeEmail, verdict: "valid" }), null);
+  assert.equal(automaticConfirmationFor({ ...freeEmail, details: undefined }), null);
+  for (const candidate of [freeEmail, weakIntent]) {
+    assert.equal(automaticConfirmationFor({ ...candidate, details: { ...candidate.details!, externalStatus: "failed" } }), null);
+    assert.equal(automaticConfirmationFor({ ...candidate, details: { ...candidate.details!, domain: "suspicious" } }), null);
+  }
+  const purchase = { ...weakIntent, details: { ...weakIntent.details!, memoIntent: "buying" } } satisfies Assessment;
+  assert.equal(automaticConfirmationFor(purchase), null);
+  assert.equal(automaticConfirmationFor({ ...weakIntent, details: { ...weakIntent.details!, routerMemoIntent: "buying" } }), null);
+  assert.equal(automaticConfirmationFor({ ...freeEmail, details: { ...freeEmail.details!, routerMemoIntent: "buying" } }), "free-email");
+  assert.equal(automaticConfirmationFor({ ...purchase, details: { ...purchase.details, domain: "unverified" } }), null);
+});
+
 
 test("automatic mail is tied to the first eligible assessment and the reply survives hydration", () => {
   let saved: string | null = null;
@@ -54,7 +64,9 @@ test("automatic mail is tied to the first eligible assessment and the reply surv
   const store = createForwardingStore(storage);
   const assessment = { id: "r3-1", leadId: lead.id, at, type: "assessed", assessment: freeEmail, workflow: "reply-pending" } as const;
   assert.ok(store.append(assessment).ok);
-  assert.ok(store.append({ ...assessment, id: "r3-2" }).ok);
+  const checked = { ...freeEmail, details: { ...freeEmail.details!, routerMemoIntent: "buying" } } satisfies Assessment;
+  assert.equal(store.append({ ...assessment, id: "bad-router-intent", assessment: { ...checked, details: { ...checked.details, routerMemoIntent: "arbitrary" } } }).ok, false);
+  assert.ok(store.append({ ...assessment, id: "r3-2", assessment: checked }).ok);
   assert.equal(automaticConfirmationForLead(store.snapshot(), lead), "free-email");
   assert.deepEqual(mailRequestsFor(store.snapshot().events, lead).map(({ event, kind }) => [event.id, kind]), [["r3-1", "free-email-confirmation"]]);
 
@@ -71,6 +83,7 @@ test("automatic mail is tied to the first eligible assessment and the reply surv
   const restored = createForwardingStore(storage).hydrate();
   assert.ok(restored.ok);
   assert.equal(restored.state.leadStates[lead.id].workflow, "decision-pending");
+  assert.equal(restored.state.leadStates[lead.id].assessment?.details?.routerMemoIntent, "buying");
   assert.deepEqual(restored.state.events.at(-1), reply);
   const legacy: ForwardingEvent = { ...assessment, workflow: "decision-pending" };
   assert.deepEqual(mailRequestsFor([legacy], lead), []);
@@ -100,8 +113,7 @@ test("public confirmation replies reclassify saved inputs and mail still returns
     const initial = await assessment(leadId);
     assert.equal(initial.assessment.verdict, "ambiguous");
     assert.equal(initial.workflow, "reply-pending");
-    const row = state.leads.find(({ id }) => id === leadId)!;
-    assert.equal(automaticConfirmationFor(initial.assessment, row), kind);
+    assert.equal(automaticConfirmationFor(initial.assessment), kind);
   }
   assert.equal((await assessment("L28")).workflow, "decision-pending");
   const confirmedMail = await assessment("L08", { kind: "free-email", text: "reply-demo@mayoclinic.org" });

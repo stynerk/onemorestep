@@ -53,6 +53,7 @@ export interface AssessmentDetails {
   countries: string[];
   industry: string | null;
   memoIntent: MemoIntent;
+  routerMemoIntent?: MemoIntent;
   memoQuote: string | null;
   memoSource?: "liner";
   domainEvidence?: DomainEvidenceAdvice;

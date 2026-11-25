@@ -66,9 +66,14 @@ export async function POST(request: Request): Promise<Response> {
       // A confirmed country changes the routing decision, but the ownership sources are the same.
       ?? (evidence.country === lead.country ? null : lookupSavedDomainEvidence({ ...evidence, country: lead.country }, savedDomainEvidence))
     : runtime.mode?.trim() === "live" && runtime.apiKey?.trim() ? (evidence) => requestDomainEvidence(evidence, runtime) : undefined;
-  const result = saved ? await assessSavedIndustryLeadWithDomainEvidence(saved, input, lead.country, await intent, domainAdvice)
+  const evaluated = saved ? await assessSavedIndustryLeadWithDomainEvidence(saved, input, lead.country, await intent, domainAdvice)
     : await service.assess(input, { ...runtime, regionalCountry: lead.country, intent, domainAdvice });
-  if (!confirmation && automaticConfirmationFor(result.assessment, input)) {
+  const routerMemoIntent = (await intent)?.intent;
+  const details = evaluated.assessment.details;
+  const result = details && routerMemoIntent
+    ? { ...evaluated, assessment: { ...evaluated.assessment, details: { ...details, routerMemoIntent } } }
+    : evaluated;
+  if (!confirmation && automaticConfirmationFor(result.assessment)) {
     return Response.json({ leadId: lead.id, ...result, workflow: "reply-pending" }, { headers });
   }
   if (result.assessment.verdict === "ambiguous") {
