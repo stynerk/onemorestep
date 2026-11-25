@@ -8,10 +8,11 @@
 - 1,000건에서 넘길 곳 일치는 Gemini 기준 528→619건, HJ 기준 628→719건이다. 권역 미지정은 161→0건이다. 애매 중 사람 확인은 555→508건이며, 추가 자동 확인은 무료 메일 28건과 약한 의향 19건이다. 그 47건은 모두 기준 라벨과 일치했다.
 - 시연 30건은 선별·넘길 곳 30/30을 유지하고 사람 확인이 6→3건이다. 블라인드 30건은 선별 17/30, 넘길 곳 21/30, 사람 확인 18건으로 동일하다.
 - 같은 기록에서 선별 결과를 유지한 채 비교했다. 보고서에 실측 뒤 룰을 추가한 시점과 자동 확인 지표의 한계를 명시했다.
+- Chrome 45개 시나리오를 확인했다. 최초 시간 초과 3건은 공개 생산 빌드에서, 무효 리드 다시 검토 표기 회귀는 수정 뒤 저장 모드에서 재검증했다. SaaS 저장 응답은 10/10이다.
 - Tony 검토와 독립 QA 이후 기획서 반영을 결정한다. 운영 배포와 대회 제출은 HJ가 한다.
 
 ## 평가 기록 위치
 
 - 1,000건 기록과 매핑은 본 폴더의 .cache/frozen-evaluations/issue-135-x/에 있다. 블라인드 30건 기록은 .cache/frozen-evaluations/issue-90/에 있다. 보고서에 재생 명령을 적었다.
 
-[Issue #144](https://github.com/stynerk/onemorestep/issues/144) · [평가 보고서](../qa/LARGE_EVALUATION_2026-11-25.md)
+[Issue #144](https://github.com/stynerk/onemorestep/issues/144) · [검토 PR #146](https://github.com/stynerk/onemorestep/pull/146) · [평가 보고서](../qa/LARGE_EVALUATION_2026-11-25.md)
