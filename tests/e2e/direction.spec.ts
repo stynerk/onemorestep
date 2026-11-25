@@ -65,7 +65,7 @@ test("애매 문의의 자동 확인 대기와 사람 확인을 나누고 자동
   await page.getByRole("link", { name: "전체 문의", exact: true }).click();
   await expect(card(page).getByText("유효", { exact: true })).toBeVisible();
   await card(page).getByText("회신 기록", { exact: true }).click();
-  await expect(card(page).getByText("Need pricing for 10 units", { exact: false })).toBeVisible();
+  await expect(card(page).getByText(/^Need pricing for 10 units · /)).toBeVisible();
 });
 
 test("같은 기관과 도메인의 다음 SaaS 문의는 새로고침 뒤에도 이전 답을 재사용한다", async ({ page }) => {
